@@ -104,7 +104,12 @@ const handleLogin = async (e) => {
         const role = userData.role;
         if (role === "admin") {
           router.push('/admin');
-        } else {
+        } else if(role === "kaprodi"){
+          router.push('/kaprodi');
+        } else if(role === "mahasiswa"){
+          router.push('/dashboardmahasiswa');
+        }
+        else {
           router.push('/dashboard');
         }
       } else {
