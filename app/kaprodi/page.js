@@ -76,13 +76,6 @@ export default function KaprodiPage() {
   }, []);
 
   return (
-    <>    
-        <NavbarKaprodi isLoggedIn={isLoggedIn} />
-      <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
-        <p>Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
-      </div>
     <div className="min-h-screen bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] p-8 font-sans">
       {/* <div className="max-w-6xl mx-auto"> */}
       <motion.div
@@ -100,6 +93,7 @@ export default function KaprodiPage() {
           <input type="number" min={0} max={1} step={0.01} value={mutationRate} onChange={(e) => setMutationRate(+e.target.value)} className="px-4 py-3 rounded-2xl shadow-inner bg-white/70 focus:ring-4 focus:ring-indigo-200 backdrop-blur-sm" placeholder="Mutasi (0.1)" />
           <input type="date" value={tanggalSidang} onChange={(e) => setTanggalSidang(e.target.value)} className="px-4 py-3 rounded-2xl shadow-inner bg-white/70 focus:ring-4 focus:ring-indigo-200 backdrop-blur-sm" />
         </div> */}
+              <NavbarKaprodi isLoggedIn={isLoggedIn} />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
   <div className="flex flex-col">
     <label className="text-sm text-gray-600 mb-1">Generasi</label>
@@ -199,5 +193,4 @@ export default function KaprodiPage() {
       </motion.div>
     </div>
 );
-  </>
 }
