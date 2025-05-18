@@ -5,7 +5,7 @@ import Link from "next/link"; // Import Link from Next.js
 import { signOut } from "firebase/auth"; // Import signOut from Firebase
 import { useRouter } from 'next/navigation'; // Import useRouter
 import styles from "./navbarkaprodi.module.css"; // Create this CSS file for styling
-import DosenListKaprodi from "../kaprodilist/page";
+// import DosenListKaprodi from "../kaprodilist/page";
 
 import { auth, db } from "@/lib/firebase";
 
