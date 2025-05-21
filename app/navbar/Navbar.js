@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link"; // Import Link from Next.js
 import { signOut } from "firebase/auth"; // Import signOut from Firebase
 import { useRouter } from 'next/navigation'; // Import useRouter
-import styles from "./navbar.module.css"; // Create this CSS file for styling
+import styles from "./navbar.module.scss"; // Create this CSS file for styling
 
 
 import { auth, db } from "@/lib/firebase";

@@ -1,0 +1,170 @@
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+  margin-top: 30px;
+
+  @media (max-width: 768px) {
+    padding: 28px 16px;
+    border-radius: 12px;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1f2937; // Gray-800
+    margin-bottom: 12px;
+
+    @media (max-width: 480px) {
+      font-size: 24px;
+    }
+  }
+
+  p {
+    font-size: 18px;
+    color: #6b7280; // Gray-500
+
+    @media (max-width: 480px) {
+      font-size: 16px;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+}
+
+.btn,
+.btnAdmin {
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn {
+  background-color: #6366f1; // Indigo-500
+
+  &:hover {
+    background-color: #4f46e5; // Indigo-600
+    transform: scale(1.03);
+  }
+}
+
+.btnAdmin {
+  background-color: #10b981; // Emerald-500
+
+  &:hover {
+    background-color: #059669; // Emerald-600
+    transform: scale(1.03);
+  }
+}
+
+
+
+
+
+
+.wrapper {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.heading {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1f2937; // gray-800
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+  }
+}
+
+.logoutButton {
+  background-color: #ef4444; // red-500
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #dc2626; // red-600
+  }
+}
+
+.downloadButton {
+  background-color: #10b981; // green-500
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #059669; // green-600
+  }
+
+  margin-bottom: 24px;
+}
+
+.subheading {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #374151; // gray-700
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    background-color: #f3f4f6; // gray-100
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #111827; // gray-900
+
+    strong {
+      color: #1e40af; // blue-800
+    }
+  }
+}
+

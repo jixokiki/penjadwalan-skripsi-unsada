@@ -4,16 +4,13 @@ import { useState } from "react";
 import Link from "next/link"; // Import Link from Next.js
 import { signOut } from "firebase/auth"; // Import signOut from Firebase
 import { useRouter } from 'next/navigation'; // Import useRouter
-import styles from "./navbarkaprodi.module.scss"; // Create this CSS file for styling
+import styles from "./navbarpenguji.module.scss"; // Create this CSS file for styling
 // import DosenListKaprodi from "../kaprodilist/page";
+
 
 import { auth, db } from "@/lib/firebase";
 
-
-
-import jsPDF from "jspdf";
-
-export default function NavbarKaprodi({ isLoggedIn }) {
+export default function NavbarPenguji({ isLoggedIn }) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter(); // Create router instance
 
@@ -33,7 +30,7 @@ export default function NavbarKaprodi({ isLoggedIn }) {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <Link href="/kaprodi">Kaprodi</Link> {/* Dashboard link */}
+        <Link href="/penguji">Penguji</Link> {/* Dashboard link */}
       </div>
       <div className={styles.hamburger} onClick={toggleMenu}>
         {/* Hamburger Icon */}
@@ -43,24 +40,34 @@ export default function NavbarKaprodi({ isLoggedIn }) {
       </div>
       <ul className={`${styles.menu} ${isOpen ? styles.active : ""}`}>
         <li className={styles.menuItem}>
-          <Link href="/kaprodi">Home</Link> {/* Home link */}
+          <Link href="/penguji">Home</Link> {/* Home link */}
+        </li>
+        {/* <li className={styles.menuItem}>
+          <Link href="/tampilankaprodilist2">Kaprodi List</Link> 
+        </li> */}
+        <li className={styles.menuItem}>
+          <Link href="/revisimahasiswasempro">Document Revisi Sempro</Link> 
+        </li>
+        {/* <li className={styles.menuItem}> */}
+          {/* <Link href="/mahasiswalist">Mahasiswa List</Link> Mahasiswa List link */}
+        {/* </li> */}
+        <li className={styles.menuItem}>
+          <Link href="/tampilanlistpenguji2">Penguji List</Link> {/* Mahasiswa List link */}
         </li>
         <li className={styles.menuItem}>
-          {/* <Link href="/kaprodilist">Kaprodi List</Link>  */}
-          <Link href="/tampilankaprodilist">Kaprodi List</Link> 
-          {/* <DosenListKaprodi/> */}
+          <Link href="/tampilanlistaccpenguji">Penguji Sempro Mahasiswa Acc</Link> {/* Dosen List link */}
         </li>
         <li className={styles.menuItem}>
-          <Link href="/tampilanlistpenguji">Penguji List</Link> {/* Mahasiswa List link */}
+          <Link href="/tampilanlistaccpenguji2">Penguji Skripsi Mahasiswa Acc</Link> {/* Dosen List link */}
+        </li>
+        {/* <li className={styles.menuItem}>
+          <Link href="/services">Services</Link> 
+        </li> */}
+        <li className={styles.menuItem}>
+          <Link href="/jadwalpenguji">Jadwal Penguji</Link> {/* Services link */}
         </li>
         <li className={styles.menuItem}>
-          <Link href="/listmahasiswaaccsempro">Dokumen Mahasiswa Lengkap Sempro</Link> {/* Dosen List link */}
-        </li>
-        <li className={styles.menuItem}>
-          <Link href="/listmahasiswaaccskripsi">Dokumen Mahasiswa Lengkap Skripsi</Link> {/* Dosen List link */}
-        </li>
-        <li className={styles.menuItem}>
-          <Link href="/contact">Contact</Link> {/* Contact link */}
+          <Link href="/jadwalsidangsemprofix">Pengiriman Link Jadwal</Link> 
         </li>
         {/* Show logout option only if logged in */}
         {isLoggedIn && (
@@ -77,16 +84,16 @@ export default function NavbarKaprodi({ isLoggedIn }) {
 
 
 
-// // components/NavbarKaprodi.js
+// // components/NavbarPenguji.js
 // "use client";
 // import { useState } from "react";
 // import Link from "next/link"; // Import Link from Next.js
 // import { auth } from "../../firebase"; // Adjust the path as needed
 // import { signOut } from "firebase/auth"; // Import signOut from Firebase
 // import { useRouter } from 'next/navigation'; // Import useRouter
-// import styles from "./navbarkaprodi.module.css"; // Create this CSS file for styling
+// import styles from "./navbarpenguji.module.css"; // Create this CSS file for styling
 
-// export default function NavbarKaprodi({ isLoggedIn, role }) {
+// export default function NavbarPenguji({ isLoggedIn, role }) {
 //   const [isOpen, setIsOpen] = useState(false);
 //   const router = useRouter(); // Create router instance
 
@@ -106,7 +113,7 @@ export default function NavbarKaprodi({ isLoggedIn }) {
 //   return (
 //     <nav className={styles.navbar}>
 //       <div className={styles.logo}>
-//         <Link href="/dashboard-kaprodi">Kaprodi</Link> {/* Dashboard link */}
+//         <Link href="/dashboard-penguji">Penguji</Link> {/* Dashboard link */}
 //       </div>
 //       <div className={styles.hamburger} onClick={toggleMenu}>
 //         {/* Hamburger Icon */}
@@ -116,18 +123,15 @@ export default function NavbarKaprodi({ isLoggedIn }) {
 //       </div>
 //       <ul className={`${styles.menu} ${isOpen ? styles.active : ""}`}>
 //         <li className={styles.menuItem}>
-//           <Link href="/dashboard-kaprodi">Home</Link>
+//           <Link href="/dashboard-penguji">Home</Link>
 //         </li>
-//         {role === "kaprodi" && (
+//         {role === "penguji" && (
 //           <>
 //             <li className={styles.menuItem}>
-//               <Link href="/kaprodilist">Kaprodi List</Link> {/* Kaprodi access */}
+//               <Link href="/kaprodilist">Kaprodi List</Link> {/* Penguji access */}
 //             </li>
 //             <li className={styles.menuItem}>
-//               <Link href="/pengujilist">Penguji List</Link> {/* Kaprodi access */}
-//             </li>
-//             <li className={styles.menuItem}>
-//               <Link href="/listmahasiswaaccsempro">Dokumen Mahasiswa Lengkap</Link> {/* Kaprodi access */}
+//               <Link href="/mahasiswalist">Mahasiswa List</Link> {/* Penguji access */}
 //             </li>
 //           </>
 //         )}

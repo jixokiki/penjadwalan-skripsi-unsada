@@ -57,6 +57,7 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import styles from './login.module.scss';
 
 export default function LoginPage() {
   const [nimOrEmail, setNimOrEmail] = useState("");
@@ -109,6 +110,9 @@ const handleLogin = async (e) => {
         } else if(role === "mahasiswa"){
           router.push('/dashboardmahasiswa');
         }
+        else if(role === "penguji"){
+          router.push('/penguji');
+        }
         else {
           router.push('/dashboard');
         }
@@ -123,13 +127,18 @@ const handleLogin = async (e) => {
   
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="p-8 bg-white rounded-lg shadow-md w-80"
-      >
-        <h1 className="text-2xl font-bold text-center mb-6">Selamat Datang di E-Skripsi Scheduler</h1>
+    // <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    //   <motion.div
+    //     initial={{ opacity: 0, y: -20 }}
+    //     animate={{ opacity: 1, y: 0 }}
+    //     className="p-8 bg-white rounded-lg shadow-md w-80"
+    //   >
+
+
+    <div className={styles.wrapper}>
+      <motion.div className={styles.card}>
+
+        {/* <h1 className="text-2xl font-bold text-center mb-6">Selamat Datang di E-Skripsi Scheduler</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
@@ -153,7 +162,29 @@ const handleLogin = async (e) => {
           >
             Login
           </button>
-        </form>
+        </form> */}
+        <h1 className={styles.title}>Selamat Datang di E-Skripsi Scheduler</h1>
+    <form onSubmit={handleLogin} className={styles.form}>
+      <input
+        type="text"
+        placeholder="NIM Mahasiswa atau Email Admin"
+        value={nimOrEmail}
+        onChange={(e) => setNimOrEmail(e.target.value)}
+        className={styles.input}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className={styles.input}
+        required
+      />
+      <button type="submit" className={styles.button}>
+        Login
+      </button>
+    </form>
       </motion.div>
     </div>
   );

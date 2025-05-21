@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase Storage methods
 
-import styles from "./dashboardsempro.module.css";
+import styles from "./dashboardsempro.module.scss";
 import Navbar from "../navbar/Navbar";
 import * as XLSX from "xlsx";
 

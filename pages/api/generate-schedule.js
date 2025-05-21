@@ -181,15 +181,48 @@ const fitness = (schedule) => {
   return score;
 };
 
+// const generateInitialPopulation = (mahasiswa, dosen, size, tanggalBase) => {
+//   const population = [];
+//   for (let i = 0; i < size; i++) {
+//     const individual = mahasiswa.map((mhs, index) => {
+//       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
+//       let penguji;
+//       do {
+//         penguji = dosen[Math.floor(Math.random() * dosen.length)];
+//       } while (penguji === pembimbing);
+
+//       const tanggal = new Date(tanggalBase);
+//       tanggal.setDate(tanggal.getDate() + (index % 20));
+//       const tanggalFormatted = tanggal.toISOString().split("T")[0];
+
+//       return {
+//         nim: mhs.nim,
+//         dosen_pembimbing: pembimbing.nama,
+//         dosen_penguji: penguji.nama,
+//         tanggal_sidang: tanggalFormatted,
+//         jam_sidang: `${8 + (index % 5)}:00`,
+//       };
+//     });
+//     population.push(individual);
+//   }
+//   return population;
+// };
+
+
 const generateInitialPopulation = (mahasiswa, dosen, size, tanggalBase) => {
   const population = [];
   for (let i = 0; i < size; i++) {
     const individual = mahasiswa.map((mhs, index) => {
       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-      let penguji;
-      do {
-        penguji = dosen[Math.floor(Math.random() * dosen.length)];
-      } while (penguji === pembimbing);
+      const pengujiSet = new Set();
+
+      // Tambahkan 4 dosen penguji yang berbeda dari pembimbing dan satu sama lain
+      while (pengujiSet.size < 4) {
+        const calon = dosen[Math.floor(Math.random() * dosen.length)];
+        if (calon.nama !== pembimbing.nama) pengujiSet.add(calon.nama);
+      }
+
+      const [penguji1, penguji2, penguji3, penguji4] = [...pengujiSet];
 
       const tanggal = new Date(tanggalBase);
       tanggal.setDate(tanggal.getDate() + (index % 20));
@@ -198,7 +231,10 @@ const generateInitialPopulation = (mahasiswa, dosen, size, tanggalBase) => {
       return {
         nim: mhs.nim,
         dosen_pembimbing: pembimbing.nama,
-        dosen_penguji: penguji.nama,
+        dosen_penguji: penguji1,
+        dosen_penguji2: penguji2,
+        dosen_penguji3: penguji3,
+        dosen_penguji4: penguji4,
         tanggal_sidang: tanggalFormatted,
         jam_sidang: `${8 + (index % 5)}:00`,
       };
@@ -208,23 +244,50 @@ const generateInitialPopulation = (mahasiswa, dosen, size, tanggalBase) => {
   return population;
 };
 
+
 const crossover = (parent1, parent2) => {
   const midpoint = Math.floor(parent1.length / 2);
   return [...parent1.slice(0, midpoint), ...parent2.slice(midpoint)];
 };
 
+// const mutate = (individual, dosen, mutationRate) => {
+//   return individual.map((item) => {
+//     if (Math.random() < mutationRate) {
+//       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
+//       let penguji;
+//       do {
+//         penguji = dosen[Math.floor(Math.random() * dosen.length)];
+//       } while (penguji === pembimbing);
+//       return {
+//         ...item,
+//         dosen_pembimbing: pembimbing.nama,
+//         dosen_penguji: penguji.nama,
+//       };
+//     }
+//     return item;
+//   });
+// };
+
 const mutate = (individual, dosen, mutationRate) => {
   return individual.map((item) => {
     if (Math.random() < mutationRate) {
       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-      let penguji;
-      do {
-        penguji = dosen[Math.floor(Math.random() * dosen.length)];
-      } while (penguji === pembimbing);
+      const pengujiSet = new Set();
+
+      while (pengujiSet.size < 4) {
+        const calon = dosen[Math.floor(Math.random() * dosen.length)];
+        if (calon.nama !== pembimbing.nama) pengujiSet.add(calon.nama);
+      }
+
+      const [penguji1, penguji2, penguji3, penguji4] = [...pengujiSet];
+
       return {
         ...item,
         dosen_pembimbing: pembimbing.nama,
-        dosen_penguji: penguji.nama,
+        dosen_penguji: penguji1,
+        dosen_penguji2: penguji2,
+        dosen_penguji3: penguji3,
+        dosen_penguji4: penguji4,
       };
     }
     return item;

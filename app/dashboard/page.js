@@ -50,6 +50,7 @@ import { signOut } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
+import styles from "./dashboard.module.scss";
 
 export default function Dashboard() {
   const [jadwal, setJadwal] = useState([]);
@@ -85,9 +86,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl mb-4">Dashboard Mahasiswa</h1>
-      <button onClick={handleLogout} className="mb-6 p-2 bg-red-500 text-white rounded">
+    // <div className="p-6">
+    //   <h1 className="text-2xl mb-4">Dashboard Mahasiswa</h1>
+
+    <div className={styles.wrapper}>
+      <h1 className={styles.heading}>Dashboard Mahasiswa</h1>
+
+      {/* <button onClick={handleLogout} className="mb-6 p-2 bg-red-500 text-white rounded"> */}
+      <button onClick={handleLogout} className={styles.logoutButton}>
         Logout
       </button>
       <div className="mb-6">
