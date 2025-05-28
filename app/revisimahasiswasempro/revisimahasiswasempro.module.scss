@@ -1,0 +1,242 @@
+// revisimahasiswasempro.module.scss
+
+// Color Palette
+$primary: #00796b;
+$accent: #0288d1;
+$danger: #d32f2f;
+$bg-light: #f9f9f9;
+$text-color: #2e2e2e;
+$card-bg: #ffffff;
+$link-blue: #1e88e5;
+$border-radius: 10px;
+$shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+// Typography
+$font-size-base: 16px;
+$font-title: 24px;
+$font-bold: 600;
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
+  background-color: $bg-light;
+  color: $text-color;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: $font-title;
+    font-weight: $font-bold;
+    color: $primary;
+  }
+
+  p {
+    font-size: 1rem;
+    color: darken($text-color, 10%);
+  }
+}
+
+.wrapper {
+  background-color: $card-bg;
+  padding: 2rem;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+}
+
+.heading {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: $primary;
+  font-weight: 600;
+}
+
+.subheading {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: $accent;
+  font-weight: 600;
+}
+
+.logoutButton {
+  background-color: $danger;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($danger, 10%);
+  }
+}
+
+.downloadButton {
+  background-color: $accent;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($accent, 10%);
+  }
+}
+
+.revisiTag {
+  color: red;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+
+.scheduleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    background-color: #f0fdfc;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    line-height: 1.6;
+    font-size: $font-size-base;
+
+    strong {
+      color: $primary;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      color: $link-blue;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.2rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    button {
+      margin-top: 1rem;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken(#3f51b5, 10%);
+      }
+    }
+  }
+}
+
+.sendButton {
+  background-color: #3f51b5;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.75rem;
+
+  &:hover {
+    background-color: darken(#3f51b5, 10%);
+  }
+}
+
+.revisiInput {
+  margin-top: 8px;
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.revisiButton {
+  margin-top: 6px;
+  background-color: #e67e22;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.revisiBaruNote {
+  background-color: #e6ffed;
+  padding: 8px;
+  border-left: 4px solid #2ecc71;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.terimaRevisiButton {
+  background-color: #2ecc71;
+  color: white;
+  margin-top: 10px;
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.2rem;
+  }
+
+  .wrapper {
+    padding: 1.5rem;
+  }
+
+  .heading {
+    font-size: 1.3rem;
+  }
+
+  .scheduleList li {
+    font-size: 0.95rem;
+  }
+
+  .logoutButton,
+  .downloadButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .revisiInput {
+  margin-top: 8px;
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.revisiButton {
+  margin-top: 6px;
+  background-color: #e67e22;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+}

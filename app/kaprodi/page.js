@@ -293,6 +293,10 @@ export default function KaprodiPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
+  const [filterAngkatan, setFilterAngkatan] = useState("");
+const [filterJurusan, setFilterJurusan] = useState("");
+
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -308,6 +312,37 @@ export default function KaprodiPage() {
     };
     fetchJadwal();
   }, []);
+
+  const [mahasiswaSempro, setMahasiswaSempro] = useState([]);
+
+useEffect(() => {
+  const fetchMahasiswa = async () => {
+    const snapshot = await getDocs(collection(db, "usersSempro"));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setMahasiswaSempro(data);
+  };
+  fetchMahasiswa();
+}, []);
+
+
+const [listAngkatan, setListAngkatan] = useState([]);
+const [listJurusan, setListJurusan] = useState([]);
+
+useEffect(() => {
+  const fetchMahasiswa = async () => {
+    const snapshot = await getDocs(collection(db, "usersSempro"));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setMahasiswaSempro(data);
+
+    // Ambil angkatan & jurusan unik
+    const angkatanUnik = [...new Set(data.map(item => item.angkatan))];
+    const jurusanUnik = [...new Set(data.map(item => item.jurusan))];
+    setListAngkatan(angkatanUnik);
+    setListJurusan(jurusanUnik);
+  };
+  fetchMahasiswa();
+}, []);
+
 
   const handleSendToPenguji = async (item) => {
     try {
@@ -366,6 +401,75 @@ export default function KaprodiPage() {
     <div className={styles.wrapper}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <NavbarKaprodi isLoggedIn={isLoggedIn} />
+        {/* <h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
+<ul className={styles.scheduleList}>
+  {mahasiswaSempro
+    .filter(item => item.nim.toLowerCase().includes(searchTerm.toLowerCase()))
+    .map((mhs) => (
+      <li key={mhs.id} className={styles.card}>
+        <p className={styles.nim}>{mhs.nim}</p>
+        <p className={styles.tanggal}>Nama: {mhs.nama}</p>
+        <p className={styles.dosen}>Judul: {mhs.judul}</p>
+        <p className={styles.dosen}>Jurusan: {mhs.jurusan} • Angkatan: {mhs.angkatan}</p>
+        <p className={styles.dosen}>WA: {mhs.noWhatsapp}</p>
+                        <a href={mhs.pengajuanSidangUrl} target="_blank" rel="noopener noreferrer">File Pengajuan Sidang</a><br />
+                <a href={mhs.krsUrl} target="_blank" rel="noopener noreferrer">KRS</a><br />
+                <a href={mhs.daftarNilaiUrl} target="_blank" rel="noopener noreferrer">Daftar Nilai</a><br />
+                <a href={mhs.fileTA1Url} target="_blank" rel="noopener noreferrer">File TA1</a>
+      </li>
+  ))}
+</ul> */}
+<h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
+<div className={styles.filterContainer}>
+  <select onChange={(e) => setFilterAngkatan(e.target.value)} className={styles.dropdown}>
+    <option value="">📅 Semua Angkatan</option>
+    {listAngkatan.map((angkatan) => (
+      <option key={angkatan} value={angkatan}>{angkatan}</option>
+    ))}
+  </select>
+
+  <select onChange={(e) => setFilterJurusan(e.target.value)} className={styles.dropdown}>
+    <option value="">🎓 Semua Jurusan</option>
+    {listJurusan.map((jurusan) => (
+      <option key={jurusan} value={jurusan}>{jurusan}</option>
+    ))}
+  </select>
+</div>
+
+{/* <div className={styles.gridListmahasiswa}>
+  {mahasiswaSempro
+    .filter(item => item.nim.toLowerCase().includes(searchTerm.toLowerCase()))
+    .map((mhs) => (
+      <div key={mhs.id} className={styles.cardmahasiswa}>
+        <p className={styles.nimmahasiswa}>{mhs.nim}</p>
+        <p className={styles.namamahasiswa}>📛 {mhs.nama}</p>
+        <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
+        <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
+        <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+      </div>
+  ))}
+</div> */}
+<div className={styles.gridListmahasiswa}>
+  {mahasiswaSempro
+    .filter(item =>
+      item.nim.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filterAngkatan === "" || item.angkatan === filterAngkatan) &&
+      (filterJurusan === "" || item.jurusan === filterJurusan)
+    )
+    .map((mhs) => (
+      <div key={mhs.id} className={styles.cardmahasiswa}>
+                <h3 className={styles.headingSempro}>Mahasiswa Sempro</h3>
+        <p className={styles.nimmahasiswa}>{mhs.nim}</p>
+        <p className={styles.namamahasiswa}>📛 {mhs.nama}</p>
+        <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
+        <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
+        <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+      </div>
+  ))}
+</div>
+
+
+
         <h1 className={styles.heading}>📅 Kaprodi Jadwal Sidang</h1>
 
         <div className={styles.inputGrid}>

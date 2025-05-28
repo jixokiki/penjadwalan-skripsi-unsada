@@ -256,3 +256,121 @@
     font-size: 0.875rem;
   }
 }
+
+
+.container {
+  max-width: 960px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.revisiAlert {
+  background: #fff4e5;
+  border: 1px solid #ffa726;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(255, 167, 38, 0.2);
+
+  h3 {
+    color: #e65100;
+    margin-bottom: 0.5rem;
+  }
+
+  .revisiNote {
+    font-style: italic;
+    color: #d84315;
+  }
+}
+
+.detailMahasiswaBox {
+  background: #fafafa;
+  border: 1px solid #ccc;
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 0.95rem;
+
+    input,
+    textarea {
+      margin-top: 0.3rem;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+    }
+
+    a {
+      font-size: 0.85rem;
+      color: #0288d1;
+      text-decoration: underline;
+      margin-top: 0.3rem;
+    }
+  }
+
+  textarea {
+    grid-column: span 2;
+    min-height: 100px;
+  }
+
+  .revisiKirimButton {
+    grid-column: span 2;
+    background: #0288d1;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #0277bd;
+    }
+  }
+}
+
+.subheading {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.scheduleList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+
+    .tanggal {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .details {
+      font-size: 0.9rem;
+      color: #444;
+      line-height: 1.6;
+    }
+  }
+}

@@ -4,14 +4,18 @@ import { onAuthStateChanged, signOut } from "firebase/auth"; // Import Firebase 
 import Navbar from "../navbar/Navbar";
 import Link from 'next/link';
 // import styles from '../page.module.css';
-import styles from './dashboard.module.scss';
+import styles from './filerevisi.module.scss';
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { collection, getDocs, doc, getDoc, query, where, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase"; // sesuaikan path jika perlu
+import { motion } from "framer-motion";
 
-export default function DashboardMahasiswa() {
+
+export default function FileRevisi() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRevisiAlert, setShowRevisiAlert] = useState(false);
 const [catatanRevisi, setCatatanRevisi] = useState("");
@@ -50,6 +54,30 @@ const [catatanRevisi, setCatatanRevisi] = useState("");
       const filteredJadwal = jadwal.filter(item =>
     item.nim.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+ 
+
+const handleFileUpload = async (e, fileKey) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const storageRef = ref(storage, `revisi/${nim}/${fileKey}-${file.name}`);
+  try {
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    setFileUrls((prev) => ({
+      ...prev,
+      [`${fileKey}Url`]: downloadURL,
+    }));
+
+    alert(`✅ Berhasil upload ${fileKey}`);
+  } catch (error) {
+    console.error(`❌ Gagal upload ${fileKey}:`, error);
+    alert(`❌ Upload gagal: ${fileKey}`);
+  }
+};
+
 
       useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -187,28 +215,150 @@ useEffect(() => {
       <Navbar isLoggedIn={isLoggedIn} />
       <div className={styles.container}>
         <div className={styles.header}>
-          {showRevisiAlert && (
+          {/* {showRevisiAlert && (
   <div className={styles.revisiAlert}>
     <h3>⚠️ Anda Diminta Melakukan Revisi</h3>
     <p>{catatanRevisi || "Tidak ada catatan tambahan dari dosen."}</p>
     <p className={styles.revisiNote}>Segera perbarui data dan upload ulang dokumen jika diperlukan.</p>
     
+
 <div className={styles.detailMahasiswaBox}>
-  <h3>Data Anda:</h3>
-  <p><strong>NIM:</strong> {nim}</p>
-  <p><strong>Nama:</strong> {nama}</p>
-  <p><strong>Jurusan:</strong> {jurusan}</p>
-  <p><strong>Angkatan:</strong> {angkatan}</p>
-  <p><strong>Judul:</strong> {judul}</p>
-  <p><strong>No Whatsapp:</strong> {noWhatsapp}</p>
-  <p><strong>Dosen Pembimbing:</strong> {selectedDosen}</p>
+  <h3>Edit Data Anda:</h3>
+
+  <label>NIM:<input value={nim} readOnly /></label>
+  <label>Nama:<input value={nama} onChange={(e) => setNama(e.target.value)} /></label>
+  <label>Jurusan:<input value={jurusan} onChange={(e) => setJurusan(e.target.value)} /></label>
+  <label>Angkatan:<input value={angkatan} onChange={(e) => setAngkatan(e.target.value)} /></label> 
+  <label>Judul:<input value={judul} onChange={(e) => setJudul(e.target.value)} /></label>
+<label>Upload File TA1:
+  <input type="file" accept=".pdf,.doc,.docx" onChange={(e) => handleFileUpload(e, 'fileTA1')} />
+</label>
+{fileUrls.fileTA1Url && <a href={fileUrls.fileTA1Url} target="_blank">Lihat File TA1</a>}
+
+<label>Upload KRS:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'krs')} />
+</label>
+{fileUrls.krsUrl && <a href={fileUrls.krsUrl} target="_blank">Lihat File KRS</a>}
+
+<label>Upload Daftar Nilai:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'daftarNilai')} />
+</label>
+{fileUrls.daftarNilaiUrl && <a href={fileUrls.daftarNilaiUrl} target="_blank">Lihat File Daftar Nilai</a>}
+
+<label>Upload Pengajuan Sidang:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'pengajuanSidang')} />
+</label>
+{fileUrls.pengajuanSidangUrl && <a href={fileUrls.pengajuanSidangUrl} target="_blank">Lihat File Pengajuan Sidang</a>}
+
+
+
+
+  <label>No Whatsapp:<input value={noWhatsapp} onChange={(e) => setNoWhatsapp(e.target.value)} /></label>
+  <label>Dosen Pembimbing:<input value={selectedDosen} onChange={(e) => setSelectedDosen(e.target.value)} /></label>
+  <label>SKS Ditempuh:<input value={sksditempuh} onChange={(e) => setSksditempuh(e.target.value)} /></label>
+  <label>SKS Berjalan:<input value={sksberjalan} onChange={(e) => setSksberjalan(e.target.value)} /></label>
 
   <textarea
     placeholder="Tulis catatan tambahan jika ada revisi yang telah Anda lakukan..."
     value={catatanRevisi}
     onChange={(e) => setCatatanRevisi(e.target.value)}
     className={styles.revisiInput}
-    readOnly
+  />
+
+  <button
+    className={styles.revisiKirimButton}
+    onClick={async () => {
+      try {
+        await setDoc(doc(db, "usersSempro", nim), {
+          nim,
+          nama,
+          jurusan,
+          angkatan,
+          judul,
+          noWhatsapp,
+          dosen: selectedDosen,
+          sksditempuh,
+          sksberjalan,
+          pengajuanSidangUrl: fileUrls.pengajuanSidangUrl || "",
+          krsUrl: fileUrls.krsUrl || "",
+          daftarNilaiUrl: fileUrls.daftarNilaiUrl || "",
+          fileTA1Url: fileUrls.fileTA1Url || "",
+          role: "mahasiswa",
+          butuhRevisi: false,
+          revisiBaru: true,
+          catatanRevisi: catatanRevisi || ""
+        });
+        alert("✅ Revisi berhasil dikirim ulang. Tunggu konfirmasi penguji.");
+      } catch (err) {
+        console.error("Gagal kirim ulang revisi:", err);
+        alert("❌ Gagal mengirim revisi. Coba lagi.");
+      }
+    }}
+  >
+    Kirim Ulang Revisi
+  </button>
+</div>
+  </div>
+)} */}
+
+{showRevisiAlert && (
+  <motion.div
+    className={styles.revisiAlert}
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <h3>⚠️ Anda Diminta Melakukan Revisi</h3>
+    <p>{catatanRevisi || "Tidak ada catatan tambahan dari dosen."}</p>
+    <p className={styles.revisiNote}>Segera perbarui data dan upload ulang dokumen jika diperlukan.</p>
+
+    <motion.div
+      className={styles.detailMahasiswaBox}
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 0.2, duration: 0.5 }}
+    >
+      {/* ... form input yang kamu sudah buat di sini ... */}
+      <h3>Edit Data Anda:</h3>
+
+  <label>NIM:<input value={nim} readOnly /></label>
+  <label>Nama:<input value={nama} onChange={(e) => setNama(e.target.value)} /></label>
+  <label>Jurusan:<input value={jurusan} onChange={(e) => setJurusan(e.target.value)} /></label>
+  <label>Angkatan:<input value={angkatan} onChange={(e) => setAngkatan(e.target.value)} /></label> 
+  <label>Judul:<input value={judul} onChange={(e) => setJudul(e.target.value)} /></label>
+<label>Upload File TA1:
+  <input type="file" accept=".pdf,.doc,.docx" onChange={(e) => handleFileUpload(e, 'fileTA1')} />
+</label>
+{fileUrls.fileTA1Url && <a href={fileUrls.fileTA1Url} target="_blank">Lihat File TA1</a>}
+
+<label>Upload KRS:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'krs')} />
+</label>
+{fileUrls.krsUrl && <a href={fileUrls.krsUrl} target="_blank">Lihat File KRS</a>}
+
+<label>Upload Daftar Nilai:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'daftarNilai')} />
+</label>
+{fileUrls.daftarNilaiUrl && <a href={fileUrls.daftarNilaiUrl} target="_blank">Lihat File Daftar Nilai</a>}
+
+<label>Upload Pengajuan Sidang:
+  <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileUpload(e, 'pengajuanSidang')} />
+</label>
+{fileUrls.pengajuanSidangUrl && <a href={fileUrls.pengajuanSidangUrl} target="_blank">Lihat File Pengajuan Sidang</a>}
+
+
+
+
+  <label>No Whatsapp:<input value={noWhatsapp} onChange={(e) => setNoWhatsapp(e.target.value)} /></label>
+  <label>Dosen Pembimbing:<input value={selectedDosen} onChange={(e) => setSelectedDosen(e.target.value)} /></label>
+  <label>SKS Ditempuh:<input value={sksditempuh} onChange={(e) => setSksditempuh(e.target.value)} /></label>
+  <label>SKS Berjalan:<input value={sksberjalan} onChange={(e) => setSksberjalan(e.target.value)} /></label>
+
+  <textarea
+    placeholder="Tulis catatan tambahan jika ada revisi yang telah Anda lakukan..."
+    value={catatanRevisi}
+    onChange={(e) => setCatatanRevisi(e.target.value)}
+    className={styles.revisiInput}
   />
 
   {/* <button
@@ -243,23 +393,59 @@ useEffect(() => {
   >
     Kirim Ulang Revisi
   </button> */}
-</div>
-  </div>
+  <motion.button
+  className={styles.revisiKirimButton}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={async () => {
+      try {
+        await setDoc(doc(db, "usersSempro", nim), {
+          nim,
+          nama,
+          jurusan,
+          angkatan,
+          judul,
+          noWhatsapp,
+          dosen: selectedDosen,
+          sksditempuh,
+          sksberjalan,
+          pengajuanSidangUrl: fileUrls.pengajuanSidangUrl || "",
+          krsUrl: fileUrls.krsUrl || "",
+          daftarNilaiUrl: fileUrls.daftarNilaiUrl || "",
+          fileTA1Url: fileUrls.fileTA1Url || "",
+          role: "mahasiswa",
+          butuhRevisi: false,
+          revisiBaru: true,
+          catatanRevisi: catatanRevisi || ""
+        });
+        alert("✅ Revisi berhasil dikirim ulang. Tunggu konfirmasi penguji.");
+      } catch (err) {
+        console.error("Gagal kirim ulang revisi:", err);
+        alert("❌ Gagal mengirim revisi. Coba lagi.");
+      }
+    }}
+>
+  Kirim Ulang Revisi
+</motion.button>
+
+    </motion.div>
+  </motion.div>
 )}
+
 
           <h1>Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
           <p>Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
         </div>
 
-        <div className={styles.buttons}>
+        {/* <div className={styles.buttons}>
           <Link href="/dashboardsempro">
             <button className={styles.btn}>Seminar Proposal</button>
           </Link>
-          {/* When clicked, sign out and redirect to /dashboardskripsi */}
+          When clicked, sign out and redirect to /dashboardskripsi
           <button onClick={handleSkripsiButtonClick} className={styles.btnAdmin}>
             Skripsi
           </button>
-        </div>
+        </div> */}
       </div>
       {/* {judul && (
   <div className={styles.preloadedSection}>

@@ -32,7 +32,7 @@ export default function Navbar({ isLoggedIn }) {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <Link href="/dashboard">Sidang</Link> {/* Dashboard link */}
+        <Link href="/dashboardmahasiswa">Sidang</Link> {/* Dashboard link */}
       </div>
       <div className={styles.hamburger} onClick={toggleMenu}>
         {/* Hamburger Icon */}
@@ -42,7 +42,7 @@ export default function Navbar({ isLoggedIn }) {
       </div>
       <ul className={`${styles.menu} ${isOpen ? styles.active : ""}`}>
         <li className={styles.menuItem}>
-          <Link href="/dashboard">Home</Link> {/* Home link */}
+          <Link href="/">Home</Link> {/* Home link */}
         </li>
         <li className={styles.menuItem}>
           <Link href="/dosenlist">Dosen List</Link> {/* Dosen List link */}

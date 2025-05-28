@@ -47,10 +47,34 @@ export default function DashboardSempro() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+
+  useEffect(() => {
+  const fetchDosenFromCollection = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "dosen"));
+      const dosenData = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          nama: data.nama || "Tanpa Nama",
+          email: data.email || "",
+          nid: data.nid || "",
+        };
+      });
+      setDosenList(dosenData);
+    } catch (error) {
+      console.error("Gagal ambil data dosen:", error);
+    }
+  };
+
+  fetchDosenFromCollection();
+}, []);
+
+
   // Function to fetch dosen list from Firestore
   // const fetchDosenList = async () => {
   //   try {
-  //     const dosenCollection = collection(db, "users");
+  //     const dosenCollection = collection(db, "dosen");
   //     const dosenSnapshot = await getDocs(dosenCollection);
   //     const dosen = dosenSnapshot.docs
   //       .map((doc) => ({ id: doc.id, ...doc.data() }))
@@ -63,64 +87,64 @@ export default function DashboardSempro() {
   // };
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log("Fetching Firestore and Excel data...");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       console.log("Fetching Firestore and Excel data...");
         
-        // Fetch Firestore data
-        const dosenCollection = collection(db, "users");
-        const dosenSnapshot = await getDocs(dosenCollection);
-        const dosenFirestore = dosenSnapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .filter((user) => user.role === "dosen");
+  //       // Fetch Firestore data
+  //       const dosenCollection = collection(db, "users");
+  //       const dosenSnapshot = await getDocs(dosenCollection);
+  //       const dosenFirestore = dosenSnapshot.docs
+  //         .map((doc) => ({ id: doc.id, ...doc.data() }))
+  //         .filter((user) => user.role === "dosen");
   
-        console.log("Dosen from Firestore:", dosenFirestore);
+  //       console.log("Dosen from Firestore:", dosenFirestore);
   
-        // Fetch Excel data
-        const responseSI = await fetch("/data/datadosenSistemInformasi.xlsx");
-        const responseTI = await fetch("/data/datadosenTeknikInformatika.xlsx");
+  //       // Fetch Excel data
+  //       const responseSI = await fetch("/data/datadosenSistemInformasi.xlsx");
+  //       const responseTI = await fetch("/data/datadosenTeknikInformatika.xlsx");
   
-        if (!responseSI.ok || !responseTI.ok) {
-          throw new Error("File Excel tidak ditemukan atau tidak bisa diakses");
-        }
+  //       if (!responseSI.ok || !responseTI.ok) {
+  //         throw new Error("File Excel tidak ditemukan atau tidak bisa diakses");
+  //       }
   
-        console.log("Files fetched successfully");
+  //       console.log("Files fetched successfully");
   
-        const [arrayBufferSI, arrayBufferTI] = await Promise.all([
-          responseSI.arrayBuffer(),
-          responseTI.arrayBuffer(),
-        ]);
+  //       const [arrayBufferSI, arrayBufferTI] = await Promise.all([
+  //         responseSI.arrayBuffer(),
+  //         responseTI.arrayBuffer(),
+  //       ]);
   
-        const workbookSI = XLSX.read(arrayBufferSI, { type: "array" });
-        const workbookTI = XLSX.read(arrayBufferTI, { type: "array" });
+  //       const workbookSI = XLSX.read(arrayBufferSI, { type: "array" });
+  //       const workbookTI = XLSX.read(arrayBufferTI, { type: "array" });
   
-        const sheetSI = XLSX.utils.sheet_to_json(workbookSI.Sheets[workbookSI.SheetNames[0]], { raw: false, defval: "" });
-        const sheetTI = XLSX.utils.sheet_to_json(workbookTI.Sheets[workbookTI.SheetNames[0]], { raw: false, defval: "" });
+  //       const sheetSI = XLSX.utils.sheet_to_json(workbookSI.Sheets[workbookSI.SheetNames[0]], { raw: false, defval: "" });
+  //       const sheetTI = XLSX.utils.sheet_to_json(workbookTI.Sheets[workbookTI.SheetNames[0]], { raw: false, defval: "" });
   
-        console.log("Parsed data from Excel:", sheetSI, sheetTI);
+  //       console.log("Parsed data from Excel:", sheetSI, sheetTI);
   
-        const allDosen = [...sheetSI, ...sheetTI].map((dosen, index) => ({
-          id: `excel_${index}`, 
-          nama: dosen["Nama Lengkap"] || "Tidak Diketahui",
-          jurusan: dosen["Jurusan"] || "Tidak Diketahui",
-        }));
+  //       const allDosen = [...sheetSI, ...sheetTI].map((dosen, index) => ({
+  //         id: `excel_${index}`, 
+  //         nama: dosen["Nama Lengkap"] || "Tidak Diketahui",
+  //         jurusan: dosen["Jurusan"] || "Tidak Diketahui",
+  //       }));
   
-        console.log("Final dosen list from Excel:", allDosen);
+  //       console.log("Final dosen list from Excel:", allDosen);
   
-        // Gabungkan data Firestore & Excel
-        setDosenList([...dosenFirestore, ...allDosen]);
-      } catch (error) {
-        console.error("Gagal mengambil data dosen:", error);
-      }
-    };
+  //       // Gabungkan data Firestore & Excel
+  //       setDosenList([...dosenFirestore, ...allDosen]);
+  //     } catch (error) {
+  //       console.error("Gagal mengambil data dosen:", error);
+  //     }
+  //   };
   
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
   
-  useEffect(() => {
-    console.log("Dosen List Updated:", dosenList);
-  }, [dosenList]);
+  // useEffect(() => {
+  //   console.log("Dosen List Updated:", dosenList);
+  // }, [dosenList]);
   
   // Fetch dosen list when component mounts
   // useEffect(() => {
@@ -128,31 +152,79 @@ export default function DashboardSempro() {
   // }, []);
 
   // Fungsi untuk mengambil data berdasarkan NIM dari Firestore
-  const fetchUserDataByNim = async (nim) => {
-    if (nim) {
-      try {
-        const docRef = doc(db, "users", nim);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          setNama(userData.nama || "");
-          setJurusan(userData.jurusan || "");
-          setAngkatan(userData.angkatan || "");
-          setCabangKampus(userData.cabangKampus || "");
-          setRole(userData.role || "");
-        } else {
-          setNama("");
-          setJurusan("");
-          setAngkatan("");
-          setCabangKampus("");
-          setRole("");
-        }
-      } catch (error) {
-        console.error("Error fetching NIM data: ", error);
-        setError("Error fetching NIM data");
-      }
+  // const fetchUserDataByNim = async (nim) => {
+  //   if (nim) {
+  //     try {
+  //       const docRef = doc(db, "users", nim);
+  //       const docSnap = await getDoc(docRef);
+  //       if (docSnap.exists()) {
+  //         const userData = docSnap.data();
+  //         setNama(userData.nama || "");
+  //         setJurusan(userData.jurusan || "");
+  //         setAngkatan(userData.angkatan || "");
+  //         setCabangKampus(userData.cabangKampus || "");
+  //         setRole(userData.role || "");
+  //       } else {
+  //         setNama("");
+  //         setJurusan("");
+  //         setAngkatan("");
+  //         setCabangKampus("");
+  //         setRole("");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching NIM data: ", error);
+  //       setError("Error fetching NIM data");
+  //     }
+  //   }
+  // };
+
+
+const fetchUserDataByNim = async (nim) => {
+  if (!nim) return;
+
+  try {
+    let userData = {};
+    let mahasiswaData = {};
+
+    // Cek data dari "users"
+    const userDocRef = collection(db, "users");
+    const userSnapshot = await getDocs(userDocRef);
+    const userDoc = userSnapshot.docs.find(doc => doc.data().nim === nim);
+
+    if (userDoc) {
+      userData = userDoc.data();
     }
-  };
+
+    // Cek data dari "mahasiswa"
+    const mhsCollection = collection(db, "mahasiswa");
+    const mhsSnapshot = await getDocs(mhsCollection);
+    const mhsDoc = mhsSnapshot.docs.find(doc => doc.data().nim === nim);
+
+    if (mhsDoc) {
+      mahasiswaData = mhsDoc.data();
+    }
+
+    // Gabungkan data dari kedua koleksi
+    const combinedData = {
+      nama: mahasiswaData.nama || userData.nama || "",
+      jurusan: userData.jurusan || "",
+      angkatan: userData.angkatan || "",
+      cabangKampus: userData.cabangKampus || "",
+      role: userData.role || "mahasiswa"
+    };
+
+    setNama(combinedData.nama);
+    setJurusan(combinedData.jurusan);
+    setAngkatan(combinedData.angkatan);
+    setCabangKampus(combinedData.cabangKampus);
+    setRole(combinedData.role);
+
+  } catch (error) {
+    console.error("Error fetching user data: ", error);
+    setError("Gagal mengambil data berdasarkan NIM");
+  }
+};
+
 
   // Panggil fetchUserDataByNim setiap kali nim berubah
   useEffect(() => {
@@ -203,52 +275,131 @@ export default function DashboardSempro() {
     }
   };
 
+  // const handleRegister = async (e) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setLoading(true);
+
+  //   try {
+  //     const email = `${nim}@university.edu`;
+  //     const password = nim;
+
+  //     // Create a new user in Firebase Authentication
+  //     await createUserWithEmailAndPassword(auth, email, password);
+
+  //     // Upload files and get their URLs
+  //     const uploadedFileUrls = await uploadFiles();
+
+  //     if (!uploadedFileUrls) {
+  //       setError("File uploads failed");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     // Save additional data to Firestore, including the selected dosen and file URLs
+  //     await setDoc(doc(db, "usersSempro", nim), {
+  //       sksditempuh,
+  //       sksberjalan,
+  //       judul,
+  //       nama,
+  //       jurusan,
+  //       angkatan,
+  //       cabangKampus,
+  //       noWhatsapp,
+  //       role,
+  //       dosen: selectedDosen, // Save selected dosen to Firestore
+  //       ...uploadedFileUrls, // Save uploaded file URLs to Firestore
+  //     });
+
+  //     setMessage({ type: "success", text: "Registration successful!" });
+  //     router.push("/dashboard");
+  //     alert("Form and files successfully submitted");
+  //   } catch (error) {
+  //     console.error("Registration failed: ", error.message);
+  //     setError("Registration failed: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  e.preventDefault();
+  setError(null);
+  setLoading(true);
 
-    try {
-      const email = `${nim}@university.edu`;
-      const password = nim;
+  try {
+    let userData = {};
+    let mahasiswaData = {};
 
-      // Create a new user in Firebase Authentication
-      await createUserWithEmailAndPassword(auth, email, password);
-
-      // Upload files and get their URLs
-      const uploadedFileUrls = await uploadFiles();
-
-      if (!uploadedFileUrls) {
-        setError("File uploads failed");
-        setLoading(false);
-        return;
+    // Ambil data dari "users"
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    usersSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.nim === nim) {
+        userData = data;
       }
+    });
 
-      // Save additional data to Firestore, including the selected dosen and file URLs
-      await setDoc(doc(db, "usersSempro", nim), {
-        sksditempuh,
-        sksberjalan,
-        judul,
-        nama,
-        jurusan,
-        angkatan,
-        cabangKampus,
-        noWhatsapp,
-        role,
-        dosen: selectedDosen, // Save selected dosen to Firestore
-        ...uploadedFileUrls, // Save uploaded file URLs to Firestore
-      });
+    // Ambil data dari "mahasiswa"
+    const mahasiswaSnapshot = await getDocs(collection(db, "mahasiswa"));
+    mahasiswaSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.nim === nim) {
+        mahasiswaData = data;
+      }
+    });
 
-      setMessage({ type: "success", text: "Registration successful!" });
-      router.push("/dashboard");
-      alert("Form and files successfully submitted");
-    } catch (error) {
-      console.error("Registration failed: ", error.message);
-      setError("Registration failed: " + error.message);
-    } finally {
+    // Kalau data tidak ditemukan di kedua koleksi
+    if (Object.keys(userData).length === 0 && Object.keys(mahasiswaData).length === 0) {
+      setError("NIM tidak ditemukan di database");
       setLoading(false);
+      return;
     }
-  };
+
+    // Gabungkan data
+    const combinedData = {
+      nama: nama || mahasiswaData.nama || userData.nama || "",
+      jurusan: jurusan || userData.jurusan || "",
+      angkatan: angkatan || userData.angkatan || "",
+      cabangKampus: cabangKampus || userData.cabangKampus || "",
+      role: role || userData.role || "mahasiswa",
+    };
+
+    // Upload file dan dapatkan URL
+    const uploadedFileUrls = await uploadFiles();
+
+    if (!uploadedFileUrls) {
+      setError("Gagal upload file");
+      setLoading(false);
+      return;
+    }
+
+    // Simpan ke Firestore di collection usersSempro
+    await setDoc(doc(db, "usersSempro", nim), {
+      ...combinedData,
+      nim,
+      sksditempuh,
+      sksberjalan,
+      judul,
+      noWhatsapp,
+      dosen: selectedDosen,
+      ...uploadedFileUrls,
+      butuhRevisi: false,
+      catatanRevisi: "",
+    });
+
+    setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
+    router.push("/dashboardmahasiswa");
+    alert("Form berhasil dikirim!");
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error.message);
+    setError("Gagal menyimpan data: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -291,24 +442,32 @@ export default function DashboardSempro() {
               className={styles.inputField}
               value={nama}
               readOnly
+                            // onChange={(e) => setNama(e.target.value)}
+                            // placeholder="Masukkan Nama Anda..."
             />
             <input
               type="text"
               className={styles.inputField}
               value={jurusan}
-              readOnly
+              // readOnly
+                            onChange={(e) => setJurusan(e.target.value)}
+                            placeholder="Masukkan Jurusan Anda...."
             />
             <input
               type="text"
               className={styles.inputField}
               value={angkatan}
-              readOnly
+              // readOnly
+                            onChange={(e) => setAngkatan(e.target.value)}
+                            placeholder="Angkatan Berapa..."
             />
             <input
               type="text"
               className={styles.inputField}
               value={cabangKampus}
-              readOnly
+              // readOnly
+                            onChange={(e) => setCabangKampus(e.target.value)}
+                            placeholder="Masukkan Nama Kampus..."
             />
             <input
               type="text"
@@ -387,7 +546,7 @@ export default function DashboardSempro() {
             />
 
             {/* Select input for Dosen */}
-            <select
+            {/* <select
               className={styles.inputField}
               value={selectedDosen}
               onChange={(e) => setSelectedDosen(e.target.value)}
@@ -398,7 +557,20 @@ export default function DashboardSempro() {
                   {dosen.nama} ({dosen.jurusan})
                 </option>
               ))}
-            </select>
+            </select> */}
+            <select
+  className={styles.inputField}
+  value={selectedDosen}
+  onChange={(e) => setSelectedDosen(e.target.value)}
+>
+  <option value="">Pilih Dosen</option>
+  {dosenList.map((dosen) => (
+    <option key={dosen.id} value={dosen.nama}>
+      {dosen.nama}
+    </option>
+  ))}
+</select>
+
 
             {error && <p className={styles.error}>{error}</p>}
             <button type="submit" className={styles.button} disabled={loading}>
