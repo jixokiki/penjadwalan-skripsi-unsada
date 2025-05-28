@@ -375,6 +375,7 @@ const fetchUserDataByNim = async (nim) => {
       return;
     }
 
+
     // Simpan ke Firestore di collection usersSempro
     await setDoc(doc(db, "usersSempro", nim), {
       ...combinedData,
@@ -387,6 +388,7 @@ const fetchUserDataByNim = async (nim) => {
       ...uploadedFileUrls,
       butuhRevisi: false,
       catatanRevisi: "",
+      formulir: "Sempro",
     });
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });

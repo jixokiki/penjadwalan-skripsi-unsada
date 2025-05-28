@@ -331,6 +331,9 @@ export default function DashboardSkripsi() {
       noWhatsapp,
       dosen: selectedDosen,
       ...uploadedFileUrls,
+            butuhRevisi: false,
+      catatanRevisi: "",
+      formulir: "Skripsi",
     });
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });

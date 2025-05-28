@@ -343,6 +343,34 @@ useEffect(() => {
   fetchMahasiswa();
 }, []);
 
+const [mahasiswaSkripsi, setMahasiswaSkripsi] = useState([]);
+
+useEffect(() => {
+  const fetchMahasiswa = async () => {
+    const snapshot = await getDocs(collection(db, "usersSkripsi"));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setMahasiswaSkripsi(data);
+  };
+  fetchMahasiswa();
+}, []);
+
+const [listAngkatanSkripsi, setListAngkatanSkripsi] = useState([]);
+const [listJurusanSkripsi, setListJurusanSkripsi] = useState([]);
+
+useEffect(() => {
+  const fetchMahasiswa = async () => {
+    const snapshot = await getDocs(collection(db, "usersSkripsi"));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setMahasiswaSkripsi(data);
+
+    // Ambil angkatan & jurusan unik
+    const angkatanUnik = [...new Set(data.map(item => item.angkatan))];
+    const jurusanUnik = [...new Set(data.map(item => item.jurusan))];
+    setListAngkatanSkripsi(angkatanUnik);
+    setListJurusanSkripsi(jurusanUnik);
+  };
+  fetchMahasiswa();
+}, []);
 
   const handleSendToPenguji = async (item) => {
     try {
@@ -373,6 +401,188 @@ useEffect(() => {
     });
     window.location.reload();
   };
+
+  const [loading, setLoading] = useState(false);
+  // const [jadwalSidang, setJadwalSidang] = useState([]);
+  const [jadwalSidangSempro, setJadwalSidangSempro] = useState([]);
+const [jadwalSidangSkripsi, setJadwalSidangSkripsi] = useState([]);
+
+
+
+  // const handleGenerate = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("/api/generate-schedule", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         generations: 50,
+  //         populationSize: 10,
+  //         mutationRate: 0.1,
+  //         tanggalSidang: new Date().toISOString().split("T")[0], // 📅 Hari ini
+  //       }),
+  //     });
+
+  //     const result = await res.json();
+  //     alert(result.message);
+  //     console.log("📅 Jadwal hasil GA:", result.schedule);
+  //   } catch (err) {
+  //     console.error("❌ Gagal membuat jadwal", err);
+  //     alert("Terjadi kesalahan saat membuat jadwal.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+//   const handleGenerate = async () => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch("/api/generate-schedule", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         generations: 50,
+//         populationSize: 10,
+//         mutationRate: 0.1,
+//         tanggalSidang: new Date().toISOString().split("T")[0],
+//       }),
+//     });
+
+//     const result = await res.json();
+//     setJadwalSidang(result.schedule); // ⬅️ simpan ke state
+//     alert(result.message);
+//   } catch (error) {
+//     console.error("❌ Gagal membuat jadwal:", error);
+//     alert("Terjadi kesalahan saat membuat jadwal.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+
+// const handleGenerateSempro = async (nim) => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch("/api/generate-schedule-bynim", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         generations: 50,
+//         populationSize: 10,
+//         mutationRate: 0.1,
+//         tanggalSidang: new Date().toISOString().split("T")[0],
+//         targetNIM: nim, // Kirim NIM terpilih
+//         formulir: "Sempro",
+//       }),
+//     });
+
+//     const result = await res.json();
+//     setJadwalSidang([result.schedule]); // hanya 1 item (array berisi satu object)
+//     alert(result.message);
+//   } catch (error) {
+//     console.error("❌ Gagal membuat jadwal:", error);
+//     alert("Terjadi kesalahan saat membuat jadwal.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// const handleGenerateSkripsi = async (nim) => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch("/api/generate-schedule-bynim", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         generations: 50,
+//         populationSize: 10,
+//         mutationRate: 0.1,
+//         tanggalSidang: new Date().toISOString().split("T")[0],
+//         targetNIM: nim, // Kirim NIM terpilih
+//       }),
+//     });
+
+//     const result = await res.json();
+//     setJadwalSidang([result.schedule]); // hanya 1 item (array berisi satu object)
+//     alert(result.message);
+//   } catch (error) {
+//     console.error("❌ Gagal membuat jadwal:", error);
+//     alert("Terjadi kesalahan saat membuat jadwal.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+const handleGenerateSempro = async (nim) => {
+  setLoading(true);
+  try {
+    const res = await fetch("/api/generate-schedule-bynimsempro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        generations: 50,
+        populationSize: 10,
+        mutationRate: 0.1,
+        tanggalSidang: new Date().toISOString().split("T")[0],
+        targetNIM: nim,
+        formulir: "Sempro", // pastikan dikirimkan
+      }),
+    });
+
+    const result = await res.json();
+
+    if (result.schedule?.formulir === "Sempro") {
+      setJadwalSidangSempro([result.schedule]);
+    }
+
+    alert(result.message);
+  } catch (error) {
+    console.error("❌ Gagal membuat jadwal:", error);
+    alert("Terjadi kesalahan saat membuat jadwal.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const handleGenerateSkripsi = async (nim) => {
+  setLoading(true);
+  try {
+    const res = await fetch("/api/generate-schedule-bynimskripsi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        generations: 50,
+        populationSize: 10,
+        mutationRate: 0.1,
+        tanggalSidang: new Date().toISOString().split("T")[0],
+        targetNIM: nim,
+        formulir: "Skripsi", // pastikan dikirimkan
+      }),
+    });
+
+    const result = await res.json();
+
+    if (result.schedule?.formulir === "Skripsi") {
+      setJadwalSidangSkripsi([result.schedule]);
+    }
+
+    alert(result.message);
+  } catch (error) {
+    console.error("❌ Gagal membuat jadwal:", error);
+    alert("Terjadi kesalahan saat membuat jadwal.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+
 
   const resetData = async () => {
     await fetch("/api/reset-data", { method: "POST" });
@@ -464,9 +674,193 @@ useEffect(() => {
         <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
         <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
         <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+            {/* <button
+  onClick={() => handleGenerateSempro(mhs.nim)} // ⬅️ Kirim NIM
+  disabled={loading}
+  className={styles.generateButton}
+>
+  {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+</button> */}
+<button
+  onClick={() => handleGenerateSempro(mhs.nim, "Sempro")} // ✅ Kirim NIM dan formulir
+  disabled={loading}
+  className={styles.generateButton}
+>
+  {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+</button>
+
       </div>
   ))}
 </div>
+
+{/* {jadwalSidang.length > 0 && jadwalSidang[0]?.formulir === "Sempro" &&(
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (1 Mahasiswa & Kategori: Sempro)</h2>
+    {jadwalSidang.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return(
+      <div key={index} className={styles.cardmahasiswa}>
+        <p>📛 NIM: {jadwal.nim}</p>
+        <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+        <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+        <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+        <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+        <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+        <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+        <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+                        <button className={styles.sendButton} onClick={() => handleSendToPenguji(item)} disabled={isSent}>
+                  {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+                </button>
+      </div>
+      );
+})}
+  </div>
+)} */}
+
+
+{jadwalSidangSempro.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (Kategori: Sempro)</h2>
+    {jadwalSidangSempro.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return (
+        <div key={index} className={styles.cardmahasiswa}>
+          <p>📛 NIM: {jadwal.nim}</p>
+          <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+          <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+          <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+          <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+          <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+          <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+          <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+          <button className={styles.sendButton} onClick={() => handleSendToPenguji(jadwal)} disabled={isSent}>
+            {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+          </button>
+        </div>
+      );
+    })}
+  </div>
+)}
+
+
+<h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Skripsi:</h2>
+<div className={styles.filterContainer}>
+  <select onChange={(e) => setFilterAngkatan(e.target.value)} className={styles.dropdown}>
+    <option value="">📅 Semua Angkatan</option>
+    {listAngkatanSkripsi.map((angkatan) => (
+      <option key={angkatan} value={angkatan}>{angkatan}</option>
+    ))}
+  </select>
+
+  <select onChange={(e) => setFilterJurusan(e.target.value)} className={styles.dropdown}>
+    <option value="">🎓 Semua Jurusan</option>
+    {listJurusanSkripsi.map((jurusan) => (
+      <option key={jurusan} value={jurusan}>{jurusan}</option>
+    ))}
+  </select>
+</div>
+
+<div className={styles.gridListmahasiswa}>
+  {mahasiswaSkripsi
+    .filter(item =>
+      item.nim.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filterAngkatan === "" || item.angkatan === filterAngkatan) &&
+      (filterJurusan === "" || item.jurusan === filterJurusan)
+    )
+    .map((mhs) => (
+      <div key={mhs.id} className={styles.cardmahasiswa}>
+                <h3 className={styles.headingSempro}>Mahasiswa Skripsi</h3>
+        <p className={styles.nimmahasiswa}>{mhs.nim}</p>
+        <p className={styles.namamahasiswa}>📛 {mhs.nama}</p>
+        <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
+        <p className={styles.detailmahasiswa}> {mhs.dosen} </p>
+        <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
+        <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+         {/* <button
+      onClick={handleGenerate}
+      disabled={loading}
+      className={styles.generateButton}
+    >
+      {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+    </button> */}
+    <button
+  onClick={() => handleGenerateSkripsi(mhs.nim, "Skripsi")} // ⬅️ Kirim NIM
+  disabled={loading}
+  className={styles.generateButton}
+>
+  {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+</button>
+
+      </div>
+  ))}
+  {/* {jadwalSidang.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Hasil Algoritma Genetika</h2>
+    {jadwalSidang.map((jadwal, index) => (
+      <div key={index} className={styles.cardmahasiswa}>
+        <p>📛 NIM: {jadwal.nim}</p>
+        <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+        <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+        <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+        <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+        <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+        <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+        <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+      </div>
+    ))}
+  </div>
+)} */}
+
+</div>
+{/* {jadwalSidang.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (1 Mahasiswa)</h2>
+    {jadwalSidang.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return(
+      <div key={index} className={styles.cardmahasiswa}>
+        <p>📛 NIM: {jadwal.nim}</p>
+        <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+        <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+        <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+        <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+        <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+        <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+        <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+                        <button className={styles.sendButton} onClick={() => handleSendToPenguji(jadwal)} disabled={isSent}>
+                  {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+                </button>
+      </div>
+      );
+})}
+  </div>
+)} */}
+
+
+{jadwalSidangSkripsi.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (Kategori: Skripsi)</h2>
+    {jadwalSidangSkripsi.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return (
+        <div key={index} className={styles.cardmahasiswa}>
+          <p>📛 NIM: {jadwal.nim}</p>
+          <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+          <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+          <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+          <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+          <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+          <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+          <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+          <button className={styles.sendButton} onClick={() => handleSendToPenguji(jadwal)} disabled={isSent}>
+            {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+          </button>
+        </div>
+      );
+    })}
+  </div>
+)}
+
 
 
 
