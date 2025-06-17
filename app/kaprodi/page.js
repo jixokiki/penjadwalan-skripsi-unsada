@@ -314,6 +314,8 @@ const [filterJurusan, setFilterJurusan] = useState("");
   }, []);
 
   const [mahasiswaSempro, setMahasiswaSempro] = useState([]);
+  const [mahasiswaSemproJadwal, setMahasiswaSemproJadwal] = useState([]);
+
 
 useEffect(() => {
   const fetchMahasiswa = async () => {
