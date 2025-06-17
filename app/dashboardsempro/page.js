@@ -322,6 +322,37 @@ const fetchUserDataByNim = async (nim) => {
   //   }
   // };
 
+  const [jadwalSidangSempro, setJadwalSidangSempro] = useState([]);
+  const handleGenerateSempro = async (nim) => {
+  setLoading(true);
+  try {
+    const res = await fetch("/api/generate-schedule-bynimsempro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        generations: 50,
+        populationSize: 10,
+        mutationRate: 0.1,
+        tanggalSidang: new Date().toISOString().split("T")[0],
+        targetNIM: nim,
+        formulir: "Sempro", // pastikan dikirimkan
+      }),
+    });
+
+    const result = await res.json();
+
+    if (result.schedule?.formulir === "Sempro") {
+      setJadwalSidangSempro([result.schedule]);
+    }
+
+    alert(result.message);
+  } catch (error) {
+    console.error("❌ Gagal membuat jadwal:", error);
+    alert("Terjadi kesalahan saat membuat jadwal.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleRegister = async (e) => {
   e.preventDefault();
@@ -390,6 +421,9 @@ const fetchUserDataByNim = async (nim) => {
       catatanRevisi: "",
       formulir: "Sempro",
     });
+
+    await handleGenerateSempro(nim, "Sempro");
+
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
     router.push("/dashboardmahasiswa");

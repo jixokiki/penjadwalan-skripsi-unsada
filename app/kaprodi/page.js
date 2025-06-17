@@ -549,6 +549,48 @@ const handleGenerateSempro = async (nim) => {
   }
 };
 
+useEffect(() => {
+  const fetchData = async () => {
+    const usersRef = collection(db, "usersSempro");
+    const jadwalRef = collection(db, "jadwal_sidang");
+
+    const [usersSnap, jadwalSnap] = await Promise.all([
+      getDocs(usersRef),
+      getDocs(jadwalRef)
+    ]);
+
+    const jadwalMap = new Map();
+    jadwalSnap.docs.forEach(doc => {
+      const data = doc.data();
+      jadwalMap.set(data.nim, { ...data, id: doc.id });
+    });
+
+    const merged = usersSnap.docs
+      .map(doc => {
+        const mhs = doc.data();
+        const jadwal = jadwalMap.get(mhs.nim);
+        return jadwal ? { ...mhs, jadwal } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.jadwal.timestamp?.seconds - b.jadwal.timestamp?.seconds); // Urut dari paling lama daftar
+
+    setMahasiswaSemproJadwal(merged);
+  };
+
+  fetchData();
+}, []);
+
+const [currentPage, setCurrentPage] = useState(1);
+const pageSize = 10;
+
+const paginatedData = mahasiswaSemproJadwal.slice(
+  (currentPage - 1) * pageSize,
+  currentPage * pageSize
+);
+
+const aktifMahasiswa = mahasiswaSemproJadwal.filter(m => m.kelulusan !== "lulus");
+
+
 
 const handleGenerateSkripsi = async (nim) => {
   setLoading(true);
@@ -630,6 +672,29 @@ const handleGenerateSkripsi = async (nim) => {
       </li>
   ))}
 </ul> */}
+
+<div className={styles.verticalScroll}>
+  {paginatedData.map((mhs, index) => (
+    <div key={mhs.nim} className={styles.cardBox}>
+      <strong>{mhs.nama}</strong>
+      <p>NIM: {mhs.nim}</p>
+      <p>Judul: {mhs.judul}</p>
+      <p>📅 {mhs.jadwal.tanggal_sidang} • {mhs.jadwal.jam_sidang}</p>
+      <p>Pembimbing: {mhs.jadwal.dosen_pembimbing}</p>
+      <p>Penguji 1: {mhs.jadwal.dosen_penguji}</p>
+      <p>Zoom: {mhs.jadwal.link_zoom || "Belum diisi"}</p>
+    </div>
+  ))}
+</div>
+
+<div className={styles.pagination}>
+  <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
+  <span>Page {currentPage}</span>
+  <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
+</div>
+
+
+
 <h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
 <div className={styles.filterContainer}>
   <select onChange={(e) => setFilterAngkatan(e.target.value)} className={styles.dropdown}>
