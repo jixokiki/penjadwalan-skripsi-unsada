@@ -773,6 +773,7 @@ export default function AdminPage() {
   const [populationSize, setPopulationSize] = useState(10);
   const [mutationRate, setMutationRate] = useState(0.1);
   const [tanggalSidang, setTanggalSidang] = useState("2025-05-10");
+  const [zoomLinks, setZoomLinks] = useState({});
   const router = useRouter();
 
   useEffect(() => {
@@ -812,7 +813,7 @@ export default function AdminPage() {
     router.push('/login');
   };
 
-  const handleSendToSempro = async (item) => {
+  const handleSendToSempro = async (item, index) => {
   try {
     await addDoc(collection(db, "admin_to_sempro"), {
       nim: item.nim,
@@ -822,6 +823,7 @@ export default function AdminPage() {
       dosen_penguji3: item.dosen_penguji3,
       dosen_penguji4: item.dosen_penguji4,
       tanggal_sidang: item.tanggal_sidang,
+      link_zoom: zoomLinks[index] || "", // Tambahkan ini
       jam_sidang: item.jam_sidang,
       timestamp: new Date()
     });
@@ -834,6 +836,14 @@ export default function AdminPage() {
   const filteredJadwal = jadwal.filter(item =>
     item.nim.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleChangeZoomLink = (index, value) => {
+  setZoomLinks((prev) => ({
+    ...prev,
+    [index]: value,
+  }));
+};
+
 
   return (
     <div className={styles.container}>
@@ -865,9 +875,21 @@ export default function AdminPage() {
                 <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
                 <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
                 <strong>Penguji 4:</strong> {item.dosen_penguji4}<br />
+                <label>
+          <strong>Link Zoom:</strong><br />
+          <input
+            type="text"
+            placeholder="Masukkan link Zoom"
+            value={zoomLinks[index] || ""}
+            onChange={(e) => handleChangeZoomLink(index, e.target.value)}
+            className={styles.inputZoom}
+          />
+        </label>
+        
+        <br />
                 <button
   className={styles.sendButton}
-  onClick={() => handleSendToSempro(item)}
+  onClick={() => handleSendToSempro(item, index)}
 >
   Kirim ke DashboardSempro
 </button>

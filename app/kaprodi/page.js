@@ -383,6 +383,7 @@ useEffect(() => {
         dosen_penguji2: item.dosen_penguji2,
         dosen_penguji3: item.dosen_penguji3,
         dosen_penguji4: item.dosen_penguji4,
+        formulir: item.formulir,
         status: "dikirim",
         timestamp: new Date(),
       });

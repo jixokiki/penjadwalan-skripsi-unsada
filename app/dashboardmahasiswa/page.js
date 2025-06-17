@@ -278,6 +278,7 @@ useEffect(() => {
               <div className={styles.details}>
                 <strong>NIM:</strong> {item.nim}<br />
                 <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
+                <strong>Formulir:</strong> {item.formulir}<br />
                 <strong>Penguji:</strong> {item.dosen_penguji}<br />
                 <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
                 <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />

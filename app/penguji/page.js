@@ -218,7 +218,24 @@ import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 export default function DashboardPenguji() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [jadwal, setJadwal] = useState([]);
+  // const latestJadwal = jadwal.slice(0, 1); // hanya 1 item
   const router = useRouter();
+  const [semproData, setSemproData] = useState([]);
+
+useEffect(() => {
+  const fetchSemproData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "admin_to_sempro"));
+      const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setSemproData(data);
+    } catch (error) {
+      console.error("Gagal mengambil data admin_to_sempro:", error);
+    }
+  };
+
+  fetchSemproData();
+}, []);
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -306,12 +323,14 @@ export default function DashboardPenguji() {
           </button>
 
           <h2 className={styles.subheading}>Jadwal Mahasiswa Sidang:</h2>
-          <ul className={styles.scheduleList}>
+          {/* <ul className={styles.scheduleList}>
             {jadwal.map((item, index) => (
               <li key={index} className={styles.scheduleItem}>
                 <strong>
                   {item.tanggal_sidang} • {item.jam_sidang}
                 </strong>
+                Formulir: {item.formulir}
+                <br/>
                 <br />
                 NIM: {item.nim}
                 <br />
@@ -333,7 +352,51 @@ export default function DashboardPenguji() {
                 </button>
               </li>
             ))}
-          </ul>
+          </ul> */}
+          <div className={styles.horizontalScroll}>
+  {jadwal.map((item, index) => (
+    <div key={index} className={styles.cardBox}>
+      <strong>
+        {item.tanggal_sidang} • {item.jam_sidang}
+      </strong>
+      <div>Formulir: {item.formulir}</div>
+      <br />
+      <div>NIM: {item.nim}</div>
+      <div>Pembimbing: {item.dosen_pembimbing}</div>
+      <div>Penguji: {item.dosen_penguji}</div>
+      <div>Penguji2: {item.dosen_penguji2}</div>
+      <div>Penguji3: {item.dosen_penguji3}</div>
+      <div>Penguji4: {item.dosen_penguji4}</div>
+      <button
+        onClick={() => handleSendToAdmin(item)}
+        className={styles.sendButton}
+      >
+        Kirim ke Admin
+      </button>
+    </div>
+  ))}
+</div>
+
+<h3 className="text-lg font-bold mb-2 mt-6">Data Terkirim ke DashboardSempro:</h3>
+<div className={styles.horizontalScroll}>
+  {semproData.map((item, index) => (
+    <div key={index} className={styles.cardBox}>
+      <strong>{item.tanggal_sidang} • {item.jam_sidang}</strong>
+      <div>Zoom: <a href={item.link_zoom} target="_blank" rel="noopener noreferrer">{item.link_zoom}</a></div>
+      <br />
+      <div>NIM: {item.nim}</div>
+      <div>Pembimbing: {item.dosen_pembimbing}</div>
+      <div>Penguji: {item.dosen_penguji}</div>
+      <div>Penguji2: {item.dosen_penguji2}</div>
+      <div>Penguji3: {item.dosen_penguji3}</div>
+      <div>Penguji4: {item.dosen_penguji4}</div>
+      <div className="text-sm text-gray-500 mt-2">Terkirim: {new Date(item.timestamp?.seconds * 1000).toLocaleString()}</div>
+    </div>
+  ))}
+</div>
+
+
+          
         </div>
       </div>
     </>
