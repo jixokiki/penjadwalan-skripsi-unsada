@@ -313,6 +313,34 @@ const [filterJurusan, setFilterJurusan] = useState("");
     fetchJadwal();
   }, []);
 
+  useEffect(() => {
+  const fetchJadwalSidang = async () => {
+    const snapshot = await getDocs(collection(db, "jadwal_sidang"));
+    const data = snapshot.docs.map(doc => {
+      const item = doc.data();
+      return {
+        nim: item.nim,
+        nama: item.nama,
+        judul: item.judul,
+        tanggal_sidang: item.tanggal_sidang,
+        jam_sidang: item.jam_sidang,
+        dosen_pembimbing: item.dosen_pembimbing,
+        dosen_penguji: item.dosen_penguji,
+        dosen_penguji2: item.dosen_penguji2,
+        dosen_penguji3: item.dosen_penguji3,
+        dosen_penguji4: item.dosen_penguji4,
+        ruangan: item.ruangan,
+        link_zoom: item.link_zoom || "",
+      };
+    });
+
+    setMahasiswaSemproJadwal(data);  // simpan ke state utama
+  };
+
+  fetchJadwalSidang();
+}, []);
+
+
   const [mahasiswaSempro, setMahasiswaSempro] = useState([]);
   const [mahasiswaSemproJadwal, setMahasiswaSemproJadwal] = useState([]);
 
@@ -675,7 +703,7 @@ const handleGenerateSkripsi = async (nim) => {
   ))}
 </ul> */}
 
-<div className={styles.verticalScroll}>
+{/* <div className={styles.verticalScroll}>
   {paginatedData.map((mhs, index) => (
     <div key={mhs.nim} className={styles.cardBox}>
       <strong>{mhs.nama}</strong>
@@ -693,8 +721,32 @@ const handleGenerateSkripsi = async (nim) => {
   <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
   <span>Page {currentPage}</span>
   <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
+</div> */}
+
+
+<div className={styles.verticalScroll}>
+  {paginatedData.map((mhs, index) => (
+    <div key={mhs.nim} className={styles.cardBox}>
+      <strong>{mhs.nama}</strong>
+      <p>NIM: {mhs.nim}</p>
+      <p>Judul: {mhs.judul}</p>
+      <p>📅 {mhs.tanggal_sidang} • {mhs.jam_sidang}</p>
+      <p>Ruangan: {mhs.ruangan}</p>
+      <p>Pembimbing: {mhs.dosen_pembimbing}</p>
+      <p>Penguji 1: {mhs.dosen_penguji}</p>
+      <p>Penguji 2: {mhs.dosen_penguji2}</p>
+      <p>Penguji 3: {mhs.dosen_penguji3}</p>
+      <p>Penguji 4: {mhs.dosen_penguji4}</p>
+      <p>Zoom: {mhs.link_zoom || "Belum diisi"}</p>
+    </div>
+  ))}
 </div>
 
+<div className={styles.pagination}>
+  <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
+  <span>Page {currentPage}</span>
+  <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
+</div>
 
 
 <h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>

@@ -323,28 +323,48 @@ const fetchUserDataByNim = async (nim) => {
   // };
 
   const [jadwalSidangSempro, setJadwalSidangSempro] = useState([]);
-  const handleGenerateSempro = async (nim) => {
+//   const handleGenerateSempro = async (nim) => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch("/api/generate-batch", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         generations: 50,
+//         populationSize: 10,
+//         mutationRate: 0.1,
+//         tanggalSidang: new Date().toISOString().split("T")[0],
+//         targetNIM: nim,
+//         formulir: "Sempro", // pastikan dikirimkan
+//       }),
+//     });
+
+//     const result = await res.json();
+
+//     if (result.schedule?.formulir === "Sempro") {
+//       setJadwalSidangSempro([result.schedule]);
+//     }
+
+//     alert(result.message);
+//   } catch (error) {
+//     console.error("❌ Gagal membuat jadwal:", error);
+//     alert("Terjadi kesalahan saat membuat jadwal.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// const [jadwalSidangSempro, setJadwalSidangSempro] = useState([]);
+
+const handleGenerateSempro = async () => {
   setLoading(true);
   try {
-    const res = await fetch("/api/generate-schedule-bynimsempro", {
+    const res = await fetch("/api/generate-batch", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        generations: 50,
-        populationSize: 10,
-        mutationRate: 0.1,
-        tanggalSidang: new Date().toISOString().split("T")[0],
-        targetNIM: nim,
-        formulir: "Sempro", // pastikan dikirimkan
-      }),
+      headers: { "Content-Type": "application/json" }
     });
 
     const result = await res.json();
-
-    if (result.schedule?.formulir === "Sempro") {
-      setJadwalSidangSempro([result.schedule]);
-    }
-
     alert(result.message);
   } catch (error) {
     console.error("❌ Gagal membuat jadwal:", error);
@@ -354,7 +374,90 @@ const fetchUserDataByNim = async (nim) => {
   }
 };
 
-  const handleRegister = async (e) => {
+//   const handleRegister = async (e) => {
+//   e.preventDefault();
+//   setError(null);
+//   setLoading(true);
+
+//   try {
+//     let userData = {};
+//     let mahasiswaData = {};
+
+//     // Ambil data dari "users"
+//     const usersSnapshot = await getDocs(collection(db, "users"));
+//     usersSnapshot.forEach(doc => {
+//       const data = doc.data();
+//       if (data.nim === nim) {
+//         userData = data;
+//       }
+//     });
+
+//     // Ambil data dari "mahasiswa"
+//     const mahasiswaSnapshot = await getDocs(collection(db, "mahasiswa"));
+//     mahasiswaSnapshot.forEach(doc => {
+//       const data = doc.data();
+//       if (data.nim === nim) {
+//         mahasiswaData = data;
+//       }
+//     });
+
+//     // Kalau data tidak ditemukan di kedua koleksi
+//     if (Object.keys(userData).length === 0 && Object.keys(mahasiswaData).length === 0) {
+//       setError("NIM tidak ditemukan di database");
+//       setLoading(false);
+//       return;
+//     }
+
+//     // Gabungkan data
+//     const combinedData = {
+//       nama: nama || mahasiswaData.nama || userData.nama || "",
+//       jurusan: jurusan || userData.jurusan || "",
+//       angkatan: angkatan || userData.angkatan || "",
+//       cabangKampus: cabangKampus || userData.cabangKampus || "",
+//       role: role || userData.role || "mahasiswa",
+//     };
+
+//     // Upload file dan dapatkan URL
+//     const uploadedFileUrls = await uploadFiles();
+
+//     if (!uploadedFileUrls) {
+//       setError("Gagal upload file");
+//       setLoading(false);
+//       return;
+//     }
+
+
+//     // Simpan ke Firestore di collection usersSempro
+//     await setDoc(doc(db, "usersSempro", nim), {
+//       ...combinedData,
+//       nim,
+//       sksditempuh,
+//       sksberjalan,
+//       judul,
+//       noWhatsapp,
+//       dosen: selectedDosen,
+//       ...uploadedFileUrls,
+//       butuhRevisi: false,
+//       catatanRevisi: "",
+//       formulir: "Sempro",
+//     });
+
+//     await handleGenerateSempro(nim, "Sempro");
+
+
+//     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
+//     router.push("/dashboardmahasiswa");
+//     alert("Form berhasil dikirim!");
+//   } catch (error) {
+//     console.error("Terjadi kesalahan:", error.message);
+//     setError("Gagal menyimpan data: " + error.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+const handleRegister = async (e) => {
   e.preventDefault();
   setError(null);
   setLoading(true);
@@ -381,14 +484,12 @@ const fetchUserDataByNim = async (nim) => {
       }
     });
 
-    // Kalau data tidak ditemukan di kedua koleksi
     if (Object.keys(userData).length === 0 && Object.keys(mahasiswaData).length === 0) {
       setError("NIM tidak ditemukan di database");
       setLoading(false);
       return;
     }
 
-    // Gabungkan data
     const combinedData = {
       nama: nama || mahasiswaData.nama || userData.nama || "",
       jurusan: jurusan || userData.jurusan || "",
@@ -397,17 +498,13 @@ const fetchUserDataByNim = async (nim) => {
       role: role || userData.role || "mahasiswa",
     };
 
-    // Upload file dan dapatkan URL
     const uploadedFileUrls = await uploadFiles();
-
     if (!uploadedFileUrls) {
       setError("Gagal upload file");
       setLoading(false);
       return;
     }
 
-
-    // Simpan ke Firestore di collection usersSempro
     await setDoc(doc(db, "usersSempro", nim), {
       ...combinedData,
       nim,
@@ -422,8 +519,8 @@ const fetchUserDataByNim = async (nim) => {
       formulir: "Sempro",
     });
 
-    await handleGenerateSempro(nim, "Sempro");
-
+    // ✅ Setelah register berhasil, langsung panggil generate batch
+    await handleGenerateSempro();
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
     router.push("/dashboardmahasiswa");
