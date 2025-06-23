@@ -86,6 +86,7 @@
 
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { time } from "console";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -164,7 +165,8 @@ export default async function handler(req, res) {
         dosen_penguji4: pengujiDipilih[3],
         tanggal_sidang: nextTanggalSidang,
         jam_sidang: `${jamAwal}:00`,
-        ruangan: assignedRoom
+        ruangan: assignedRoom,
+        timestamp: new Date().toISOString()
       });
 
       jamAwal++;
