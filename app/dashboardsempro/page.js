@@ -519,8 +519,8 @@ const handleRegister = async (e) => {
       formulir: "Sempro",
     });
 
-    // ✅ Setelah register berhasil, langsung panggil generate batch
-    await handleGenerateSempro();
+    // // ✅ Setelah register berhasil, langsung panggil generate batch
+    // await handleGenerateSempro();
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
     router.push("/dashboardmahasiswa");

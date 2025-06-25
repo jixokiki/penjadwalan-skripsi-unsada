@@ -1084,7 +1084,7 @@ import { useState, useEffect } from "react";
 import { auth, db } from "@/lib/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import NavbarKaprodi from "../navbarkaprodi/page";
@@ -1274,7 +1274,7 @@ useEffect(() => {
       .map(doc => {
         const mhs = doc.data();
         const jadwal = jadwalMap.get(mhs.nim);
-        return jadwal ? { ...mhs, jadwal } : null;
+        return jadwal ? { ...mhs, jadwal} : null;
       })
       .filter(Boolean)
       .sort((a, b) => a.jadwal.timestamp?.seconds - b.jadwal.timestamp?.seconds);
@@ -1334,57 +1334,111 @@ const handleGenerateSkripsi = async (nim) => {
 };
 
 
-const fetchData = async () => {
+// const fetchData = async () => {
+//   const usersRef = collection(db, "usersSempro");
+//   const jadwalRef = collection(db, "jadwal_sidang");
+
+//   const [usersSnap, jadwalSnap] = await Promise.all([
+//     getDocs(usersRef),
+//     getDocs(jadwalRef)
+//   ]);
+
+//   const jadwalMap = new Map();
+//   jadwalSnap.docs.forEach(doc => {
+//     const data = doc.data();
+//     jadwalMap.set(data.nim, { ...data, id: doc.id });
+//   });
+
+//   const merged = usersSnap.docs
+//     .map(doc => {
+//       const mhs = doc.data();
+//       const jadwal = jadwalMap.get(mhs.nim);
+//       return jadwal ? { ...mhs, jadwal } : null;
+//     })
+//     .filter(Boolean)
+//     .sort((a, b) => a.jadwal.timestamp?.seconds - b.jadwal.timestamp?.seconds);
+
+//   setMahasiswaSemproJadwal(merged);
+
+//   const mahasiswaBaru = usersSnap.docs
+//     .map(doc => doc.data())
+//     .filter(mhs => !jadwalMap.has(mhs.nim));
+
+//   setMahasiswaBaruBelumAdaJadwal(mahasiswaBaru);
+// };
+
+// useEffect(() => {
+//   fetchData();
+// }, []);
+
+
+// ====================
+useEffect(() => {
   const usersRef = collection(db, "usersSempro");
   const jadwalRef = collection(db, "jadwal_sidang");
 
-  const [usersSnap, jadwalSnap] = await Promise.all([
-    getDocs(usersRef),
-    getDocs(jadwalRef)
-  ]);
+  // Listen realtime dari jadwal_sidang:
+  const unsubscribeJadwal = onSnapshot(jadwalRef, async (jadwalSnap) => {
+    const usersSnap = await getDocs(usersRef);
 
-  const jadwalMap = new Map();
-  jadwalSnap.docs.forEach(doc => {
-    const data = doc.data();
-    jadwalMap.set(data.nim, { ...data, id: doc.id });
+    const jadwalMap = new Map();
+    jadwalSnap.docs.forEach(doc => {
+      const data = doc.data();
+      jadwalMap.set(data.nim, { ...data, id: doc.id });
+    });
+
+    const merged = usersSnap.docs
+      .map(doc => {
+        const mhs = doc.data();
+        const jadwal = jadwalMap.get(mhs.nim);
+        return jadwal ? { ...mhs, jadwal } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.jadwal.timestamp?.seconds - b.jadwal.timestamp?.seconds);
+
+    setMahasiswaSemproJadwal(merged);
+
+    const mahasiswaBaru = usersSnap.docs
+      .map(doc => doc.data())
+      .filter(mhs => !jadwalMap.has(mhs.nim));
+
+    setMahasiswaBaruBelumAdaJadwal(mahasiswaBaru);
   });
 
-  const merged = usersSnap.docs
-    .map(doc => {
-      const mhs = doc.data();
-      const jadwal = jadwalMap.get(mhs.nim);
-      return jadwal ? { ...mhs, jadwal } : null;
-    })
-    .filter(Boolean)
-    .sort((a, b) => a.jadwal.timestamp?.seconds - b.jadwal.timestamp?.seconds);
-
-  setMahasiswaSemproJadwal(merged);
-
-  const mahasiswaBaru = usersSnap.docs
-    .map(doc => doc.data())
-    .filter(mhs => !jadwalMap.has(mhs.nim));
-
-  setMahasiswaBaruBelumAdaJadwal(mahasiswaBaru);
-};
-
-useEffect(() => {
-  fetchData();
+  // Unsubscribe kalau komponen unmount
+  return () => unsubscribeJadwal();
 }, []);
+
+
+// const handleGenerateBatch = async () => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch("/api/generate-batch", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" }
+//     });
+
+//     const result = await res.json();
+//     alert(result.message);
+
+//     // ✅ Refresh data setelah generate
+//     await fetchData();
+//   } catch (error) {
+//     console.error("❌ Gagal membuat jadwal:", error);
+//     alert("Terjadi kesalahan saat membuat jadwal.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 
 const handleGenerateBatch = async () => {
   setLoading(true);
   try {
-    const res = await fetch("/api/generate-batch", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }
-    });
-
+    const res = await fetch("/api/generate-batch", { method: "POST" });
     const result = await res.json();
     alert(result.message);
-
-    // ✅ Refresh data setelah generate
-    await fetchData();
+    // ✅ Tidak perlu panggil fetchData atau reload
   } catch (error) {
     console.error("❌ Gagal membuat jadwal:", error);
     alert("Terjadi kesalahan saat membuat jadwal.");
@@ -1431,6 +1485,8 @@ const handleGenerateBatch = async () => {
       <strong>{mhs.nama}</strong>
       <p>NIM: {mhs.nim}</p>
       <p>Judul: {mhs.judul}</p>
+      <p>Form: {mhs.formulir}</p>
+      <p>Ruangan: {mhs.jadwal.ruangan || "belum diisi"}</p>
       <p>📅 {mhs.jadwal.tanggal_sidang} • {mhs.jadwal.jam_sidang}</p>
       <p>Pembimbing: {mhs.jadwal.dosen_pembimbing}</p>
       <p>Penguji 1: {mhs.jadwal.dosen_penguji}</p>
@@ -1449,11 +1505,22 @@ const handleGenerateBatch = async () => {
     🔥 Generate Batch Baru
   </button>
 )} */}
-<button onClick={async () => {
+{/* <button onClick={async () => {
     await handleGenerateBatch();
     await fetchData(); // langsung refresh data
 }} className={styles.generateButton}>
   🔥 Generate Batch Baru
+</button> */}
+
+{/* <button onClick={async () => {
+    await handleGenerateBatch();
+    window.location.reload();
+}} className={styles.generateButton}>
+  🔥 Generate Batch Baru
+</button> */}
+
+<button onClick={handleGenerateBatch} className={styles.generateButton}>
+  {loading ? "Memproses..." : "🔥 Generate Batch Baru"}
 </button>
 
 

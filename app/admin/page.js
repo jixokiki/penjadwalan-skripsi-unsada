@@ -776,6 +776,11 @@ export default function AdminPage() {
   const [zoomLinks, setZoomLinks] = useState({});
   const router = useRouter();
 
+  const [jadwalSidang, setJadwalSidang] = useState([]);
+const [searchTermJadwal, setSearchTermJadwal] = useState("");
+
+
+
   useEffect(() => {
     const fetchJadwal = async () => {
       const snapshot = await getDocs(collection(db, "jadwalSidangMahasiswa"));
@@ -784,6 +789,16 @@ export default function AdminPage() {
     };
     fetchJadwal();
   }, []);
+
+  useEffect(() => {
+  const fetchJadwalSidang = async () => {
+    const snapshot = await getDocs(collection(db, "jadwal_sidang"));
+    const data = snapshot.docs.map(doc => doc.data());
+    setJadwalSidang(data);
+  };
+  fetchJadwalSidang();
+}, []);
+
 
   const generateSchedule = async () => {
     await fetch('/api/generate-schedule', {
@@ -833,9 +848,35 @@ export default function AdminPage() {
   }
 };
 
+const handleSendToSidangSempro = async (item, index) => {
+  try {
+    await addDoc(collection(db, "admin_to_sempro"), {
+      nim: item.nim,
+      dosen_pembimbing: item.dosen_pembimbing,
+      dosen_penguji: item.dosen_penguji,
+      dosen_penguji2: item.dosen_penguji2,
+      dosen_penguji3: item.dosen_penguji3,
+      dosen_penguji4: item.dosen_penguji4,
+      tanggal_sidang: item.tanggal_sidang,
+      link_zoom: zoomLinks[index] || "", 
+      jam_sidang: item.jam_sidang,
+      timestamp: new Date()
+    });
+    alert("✅ Data berhasil dikirim ke DashboardSempro.");
+  } catch (err) {
+    console.error("❌ Gagal kirim:", err);
+  }
+};
+
+
   const filteredJadwal = jadwal.filter(item =>
     item.nim.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const filteredJadwalSidang = jadwalSidang.filter(item =>
+  item.nim.toLowerCase().includes(searchTermJadwal.toLowerCase())
+);
+
 
   const handleChangeZoomLink = (index, value) => {
   setZoomLinks((prev) => ({
@@ -898,6 +939,56 @@ export default function AdminPage() {
             </li>
           ))}
         </ul>
+        <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Hasil Generate:</h2>
+
+<input
+  type="text"
+  placeholder="🔍 Cari NIM mahasiswa..."
+  value={searchTermJadwal}
+  onChange={(e) => setSearchTermJadwal(e.target.value)}
+  className={styles.search}
+/>
+
+<ul className={styles.scheduleList}>
+  {filteredJadwalSidang.map((item, index) => (
+    <li key={index} className={styles.card}>
+      <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
+      <div className={styles.details}>
+                <strong>Formulir:</strong> {item.formulir}<br />
+                        <strong>Ruangan:</strong> {item.ruangan}<br />
+        <strong>NIM:</strong> {item.nim}<br />
+        <strong>Judul:</strong> {item.judul}<br />
+        <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
+        <strong>Penguji:</strong> {item.dosen_penguji}<br />
+        <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
+        <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
+        <strong>Penguji 4:</strong> {item.dosen_penguji4}<br />
+                        <strong>Formulir:</strong> {item.formulir}<br />
+                                <strong>Ruangan:</strong> {item.ruangan}<br />
+{/* <strong>Times Stamp:</strong> {item.timestamp.toDate().toLocaleString()}<br /> */}
+
+        <label>
+          <strong>Link Zoom:</strong><br />
+          <input
+            type="text"
+            placeholder="Masukkan link Zoom"
+            value={zoomLinks[index] || ""}
+            onChange={(e) => handleChangeZoomLink(index, e.target.value)}
+            className={styles.inputZoom}
+          />
+        </label>
+        <br />
+        <button
+          className={styles.sendButton}
+          onClick={() => handleSendToSidangSempro(item, index)}
+        >
+          Kirim ke DashboardSempro
+        </button>
+      </div>
+    </li>
+  ))}
+</ul>
+
       </motion.div>
     </div>
   );
