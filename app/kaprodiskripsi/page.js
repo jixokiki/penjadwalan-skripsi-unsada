@@ -1089,7 +1089,6 @@ import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import NavbarKaprodi from "../navbarkaprodi/page";
 import styles from "./kaprodi.module.scss";
-import Link from 'next/link';
 
 
 export default function KaprodiPage() {
@@ -1257,7 +1256,7 @@ const [mahasiswaBaruBelumAdaJadwal, setMahasiswaBaruBelumAdaJadwal] = useState([
 
 useEffect(() => {
   const fetchData = async () => {
-    const usersRef = collection(db, "usersSempro");
+    const usersRef = collection(db, "usersSkripsi");
     const jadwalRef = collection(db, "jadwal_sidang");
 
     const [usersSnap, jadwalSnap] = await Promise.all([
@@ -1375,7 +1374,7 @@ const handleGenerateSkripsi = async (nim) => {
 
 // ====================
 useEffect(() => {
-  const usersRef = collection(db, "usersSempro");
+  const usersRef = collection(db, "usersSkripsi");
   const jadwalRef = collection(db, "jadwal_sidang");
 
   // Listen realtime dari jadwal_sidang:
@@ -1450,23 +1449,6 @@ const handleGenerateBatch = async () => {
 
 
 
-const handleSkripsiButtonClick = async () => {
-    try {
-      await signOut(auth); // Sign out the user
-      router.push("/kaprodiskripsi"); // Redirect to dashboardskripsi
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
-
-  const handleSemproButtonClick = async () => {
-    try {
-      await signOut(auth); // Sign out the user
-      router.push("/kaprodisempro"); // Redirect to dashboardskripsi
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
 
   const resetData = async () => {
     await fetch("/api/reset-data", { method: "POST" });
@@ -1495,22 +1477,254 @@ const handleSkripsiButtonClick = async () => {
     <div className={styles.wrapper}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <NavbarKaprodi isLoggedIn={isLoggedIn} />
-       <>
-       <h1>Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
-          <p>Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
-        
+       
 
-        <div className={styles.buttons}>
-          <button onClick={handleSemproButtonClick} className={styles.btnAdmin}>
-            Atur Mahasiswa Sempro
-          </button>
-          {/* When clicked, sign out and redirect to /dashboardskripsi */}
-          <button onClick={handleSkripsiButtonClick} className={styles.btnAdmin}>
-            Atur Mahasiswa Skripsi
+<div className={styles.verticalScroll}>
+  {paginatedData.map((mhs, index) => (
+    <div key={mhs.nim} className={styles.cardBox}>
+      <strong>{mhs.nama}</strong>
+      <p>NIM: {mhs.nim}</p>
+      <p>Judul: {mhs.judul}</p>
+      <p>Form: {mhs.formulir}</p>
+      <p>Ruangan: {mhs.jadwal.ruangan || "belum diisi"}</p>
+      <p>📅 {mhs.jadwal.tanggal_sidang} • {mhs.jadwal.jam_sidang}</p>
+      <p>Pembimbing: {mhs.jadwal.dosen_pembimbing}</p>
+      <p>Penguji 1: {mhs.jadwal.dosen_penguji}</p>
+      <p>Zoom: {mhs.jadwal.link_zoom || "Belum diisi"}</p>
+    </div>
+  ))}
+</div>
+
+<div className={styles.pagination}>
+  <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
+  <span>Page {currentPage}</span>
+  <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
+</div>
+{/* {mahasiswaBaruBelumAdaJadwal.length >= 10 && (
+  <button onClick={handleGenerateBatch} className={styles.generateButton}>
+    🔥 Generate Batch Baru
+  </button>
+)} */}
+{/* <button onClick={async () => {
+    await handleGenerateBatch();
+    await fetchData(); // langsung refresh data
+}} className={styles.generateButton}>
+  🔥 Generate Batch Baru
+</button> */}
+
+{/* <button onClick={async () => {
+    await handleGenerateBatch();
+    window.location.reload();
+}} className={styles.generateButton}>
+  🔥 Generate Batch Baru
+</button> */}
+
+<button onClick={handleGenerateBatch} className={styles.generateButton}>
+  {loading ? "Memproses..." : "🔥 Generate Batch Baru"}
+</button>
+
+
+
+<h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
+<div className={styles.filterContainer}>
+  <select onChange={(e) => setFilterAngkatan(e.target.value)} className={styles.dropdown}>
+    <option value="">📅 Semua Angkatan</option>
+    {listAngkatan.map((angkatan) => (
+      <option key={angkatan} value={angkatan}>{angkatan}</option>
+    ))}
+  </select>
+
+  <select onChange={(e) => setFilterJurusan(e.target.value)} className={styles.dropdown}>
+    <option value="">🎓 Semua Jurusan</option>
+    {listJurusan.map((jurusan) => (
+      <option key={jurusan} value={jurusan}>{jurusan}</option>
+    ))}
+  </select>
+</div>
+
+<div className={styles.gridListmahasiswa}>
+  {mahasiswaSempro
+    .filter(item =>
+      item.nim.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filterAngkatan === "" || item.angkatan === filterAngkatan) &&
+      (filterJurusan === "" || item.jurusan === filterJurusan)
+    )
+    .map((mhs) => (
+      <div key={mhs.id} className={styles.cardmahasiswa}>
+                <h3 className={styles.headingSempro}>Mahasiswa Sempro</h3>
+        <p className={styles.nimmahasiswa}>{mhs.nim}</p>
+        <p className={styles.namamahasiswa}>📛 {mhs.nama}</p>
+        <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
+        <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
+        <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+            
+<button
+  onClick={() => handleGenerateSempro(mhs.nim, "Sempro")} // ✅ Kirim NIM dan formulir
+  disabled={loading}
+  className={styles.generateButton}
+>
+  {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+</button>
+
+      </div>
+  ))}
+</div>
+
+
+{jadwalSidangSempro.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (Kategori: Sempro)</h2>
+    {jadwalSidangSempro.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return (
+        <div key={index} className={styles.cardmahasiswa}>
+          <p>📛 NIM: {jadwal.nim}</p>
+          <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+          <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+          <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+          <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+          <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+          <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+          <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+          <button className={styles.sendButton} onClick={() => handleSendToPenguji(jadwal)} disabled={isSent}>
+            {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
           </button>
         </div>
-       </>
+      );
+    })}
+  </div>
+)}
 
+
+<h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Skripsi:</h2>
+<div className={styles.filterContainer}>
+  <select onChange={(e) => setFilterAngkatan(e.target.value)} className={styles.dropdown}>
+    <option value="">📅 Semua Angkatan</option>
+    {listAngkatanSkripsi.map((angkatan) => (
+      <option key={angkatan} value={angkatan}>{angkatan}</option>
+    ))}
+  </select>
+
+  <select onChange={(e) => setFilterJurusan(e.target.value)} className={styles.dropdown}>
+    <option value="">🎓 Semua Jurusan</option>
+    {listJurusanSkripsi.map((jurusan) => (
+      <option key={jurusan} value={jurusan}>{jurusan}</option>
+    ))}
+  </select>
+</div>
+
+<div className={styles.gridListmahasiswa}>
+  {mahasiswaSkripsi
+    .filter(item =>
+      item.nim.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filterAngkatan === "" || item.angkatan === filterAngkatan) &&
+      (filterJurusan === "" || item.jurusan === filterJurusan)
+    )
+    .map((mhs) => (
+      <div key={mhs.id} className={styles.cardmahasiswa}>
+                <h3 className={styles.headingSempro}>Mahasiswa Skripsi</h3>
+        <p className={styles.nimmahasiswa}>{mhs.nim}</p>
+        <p className={styles.namamahasiswa}>📛 {mhs.nama}</p>
+        <p className={styles.detailmahasiswa}>🎓 {mhs.jurusan} ({mhs.angkatan})</p>
+        <p className={styles.detailmahasiswa}> {mhs.dosen} </p>
+        <p className={styles.detailmahasiswa}>📄 {mhs.judul}</p>
+        <p className={styles.detailmahasiswa}>📱 {mhs.noWhatsapp}</p>
+         {/* <button
+      onClick={handleGenerate}
+      disabled={loading}
+      className={styles.generateButton}
+    >
+      {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+    </button> */}
+    <button
+  onClick={() => handleGenerateSkripsi(mhs.nim, "Skripsi")} // ⬅️ Kirim NIM
+  disabled={loading}
+  className={styles.generateButton}
+>
+  {loading ? "Memproses..." : "🔁 Buat Jadwal Sidang Otomatis"}
+</button>
+
+      </div>
+  ))}
+  
+
+</div>
+
+
+{jadwalSidangSkripsi.length > 0 && (
+  <div className={styles.gridListmahasiswa}>
+    <h2 className={styles.subheading}>🧬 Jadwal Sidang Otomatis (Kategori: Skripsi)</h2>
+    {jadwalSidangSkripsi.map((jadwal, index) => {
+      const isSent = sentJadwalIds.includes(jadwal.id);
+      return (
+        <div key={index} className={styles.cardmahasiswa}>
+          <p>📛 NIM: {jadwal.nim}</p>
+          <p>👨‍🏫 Pembimbing: {jadwal.dosen_pembimbing}</p>
+          <p>🧑‍⚖️ Penguji 1: {jadwal.dosen_penguji}</p>
+          <p>🧑‍⚖️ Penguji 2: {jadwal.dosen_penguji2}</p>
+          <p>🧑‍⚖️ Penguji 3: {jadwal.dosen_penguji3}</p>
+          <p>🧑‍⚖️ Penguji 4: {jadwal.dosen_penguji4}</p>
+          <p>📅 Tanggal Sidang: {jadwal.tanggal_sidang}</p>
+          <p>⏰ Jam Sidang: {jadwal.jam_sidang}</p>
+          <button className={styles.sendButton} onClick={() => handleSendToPenguji(jadwal)} disabled={isSent}>
+            {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+          </button>
+        </div>
+      );
+    })}
+  </div>
+)}
+
+        <h1 className={styles.heading}>📅 Kaprodi Jadwal Sidang</h1>
+
+        <div className={styles.inputGrid}>
+          <div className={styles.inputGroup}>
+            <label>Generasi</label>
+            <input type="number" value={generations} onChange={(e) => setGenerations(+e.target.value)} />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Populasi</label>
+            <input type="number" value={populationSize} onChange={(e) => setPopulationSize(+e.target.value)} />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Mutasi</label>
+            <input type="number" step={0.01} value={mutationRate} onChange={(e) => setMutationRate(+e.target.value)} />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Tanggal Sidang</label>
+            <input type="date" value={tanggalSidang} onChange={(e) => setTanggalSidang(e.target.value)} />
+          </div>
+        </div>
+
+        <div className={styles.buttonGroup}>
+          <button className={`${styles.button} ${styles.generate}`} onClick={generateSchedule}>🚀 Generate</button>
+          <button className={`${styles.button} ${styles.reset}`} onClick={resetData}>♻️ Reset</button>
+          <button className={`${styles.button} ${styles.download}`} onClick={downloadPDF}>📄 PDF</button>
+          <button className={`${styles.button} ${styles.logout}`} onClick={handleLogout}>🚪 Logout</button>
+        </div>
+
+        <input className={styles.search} type="text" placeholder="🔍 Cari NIM mahasiswa..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
+        <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang:</h2>
+        <ul className={styles.scheduleList}>
+          {filteredJadwal.map((item, index) => {
+            const isSent = sentJadwalIds.includes(item.id);
+            return (
+              <li key={item.id} className={`${styles.card} ${isSent ? styles.sentCard : ""}`}>
+                <p className={styles.nim}>{item.nim}</p>
+                <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
+                <p className={styles.dosen}>Dosen Pebimbing : {item.dosen_pembimbing} </p>
+                <p className={styles.dosen}>Dosen Penguji 1 : {item.dosen_penguji}</p>
+                <p className={styles.dosen}>Dosen Penguji 2: {item.dosen_penguji2}</p>
+                <p className={styles.dosen}>Dosen Penguji 3: {item.dosen_penguji3}</p>
+                <p className={styles.dosen}>Dosen Penguji 4: {item.dosen_penguji4}</p>
+                <button className={styles.sendButton} onClick={() => handleSendToPenguji(item)} disabled={isSent}>
+                  {isSent ? "✅ Terkirim ke Penguji" : "Tampilkan di Halaman Penguji"}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </motion.div>
     </div>
   );
