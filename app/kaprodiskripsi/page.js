@@ -1374,8 +1374,8 @@ const handleGenerateSkripsi = async (nim) => {
 
 // ====================
 useEffect(() => {
-  const usersRef = collection(db, "usersSkripsi");
-  const jadwalRef = collection(db, "jadwal_sidang");
+  const usersRef = collection(db, "usersSempro");
+  const jadwalRef = collection(db, "jadwal_sidang_sempro");
 
   // Listen realtime dari jadwal_sidang:
   const unsubscribeJadwal = onSnapshot(jadwalRef, async (jadwalSnap) => {
@@ -1435,7 +1435,7 @@ useEffect(() => {
 const handleGenerateBatch = async () => {
   setLoading(true);
   try {
-    const res = await fetch("/api/generate-batch", { method: "POST" });
+    const res = await fetch("/api/generate-batch-skripsi", { method: "POST" });
     const result = await res.json();
     alert(result.message);
     // ✅ Tidak perlu panggil fetchData atau reload

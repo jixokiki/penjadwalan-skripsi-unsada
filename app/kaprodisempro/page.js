@@ -1084,11 +1084,15 @@ import { useState, useEffect } from "react";
 import { auth, db } from "@/lib/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, query, limit, getDocs, doc, setDoc, addDoc, onSnapshot } from "firebase/firestore";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import NavbarKaprodi from "../navbarkaprodi/page";
 import styles from "./kaprodi.module.scss";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 
 export default function KaprodiPage() {
@@ -1101,6 +1105,9 @@ export default function KaprodiPage() {
   const [sentJadwalIds, setSentJadwalIds] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const [jadwalFix, setJadwalFix] = useState([]);
+const [showFixTable, setShowFixTable] = useState(false);
+
 
   const [filterAngkatan, setFilterAngkatan] = useState("");
 const [filterJurusan, setFilterJurusan] = useState("");
@@ -1204,6 +1211,85 @@ useEffect(() => {
       console.error("Gagal kirim data:", error);
     }
   };
+
+
+const fetchJadwalFix = async () => {
+  const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
+  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  setJadwalFix(data);
+};
+
+useEffect(() => {
+  fetchJadwalFix();
+}, []);
+
+
+
+const handleGenerateFix = async () => {
+  setLoading(true);
+  try {
+    const q = query(collection(db, "jadwal_sidang"));
+    const snapshot = await getDocs(q);
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Cek jika ada minimal 10 data
+    if (data.length >= 10) {
+      const first10 = data.slice(0, 10);
+
+      for (const item of first10) {
+        const newDocRef = doc(db, "jadwal_sidang_sempro", item.id); // Simpan dengan ID sama
+        await setDoc(newDocRef, item); // Menyalin data ke koleksi baru
+      }
+
+      alert("✅ Jadwal fix berhasil dimasukkan ke jadwal_sidang_sempro.");
+      fetchJadwalFix(); // refresh tampilan tabel fix
+      setShowFixTable(true); // tampilkan tabel
+    } else {
+      alert("⚠️ Data belum mencapai 10 mahasiswa.");
+    }
+  } catch (error) {
+    console.error("❌ Gagal generate fix:", error);
+    alert("Terjadi kesalahan saat memindahkan data.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const exportToPDF = () => {
+  const doc = new jsPDF();
+  autoTable(doc, {
+    head: [["No", "NIM", "Nama", "Judul", "Tanggal", "Jam", "Pembimbing", "Penguji", "Zoom"]],
+    body: jadwalFix.map((item, i) => [
+      i + 1, item.nim, item.nama, item.judul, item.tanggal_sidang,
+      item.jam_sidang, item.dosen_pembimbing, item.dosen_penguji, item.link_zoom || "-"
+    ])
+  });
+  doc.save("jadwal_fix_sempro.pdf");
+};
+
+const exportToExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(jadwalFix);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "JadwalFix");
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(data, "jadwal_fix_sempro.xlsx");
+};
+
+const exportToWord = () => {
+  let html = "<table border='1'><tr><th>No</th><th>NIM</th><th>Nama</th><th>Judul</th><th>Tanggal</th><th>Jam</th><th>Pembimbing</th><th>Penguji</th><th>Zoom</th></tr>";
+  jadwalFix.forEach((item, i) => {
+    html += `<tr><td>${i + 1}</td><td>${item.nim}</td><td>${item.nama}</td><td>${item.judul}</td><td>${item.tanggal_sidang}</td><td>${item.jam_sidang}</td><td>${item.dosen_pembimbing}</td><td>${item.dosen_penguji}</td><td>${item.link_zoom || "-"}</td></tr>`;
+  });
+  html += "</table>";
+
+  const blob = new Blob(["\ufeff" + html], {
+    type: "application/msword"
+  });
+
+  saveAs(blob, "jadwal_fix_sempro.doc");
+};
 
   const generateSchedule = async () => {
     await fetch("/api/generate-schedule", {
@@ -1522,6 +1608,54 @@ const handleGenerateBatch = async () => {
 <button onClick={handleGenerateBatch} className={styles.generateButton}>
   {loading ? "Memproses..." : "🔥 Generate Batch Baru"}
 </button>
+
+<button onClick={handleGenerateFix} className={styles.generateButton}>
+  {loading ? "Memproses..." : "✅ Generate Jadwal Fix"}
+</button>
+
+{showFixTable && jadwalFix.length > 0 && (
+  <div className={styles.tableWrapper}>
+    <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Sempro)</h2>
+
+    <div className={styles.exportButtons}>
+      <button onClick={() => exportToPDF()}>📄 Export PDF</button>
+      <button onClick={() => exportToExcel()}>📊 Export Excel</button>
+      <button onClick={() => exportToWord()}>📝 Export Word</button>
+    </div>
+
+    <table className={styles.dataTable}>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NIM</th>
+          <th>Nama</th>
+          <th>Judul</th>
+          <th>Tanggal</th>
+          <th>Jam</th>
+          <th>Pembimbing</th>
+          <th>Penguji 1</th>
+          <th>Zoom</th>
+        </tr>
+      </thead>
+      <tbody>
+        {jadwalFix.map((item, index) => (
+          <tr key={item.id}>
+            <td>{index + 1}</td>
+            <td>{item.nim}</td>
+            <td>{item.nama}</td>
+            <td>{item.judul}</td>
+            <td>{item.tanggal_sidang}</td>
+            <td>{item.jam_sidang}</td>
+            <td>{item.dosen_pembimbing}</td>
+            <td>{item.dosen_penguji}</td>
+            <td>{item.link_zoom || "-"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
 
 
 
