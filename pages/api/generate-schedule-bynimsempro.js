@@ -44,7 +44,7 @@ const generateInitialPopulation = (mahasiswa, dosen, size, tanggalBase, formulir
     //     jam_sidang: `${8 + (index % 5)}:00`,
     //   };
     const tanggalOffset = Math.floor(Math.random() * 10); // misal: 0–9 hari dari tanggal base
-const jamSidang = 8 + Math.floor(Math.random() * 5); // 8–12 siang
+const jamSidang = 8 + Math.floor(Math.random() * 10); // 8–12 siang
 
 const tanggal = new Date(tanggalBase);
 tanggal.setDate(tanggal.getDate() + tanggalOffset);

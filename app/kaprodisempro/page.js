@@ -1221,11 +1221,11 @@ useEffect(() => {
   };
 
 
-// const fetchJadwalFix = async () => {
-//   const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
-//   const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//   setJadwalFix(data);
-// };
+const fetchJadwalFix = async () => {
+  const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
+  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  setJadwalFix(data);
+};
 
 
 useEffect(() => {
@@ -1243,34 +1243,77 @@ useEffect(() => {
 // }, []);
 
 
+//JANGAN DIHAPUS YAA IKI
+// const handleGenerateFix = async () => {
+//   setLoading(true);
+//   try {
+//     const q = query(collection(db, "jadwal_sidang"));
+//     const snapshot = await getDocs(q);
+//     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     // Cek jika ada minimal 10 data
+//     if (data.length >= 10) {
+//       const first10 = data.slice(0, 10);
+
+//       for (const item of first10) {
+//         const newDocRef = doc(db, "jadwal_sidang_sempro", item.id); // Simpan dengan ID sama
+//         await setDoc(newDocRef, item); // Menyalin data ke koleksi baru
+//       }
+
+//       alert("✅ Jadwal fix berhasil dimasukkan ke jadwal_sidang_sempro.");
+//       // ⬇️ Scroll otomatis ke tabel setelah generate
+//       setTimeout(() => {
+//         if (tableFixRef.current) {
+//           tableFixRef.current.scrollIntoView({ behavior: "smooth" });
+//         }
+//       }, 300);
+//       fetchJadwalFix(); // refresh tampilan tabel fix
+//       setShowFixTable(true); // tampilkan tabel
+//     } else {
+//       alert("⚠️ Data belum mencapai 10 mahasiswa.");
+//     }
+//   } catch (error) {
+//     console.error("❌ Gagal generate fix:", error);
+//     alert("Terjadi kesalahan saat memindahkan data.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 const handleGenerateFix = async () => {
   setLoading(true);
   try {
+    // Ambil semua mahasiswa yang belum punya jadwal
+    const mahasiswaBelumFix = mahasiswaSemproJadwal.filter((mhs) =>
+      mahasiswaBaruBelumAdaJadwal.some((baru) => baru.nim === mhs.nim)
+    );
+
+    // Gabungkan dengan mahasiswa yang sudah ada jadwal fix (misalnya di halaman 1)
     const q = query(collection(db, "jadwal_sidang"));
     const snapshot = await getDocs(q);
-    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const jadwalEksisting = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    // Cek jika ada minimal 10 data
-    if (data.length >= 10) {
-      const first10 = data.slice(0, 10);
+    // Gabungkan data eksisting + mahasiswa baru
+    const combined = [...jadwalEksisting, ...mahasiswaBelumFix.map(m => m.jadwal)];
 
-      for (const item of first10) {
-        const newDocRef = doc(db, "jadwal_sidang_sempro", item.id); // Simpan dengan ID sama
-        await setDoc(newDocRef, item); // Menyalin data ke koleksi baru
+    // Simpan ke jadwal_sidang_sempro
+    const batchLimit = 10;
+    if (combined.length >= batchLimit) {
+      for (const item of combined) {
+        const newDocRef = doc(db, "jadwal_sidang_sempro", item.id || item.nim); // fallback pakai nim
+        await setDoc(newDocRef, item);
       }
 
-      alert("✅ Jadwal fix berhasil dimasukkan ke jadwal_sidang_sempro.");
-      // ⬇️ Scroll otomatis ke tabel setelah generate
+      alert("✅ Jadwal fix berhasil digabung dan dimasukkan.");
       setTimeout(() => {
         if (tableFixRef.current) {
           tableFixRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, 300);
-      fetchJadwalFix(); // refresh tampilan tabel fix
-      setShowFixTable(true); // tampilkan tabel
+
+      setShowFixTable(true);
     } else {
-      alert("⚠️ Data belum mencapai 10 mahasiswa.");
+      alert("⚠️ Belum cukup data untuk digabungkan (minimal 10).");
     }
   } catch (error) {
     console.error("❌ Gagal generate fix:", error);
@@ -1279,6 +1322,7 @@ const handleGenerateFix = async () => {
     setLoading(false);
   }
 };
+
 
 
 const exportToPDF = () => {
