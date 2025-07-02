@@ -888,7 +888,7 @@ export default async function handler(req, res) {
     const currentBatchIndex = Math.floor(totalExisting / 10);
 
     const baseDate = new Date();
-    baseDate.setDate(baseDate.getDate() + 4 + (currentBatchIndex * 2));
+    baseDate.setDate(baseDate.getDate() + 30 + currentBatchIndex);
     const tanggalBatchSidang = baseDate.toISOString().split("T")[0];
 
     const schedule = mahasiswaBatch.map((mhs) => {
