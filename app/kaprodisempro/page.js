@@ -1482,6 +1482,27 @@ const handleGenerateSkripsi = async (nim) => {
 //   fetchData();
 // }, []);
 
+useEffect(() => {
+  const totalPages = Math.ceil(mahasiswaSemproJadwal.length / pageSize);
+  const startIndex = (totalPages - 1) * pageSize;
+  const lastPageData = mahasiswaSemproJadwal.slice(startIndex);
+
+  const mahasiswaBaruTanpaJadwal = lastPageData.filter(mhs =>
+    mahasiswaBaruBelumAdaJadwal.some(item => item.nim === mhs.nim)
+  );
+
+  if (mahasiswaBaruTanpaJadwal.length >= 10) {
+    fetch("/api/generate-batch", { method: "POST" })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("✅ Jadwal batch baru dibuat:", data.message);
+      })
+      .catch((err) => {
+        console.error("❌ Gagal membuat jadwal batch:", err);
+      });
+  }
+}, [mahasiswaSemproJadwal, mahasiswaBaruBelumAdaJadwal]);
+
 
 // ====================
 useEffect(() => {
@@ -1519,6 +1540,13 @@ useEffect(() => {
   // Unsubscribe kalau komponen unmount
   return () => unsubscribeJadwal();
 }, []);
+
+
+useEffect(() => {
+  const totalPage = Math.ceil(mahasiswaSemproJadwal.length / pageSize);
+  setCurrentPage(totalPage); // pindahkan ke halaman terakhir
+}, [mahasiswaSemproJadwal.length]);
+
 
 
 // const handleGenerateBatch = async () => {
@@ -1604,13 +1632,52 @@ const handleGenerateBatch = async () => {
       <p>Zoom: {mhs.jadwal.link_zoom || "Belum diisi"}</p>
     </div>
   ))}
+  <p>Total Mahasiswa: {mahasiswaSemproJadwal.length}</p>
+<p>Page: {currentPage} of {Math.ceil(mahasiswaSemproJadwal.length / pageSize)}</p>
+
 </div>
 
-<div className={styles.pagination}>
+{/* <div className={styles.pagination}>
   <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
+  <button
+  disabled={currentPage === 1}
+  onClick={() => setCurrentPage(p => p - 1)}
+>
+  ⬅️ Prev
+</button>
+
   <span>Page {currentPage}</span>
   <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
+  <button
+  disabled={currentPage >= Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
+  onClick={() => setCurrentPage(p => p + 1)}
+>
+  Next ➡️
+</button>
+
+
+</div> */}
+
+<div className={styles.pagination}>
+  <button
+    disabled={currentPage <= 1}
+    onClick={() => setCurrentPage(p => p - 1)}
+  >
+    ⬅️ Prev
+  </button>
+
+  <span>
+    Page {currentPage} of {Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
+  </span>
+
+  <button
+    disabled={currentPage >= Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
+    onClick={() => setCurrentPage(p => p + 1)}
+  >
+    Next ➡️
+  </button>
 </div>
+
 {/* {mahasiswaBaruBelumAdaJadwal.length >= 10 && (
   <button onClick={handleGenerateBatch} className={styles.generateButton}>
     🔥 Generate Batch Baru
