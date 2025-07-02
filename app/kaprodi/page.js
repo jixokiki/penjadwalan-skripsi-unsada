@@ -1492,26 +1492,23 @@ const handleSkripsiButtonClick = async () => {
   );
 
   return (
+    
     <div className={styles.wrapper}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <NavbarKaprodi isLoggedIn={isLoggedIn} />
-       <>
-       <h1>Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
-          <p>Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
-        
+       <motion.div className="maxContainer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+  <h1 className="heroTitle fadeInUp">Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
+  <p className="heroSubtitle fadeInUp">Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
 
-        <div className={styles.buttons}>
-          <button onClick={handleSemproButtonClick} className={styles.btnAdmin}>
-            Atur Mahasiswa Sempro
-          </button>
-          {/* When clicked, sign out and redirect to /dashboardskripsi */}
-          <button onClick={handleSkripsiButtonClick} className={styles.btnAdmin}>
-            Atur Mahasiswa Skripsi
-          </button>
-        </div>
-       </>
+  <div className={styles.buttons}>
+    <button onClick={handleSemproButtonClick} className="btnAdmin fadeInUp">Atur Mahasiswa Sempro</button>
+    <button onClick={handleSkripsiButtonClick} className="btnAdmin fadeInUp">Atur Mahasiswa Skripsi</button>
+  </div>
+</motion.div>
+
 
       </motion.div>
     </div>
+    
   );
 }

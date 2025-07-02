@@ -1,9 +1,233 @@
+// .wrapper {
+//   min-height: 100vh;
+//   padding: 32px 20px;
+//   background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+//   font-family: 'Inter', sans-serif;
+// }
+
+
+// =============== WRAPPER ===============
+// .wrapper {
+//   min-height: 100vh;
+//   // padding: 64px 20px;
+//     padding: 32px 20px;
+//   background: radial-gradient(ellipse at top left, #eef2ff, #e0f2fe);
+//   font-family: 'Inter', sans-serif;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+// }
+
 .wrapper {
   min-height: 100vh;
-  padding: 32px 20px;
-  background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+  padding: 64px 20px;
+  background: radial-gradient(ellipse at top left, #eef2ff, #e0f2fe);
   font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.maxContainer {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+
+// =============== HERO SECTION ===============
+// .heroTitle {
+//   font-size: 3rem;
+//   font-weight: 900;
+//   color: #1e3a8a;
+//   text-align: center;
+//   margin-bottom: 12px;
+//   line-height: 1.2;
+//   letter-spacing: -0.5px;
+
+//   @media (max-width: 600px) {
+//     font-size: 2.2rem;
+//   }
+// }
+
+// .heroSubtitle {
+//   font-size: 1.2rem;
+//   font-weight: 500;
+//   color: #475569;
+//   text-align: center;
+//   max-width: 600px;
+//   margin: 0 auto 48px;
+// }
+
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+
+  @media (max-width: 600px) {
+    font-size: 2.2rem;
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #475569;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 48px;
+}
+
+
+// =============== BUTTONS ===============
+// .buttons {
+//   display: flex;
+//   gap: 20px;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   margin-bottom: 40px;
+
+//   button {
+//     padding: 14px 32px;
+//     font-size: 16px;
+//     font-weight: 600;
+//     border: none;
+//     border-radius: 12px;
+//     background: linear-gradient(to right, #6366f1, #3b82f6);
+//     color: #ffffff;
+//     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+//     transition: all 0.3s ease;
+
+//     &:hover {
+//       transform: translateY(-2px);
+//       box-shadow: 0 12px 28px rgba(99, 102, 241, 0.35);
+//     }
+
+//     &:active {
+//       transform: scale(0.97);
+//     }
+//   }
+
+//   .btnAdmin {
+//     background: linear-gradient(to right, #10b981, #06b6d4);
+//     box-shadow: 0 6px 18px rgba(6, 182, 212, 0.3);
+//   }
+// }
+
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+
+  button {
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(to right, #6366f1, #3b82f6);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.35);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  .btnAdmin {
+    background: linear-gradient(to right, #10b981, #06b6d4);
+    box-shadow: 0 6px 18px rgba(6, 182, 212, 0.3);
+  }
+}
+
+
+// =============== ANIMASI MASUK ===============
+// .fadeInUp {
+//   opacity: 0;
+//   transform: translateY(30px);
+//   animation: fadeInUp 0.7s ease forwards;
+
+//   &:nth-child(2) {
+//     animation-delay: 0.2s;
+//   }
+//   &:nth-child(3) {
+//     animation-delay: 0.4s;
+//   }
+// }
+
+// @keyframes fadeInUp {
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
+// }
+
+.fadeInUp {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.7s ease forwards;
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.maxContainer {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+
+// =============== PDF DOWNLOAD BUTTON ===============
+.downloadBtn {
+  background: linear-gradient(to right, #10b981, #34d399);
+  color: white;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #059669;
+    transform: scale(1.03);
+  }
+}
+
+
+// =============== EXTENDED STYLE ===============
+// This section is from user's original code and already integrated below this line
+
+// (Paste the entire extended SCSS content from the user's original message here)
+
 
 .heading {
   font-size: 42px;
@@ -444,3 +668,6 @@
     }
   }
 }
+
+
+

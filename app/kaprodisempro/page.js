@@ -1092,6 +1092,11 @@ import styles from "./kaprodi.module.scss";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useRef } from "react";
+
+
+
+
 
 
 
@@ -1107,6 +1112,9 @@ export default function KaprodiPage() {
   const router = useRouter();
   const [jadwalFix, setJadwalFix] = useState([]);
 const [showFixTable, setShowFixTable] = useState(false);
+const tableFixRef = useRef(null);
+
+
 
 
   const [filterAngkatan, setFilterAngkatan] = useState("");
@@ -1213,15 +1221,26 @@ useEffect(() => {
   };
 
 
-const fetchJadwalFix = async () => {
-  const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
-  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  setJadwalFix(data);
-};
+// const fetchJadwalFix = async () => {
+//   const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
+//   const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//   setJadwalFix(data);
+// };
+
 
 useEffect(() => {
-  fetchJadwalFix();
+  const unsubscribe = onSnapshot(collection(db, "jadwal_sidang_sempro"), (snapshot) => {
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setJadwalFix(data);
+  });
+
+  return () => unsubscribe(); // cleanup saat komponen unmount
 }, []);
+
+
+// useEffect(() => {
+//   fetchJadwalFix();
+// }, []);
 
 
 
@@ -1242,6 +1261,12 @@ const handleGenerateFix = async () => {
       }
 
       alert("✅ Jadwal fix berhasil dimasukkan ke jadwal_sidang_sempro.");
+      // ⬇️ Scroll otomatis ke tabel setelah generate
+      setTimeout(() => {
+        if (tableFixRef.current) {
+          tableFixRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
       fetchJadwalFix(); // refresh tampilan tabel fix
       setShowFixTable(true); // tampilkan tabel
     } else {
@@ -1657,7 +1682,49 @@ const handleGenerateBatch = async () => {
 )}
 
 
+{jadwalFix.length > 0 && (
+  <div className={styles.tableWrapper} ref={tableFixRef}>
 
+    <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Sempro)</h2>
+
+    <div className={styles.exportButtons}>
+      <button onClick={() => exportToPDF()}>📄 Export PDF</button>
+      <button onClick={() => exportToExcel()}>📊 Export Excel</button>
+      <button onClick={() => exportToWord()}>📝 Export Word</button>
+    </div>
+
+    <table className={styles.dataTable}>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NIM</th>
+          <th>Nama</th>
+          <th>Judul</th>
+          <th>Tanggal</th>
+          <th>Jam</th>
+          <th>Pembimbing</th>
+          <th>Penguji 1</th>
+          <th>Zoom</th>
+        </tr>
+      </thead>
+      <tbody>
+        {jadwalFix.map((item, index) => (
+          <tr key={item.id}>
+            <td>{index + 1}</td>
+            <td>{item.nim}</td>
+            <td>{item.nama}</td>
+            <td>{item.judul}</td>
+            <td>{item.tanggal_sidang}</td>
+            <td>{item.jam_sidang}</td>
+            <td>{item.dosen_pembimbing}</td>
+            <td>{item.dosen_penguji}</td>
+            <td>{item.link_zoom || "-"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
 
 <h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
 <div className={styles.filterContainer}>

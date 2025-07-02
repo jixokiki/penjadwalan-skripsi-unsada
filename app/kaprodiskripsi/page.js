@@ -1089,6 +1089,10 @@ import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import NavbarKaprodi from "../navbarkaprodi/page";
 import styles from "./kaprodi.module.scss";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { useRef } from "react";
 
 
 export default function KaprodiPage() {
@@ -1101,6 +1105,9 @@ export default function KaprodiPage() {
   const [sentJadwalIds, setSentJadwalIds] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const [jadwalFix, setJadwalFix] = useState([]);
+  const [showFixTable, setShowFixTable] = useState(false);
+const tableFixRef = useRef(null);
 
   const [filterAngkatan, setFilterAngkatan] = useState("");
 const [filterJurusan, setFilterJurusan] = useState("");
@@ -1251,6 +1258,14 @@ const handleGenerateSempro = async (nim) => {
   }
 };
 
+useEffect(() => {
+  const unsubscribe = onSnapshot(collection(db, "jadwal_sidang_skripsi"), (snapshot) => {
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setJadwalFix(data);
+  });
+
+  return () => unsubscribe(); // cleanup saat komponen unmount
+}, []);
 
 const [mahasiswaBaruBelumAdaJadwal, setMahasiswaBaruBelumAdaJadwal] = useState([]);
 
@@ -1300,6 +1315,40 @@ const paginatedData = mahasiswaSemproJadwal.slice(
   currentPage * pageSize
 );
 
+const exportToPDF = () => {
+  const doc = new jsPDF();
+  autoTable(doc, {
+    head: [["No", "NIM", "Nama", "Judul", "Tanggal", "Jam", "Pembimbing", "Penguji", "Zoom"]],
+    body: jadwalFix.map((item, i) => [
+      i + 1, item.nim, item.nama, item.judul, item.tanggal_sidang,
+      item.jam_sidang, item.dosen_pembimbing, item.dosen_penguji, item.link_zoom || "-"
+    ])
+  });
+  doc.save("jadwal_fix_skripsi.pdf");
+};
+
+const exportToExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(jadwalFix);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "JadwalFix");
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(data, "jadwal_fix_skripsi.xlsx");
+};
+
+const exportToWord = () => {
+  let html = "<table border='1'><tr><th>No</th><th>NIM</th><th>Nama</th><th>Judul</th><th>Tanggal</th><th>Jam</th><th>Pembimbing</th><th>Penguji</th><th>Zoom</th></tr>";
+  jadwalFix.forEach((item, i) => {
+    html += `<tr><td>${i + 1}</td><td>${item.nim}</td><td>${item.nama}</td><td>${item.judul}</td><td>${item.tanggal_sidang}</td><td>${item.jam_sidang}</td><td>${item.dosen_pembimbing}</td><td>${item.dosen_penguji}</td><td>${item.link_zoom || "-"}</td></tr>`;
+  });
+  html += "</table>";
+
+  const blob = new Blob(["\ufeff" + html], {
+    type: "application/msword"
+  });
+
+  saveAs(blob, "jadwal_fix_skripsi.doc");
+};
 
 
 const handleGenerateSkripsi = async (nim) => {
@@ -1524,6 +1573,93 @@ const handleGenerateBatch = async () => {
 </button>
 
 
+{showFixTable && jadwalFix.length > 0 && (
+  <div className={styles.tableWrapper}>
+    <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Skripsi)</h2>
+
+    <div className={styles.exportButtons}>
+      <button onClick={() => exportToPDF()}>📄 Export PDF</button>
+      <button onClick={() => exportToExcel()}>📊 Export Excel</button>
+      <button onClick={() => exportToWord()}>📝 Export Word</button>
+    </div>
+
+    <table className={styles.dataTable}>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NIM</th>
+          <th>Nama</th>
+          <th>Judul</th>
+          <th>Tanggal</th>
+          <th>Jam</th>
+          <th>Pembimbing</th>
+          <th>Penguji 1</th>
+          <th>Zoom</th>
+        </tr>
+      </thead>
+      <tbody>
+        {jadwalFix.map((item, index) => (
+          <tr key={item.id}>
+            <td>{index + 1}</td>
+            <td>{item.nim}</td>
+            <td>{item.nama}</td>
+            <td>{item.judul}</td>
+            <td>{item.tanggal_sidang}</td>
+            <td>{item.jam_sidang}</td>
+            <td>{item.dosen_pembimbing}</td>
+            <td>{item.dosen_penguji}</td>
+            <td>{item.link_zoom || "-"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+
+{jadwalFix.length > 0 && (
+  <div className={styles.tableWrapper} ref={tableFixRef}>
+
+    <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Skripsi)</h2>
+
+    <div className={styles.exportButtons}>
+      <button onClick={() => exportToPDF()}>📄 Export PDF</button>
+      <button onClick={() => exportToExcel()}>📊 Export Excel</button>
+      <button onClick={() => exportToWord()}>📝 Export Word</button>
+    </div>
+
+    <table className={styles.dataTable}>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NIM</th>
+          <th>Nama</th>
+          <th>Judul</th>
+          <th>Tanggal</th>
+          <th>Jam</th>
+          <th>Pembimbing</th>
+          <th>Penguji 1</th>
+          <th>Zoom</th>
+        </tr>
+      </thead>
+      <tbody>
+        {jadwalFix.map((item, index) => (
+          <tr key={item.id}>
+            <td>{index + 1}</td>
+            <td>{item.nim}</td>
+            <td>{item.nama}</td>
+            <td>{item.judul}</td>
+            <td>{item.tanggal_sidang}</td>
+            <td>{item.jam_sidang}</td>
+            <td>{item.dosen_pembimbing}</td>
+            <td>{item.dosen_penguji}</td>
+            <td>{item.link_zoom || "-"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
 
 <h2 className={styles.subheading}>📋 Daftar Data Mahasiswa Sempro:</h2>
 <div className={styles.filterContainer}>

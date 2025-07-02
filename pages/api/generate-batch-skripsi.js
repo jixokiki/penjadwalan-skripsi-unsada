@@ -732,6 +732,137 @@
 // }
 
 
+// import { collection, getDocs, writeBatch, doc } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
+
+// export default async function handler(req, res) {
+//   if (req.method !== "POST") return res.status(405).end();
+
+//   try {
+//     const dosenSnapshot = await getDocs(collection(db, "dosen"));
+//     const jadwalSemproSnapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
+//     const existingJadwalSkripsiSnapshot = await getDocs(collection(db, "jadwal_sidang_skripsi"));
+
+//     const dosen = dosenSnapshot.docs.map(doc => doc.data());
+//     const semuaSempro = jadwalSemproSnapshot.docs.map(doc => doc.data());
+//     const existingJadwal = existingJadwalSkripsiSnapshot.docs.map(doc => doc.data());
+
+//     const existingNIMs = existingJadwal.map(j => j.nim);
+//     const mahasiswaBaru = semuaSempro.filter(mhs => mhs?.nim && !existingNIMs.includes(mhs.nim));
+
+//     if (mahasiswaBaru.length < 10) {
+//       return res.status(200).json({ message: "Belum cukup 10 mahasiswa baru di jadwal_sidang_sempro." });
+//     }
+
+//     const mahasiswaBatch = mahasiswaBaru.slice(0, 10);
+
+//     const totalExisting = existingJadwal.length;
+//     const currentBatchIndex = Math.floor(totalExisting / 10);
+
+//     const baseDate = new Date();
+//     baseDate.setDate(baseDate.getDate() + 4 + (currentBatchIndex * 2));
+//     const tanggalBatchSidang = baseDate.toISOString().split("T")[0];
+
+//     const schedule = mahasiswaBatch.map((mhs) => {
+//       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
+//       const pengujiSet = new Set();
+//       while (pengujiSet.size < 4) {
+//         const calon = dosen[Math.floor(Math.random() * dosen.length)];
+//         if (calon.nama !== pembimbing.nama) pengujiSet.add(calon.nama);
+//       }
+//       const [penguji1, penguji2, penguji3, penguji4] = [...pengujiSet];
+//       return {
+//         nim: mhs.nim,
+//         nama: mhs.nama,
+//         judul: mhs.judul,
+//         formulir: mhs.formulir,
+//         pembimbing: pembimbing.nama,
+//         penguji: [penguji1, penguji2, penguji3, penguji4]
+//       };
+//     });
+
+//     const rooms = [
+//       { kode: "Lt 1 - Obeha", kapasitas: 4 },
+//       { kode: "Lt 2 - 205", kapasitas: 3 },
+//       { kode: "Lt 2 - 206", kapasitas: 3 }
+//     ];
+
+//     const jadwalPerTanggalJam = {};
+//     for (const j of existingJadwal) {
+//       const tgl = j.tanggal_sidang;
+//       if (!jadwalPerTanggalJam[tgl]) jadwalPerTanggalJam[tgl] = {};
+//       if (!jadwalPerTanggalJam[tgl][j.jam_sidang]) jadwalPerTanggalJam[tgl][j.jam_sidang] = new Set();
+//       [j.dosen_pembimbing, j.dosen_penguji, j.dosen_penguji2, j.dosen_penguji3, j.dosen_penguji4].forEach(dosen => {
+//         jadwalPerTanggalJam[tgl][j.jam_sidang].add(dosen);
+//       });
+//     }
+
+//     const finalSchedule = [];
+
+//     for (const item of schedule) {
+//       let assigned = false;
+//       let tanggalLoop = new Date(tanggalBatchSidang);
+
+//       while (!assigned) {
+//         const tanggalStr = tanggalLoop.toISOString().split("T")[0];
+//         if (!jadwalPerTanggalJam[tanggalStr]) jadwalPerTanggalJam[tanggalStr] = {};
+
+//         const shuffledRooms = [...rooms].sort(() => Math.random() - 0.5);
+
+//         for (const room of shuffledRooms) {
+//           for (let slot = 0; slot < room.kapasitas; slot++) {
+//             const jamSidang = `${8 + slot}:00`;
+//             if (!jadwalPerTanggalJam[tanggalStr][jamSidang]) {
+//               jadwalPerTanggalJam[tanggalStr][jamSidang] = new Set();
+//             }
+//             const dosenDipakai = jadwalPerTanggalJam[tanggalStr][jamSidang];
+//             const dosenBentrok = [item.pembimbing, ...item.penguji].some(dosen => dosenDipakai.has(dosen));
+
+//             if (!dosenBentrok) {
+//               dosenDipakai.add(item.pembimbing);
+//               item.penguji.forEach(p => dosenDipakai.add(p));
+//               finalSchedule.push({
+//                 nim: item.nim,
+//                 nama: item.nama,
+//                 judul: item.judul,
+//                 formulir: item.formulir,
+//                 dosen_pembimbing: item.pembimbing,
+//                 dosen_penguji: item.penguji[0],
+//                 dosen_penguji2: item.penguji[1],
+//                 dosen_penguji3: item.penguji[2],
+//                 dosen_penguji4: item.penguji[3],
+//                 tanggal_sidang: tanggalStr,
+//                 jam_sidang: jamSidang,
+//                 ruangan: room.kode,
+//                 timestamp: new Date().toISOString()
+//               });
+//               assigned = true;
+//               break;
+//             }
+//           }
+//           if (assigned) break;
+//         }
+//         if (!assigned) tanggalLoop.setDate(tanggalLoop.getDate() + 1);
+//       }
+//     }
+
+//     const batch = writeBatch(db);
+//     finalSchedule.forEach(item => {
+//       const newDocRef = doc(collection(db, "jadwal_sidang_skripsi"));
+//       batch.set(newDocRef, item);
+//     });
+//     await batch.commit();
+
+//     res.status(200).json({ message: `✅ Jadwal batch berhasil dibuat (mulai tanggal ${tanggalBatchSidang}).` });
+
+//   } catch (error) {
+//     console.error("🔥 ERROR:", error);
+//     res.status(500).json({ message: "Internal Server Error", error: error.message });
+//   }
+// }
+
+
+
 import { collection, getDocs, writeBatch, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -739,12 +870,10 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   try {
-    const dosenSnapshot = await getDocs(collection(db, "dosen"));
     const jadwalSemproSnapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
     const existingJadwalSkripsiSnapshot = await getDocs(collection(db, "jadwal_sidang_skripsi"));
 
-    const dosen = dosenSnapshot.docs.map(doc => doc.data());
-    const semuaSempro = jadwalSemproSnapshot.docs.map(doc => doc.data());
+    const semuaSempro = jadwalSemproSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const existingJadwal = existingJadwalSkripsiSnapshot.docs.map(doc => doc.data());
 
     const existingNIMs = existingJadwal.map(j => j.nim);
@@ -755,7 +884,6 @@ export default async function handler(req, res) {
     }
 
     const mahasiswaBatch = mahasiswaBaru.slice(0, 10);
-
     const totalExisting = existingJadwal.length;
     const currentBatchIndex = Math.floor(totalExisting / 10);
 
@@ -764,20 +892,24 @@ export default async function handler(req, res) {
     const tanggalBatchSidang = baseDate.toISOString().split("T")[0];
 
     const schedule = mahasiswaBatch.map((mhs) => {
-      const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-      const pengujiSet = new Set();
-      while (pengujiSet.size < 4) {
-        const calon = dosen[Math.floor(Math.random() * dosen.length)];
-        if (calon.nama !== pembimbing.nama) pengujiSet.add(calon.nama);
+      const semproData = semuaSempro.find(s => s.nim === mhs.nim);
+
+      if (!semproData) {
+        throw new Error(`Data sempro untuk NIM ${mhs.nim} tidak ditemukan`);
       }
-      const [penguji1, penguji2, penguji3, penguji4] = [...pengujiSet];
+
       return {
         nim: mhs.nim,
         nama: mhs.nama,
         judul: mhs.judul,
         formulir: mhs.formulir,
-        pembimbing: pembimbing.nama,
-        penguji: [penguji1, penguji2, penguji3, penguji4]
+        pembimbing: semproData.dosen_pembimbing,
+        penguji: [
+          semproData.dosen_penguji,
+          semproData.dosen_penguji2,
+          semproData.dosen_penguji3,
+          semproData.dosen_penguji4
+        ]
       };
     });
 
@@ -819,13 +951,12 @@ export default async function handler(req, res) {
             const dosenBentrok = [item.pembimbing, ...item.penguji].some(dosen => dosenDipakai.has(dosen));
 
             if (!dosenBentrok) {
-              dosenDipakai.add(item.pembimbing);
               item.penguji.forEach(p => dosenDipakai.add(p));
               finalSchedule.push({
                 nim: item.nim,
                 nama: item.nama,
                 judul: item.judul,
-                formulir: item.formulir,
+                formulir: "Skripsi",
                 dosen_pembimbing: item.pembimbing,
                 dosen_penguji: item.penguji[0],
                 dosen_penguji2: item.penguji[1],
@@ -860,7 +991,6 @@ export default async function handler(req, res) {
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 }
-
 
 //INI sebenernya masih ada bug yaa ga sesuai tapi jangan dihapus dulu soalnya ini ada penerapan code tanggal LANJUTKAN HYBRID INTELLIGENT AI-LIKE
 // import { collection, getDocs, writeBatch, doc } from "firebase/firestore";
