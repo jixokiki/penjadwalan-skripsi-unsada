@@ -1569,6 +1569,24 @@ const handleTerapkanJadwal = () => {
 };
 
 
+const handleKirimKeAdmin = async () => {
+  const dataUntukAdmin = jadwalFix.filter(
+    item => selectedIds.includes(item.id) && item.tanggal_sidang && item.jam_sidang
+  );
+
+  try {
+    // Jika pakai Firebase:
+    for (const data of dataUntukAdmin) {
+      await addDoc(collection(db, "jadwalFixSkripsi"), data); // atau setDoc jika pakai id tertentu
+    }
+
+    alert("🎉 Jadwal berhasil dikirim ke Admin!");
+  } catch (error) {
+    console.error("Gagal mengirim data:", error);
+    alert("❌ Gagal mengirim jadwal ke Admin.");
+  }
+};
+
   return (
     <div className={styles.wrapper}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -1675,7 +1693,75 @@ const handleTerapkanJadwal = () => {
       <button onClick={() => exportToWord()}>📝 Export Word</button>
     </div>
 
-{/* Kalender & Pilihan Jadwal */}
+{/* Kalender & Pilihan Jadwal
+<div className={styles.kalenderSection}>
+  <h3>📆 Atur Jadwal Fix Sidang</h3>
+
+  Pilih Tanggal Mulai
+  <label>
+    Tanggal Mulai Sidang:
+    <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+  </label>
+
+  Jam Mulai dan Selesai
+  <div className={styles.timeRange}>
+    <label>
+      Jam Mulai:
+      <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} />
+    </label>
+    <label>
+      Jam Selesai:
+      <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} />
+    </label>
+  </div>
+
+  Pilih Mahasiswa
+  <div className={styles.pilihMahasiswa}>
+    <label>Pilih Mahasiswa untuk Disidangkan:</label>
+    {jadwalFix.map((item) => (
+      <div key={item.id}>
+        <input
+          type="checkbox"
+          checked={selectedIds.includes(item.id)}
+          onChange={() => toggleMahasiswaSelection(item.id)}
+        />
+        <span>{item.nama} ({item.nim})</span>
+      </div>
+    ))}
+  </div>
+
+  Berapa Hari Selesai
+  <label>
+    Target Hari Selesai Sidang:
+    <input
+      type="number"
+      value={durasiHari}
+      min={1}
+      onChange={e => setDurasiHari(Number(e.target.value))}
+    />
+  </label>
+
+  Tombol Terapkan
+  <button onClick={handleTerapkanJadwal}>
+    🔄 Terapkan Jadwal untuk Mahasiswa Terpilih
+  </button>
+</div>
+Hasil Jadwal Fix
+<div className={styles.hasilJadwal}>
+  <h4>📋 Jadwal Fix Mahasiswa</h4>
+  <ul>
+    {jadwalFix
+      .filter(item => selectedIds.includes(item.id)) // atau tampilkan semuanya
+      .map(item => (
+        <li key={item.id}>
+          {item.nama} ({item.nim}) - {item.tanggal_sidang || "Belum dijadwalkan"} jam {item.jam_sidang || "-"}- {item.dosen_pembimbing} - DOSEN PENGUJI 1 {item.dosen_penguji} {"\n"} - DOSEN PENGUJI 2{item.dosen_penguji2}  {"\n"} - DOSEN PENGUJI 3 {item.dosen_penguji3} - {item.link_zoom || "Belum diisi"}
+        </li>
+      ))}
+  </ul>
+</div> */}
+
+
+    {/* Kalender & Pilihan Jadwal */}
 <div className={styles.kalenderSection}>
   <h3>📆 Atur Jadwal Fix Sidang</h3>
 
@@ -1728,18 +1814,39 @@ const handleTerapkanJadwal = () => {
     🔄 Terapkan Jadwal untuk Mahasiswa Terpilih
   </button>
 </div>
-{/* Hasil Jadwal Fix */}
+
+
 <div className={styles.hasilJadwal}>
   <h4>📋 Jadwal Fix Mahasiswa</h4>
-  <ul>
+  <div className={styles.jadwalGrid}>
     {jadwalFix
-      .filter(item => selectedIds.includes(item.id)) // atau tampilkan semuanya
+      .filter(item => selectedIds.includes(item.id))
       .map(item => (
-        <li key={item.id}>
-          {item.nama} ({item.nim}) - {item.tanggal_sidang || "Belum dijadwalkan"} jam {item.jam_sidang || "-"}- {item.dosen_pembimbing} - DOSEN PENGUJI 1 {item.dosen_penguji} {"\n"} - DOSEN PENGUJI 2{item.dosen_penguji2}  {"\n"} - DOSEN PENGUJI 3 {item.dosen_penguji3} - {item.link_zoom || "Belum diisi"}
-        </li>
+        <div key={item.id} className={styles.jadwalCard}>
+          <div className={styles.jadwalTitle}>
+            {item.nama} ({item.nim})
+          </div>
+          <div className={styles.jadwalDetail}>
+            📅 <strong>Tanggal:</strong> {item.tanggal_sidang || "Belum dijadwalkan"}{"\n"}
+            🕒 <strong>Jam:</strong> {item.jam_sidang || "-"}{"\n\n"}
+            👨‍🏫 <strong>Dosen Pembimbing:</strong> {item.dosen_pembimbing || "-"}{"\n"}
+            🧑‍🔬 <strong>Penguji 1:</strong> {item.dosen_penguji || "-"}{"\n"}
+            👩‍🔬 <strong>Penguji 2:</strong> {item.dosen_penguji2 || "-"}{"\n"}
+            👨‍🔬 <strong>Penguji 3:</strong> {item.dosen_penguji3 || "-"}{"\n\n"}
+            🔗 <strong>Zoom:</strong> {item.link_zoom || "Belum diisi"}
+          </div>
+        </div>
       ))}
-  </ul>
+  </div>
+  {selectedIds.length > 0 && jadwalFix.some(item => item.tanggal_sidang && selectedIds.includes(item.id)) && (
+  <button
+    className={styles.sendToAdminButton}
+    onClick={handleKirimKeAdmin}
+  >
+    ✅ Kirim Semua Jadwal ke Admin
+  </button>
+)}
+
 </div>
 
     <table className={styles.dataTable}>

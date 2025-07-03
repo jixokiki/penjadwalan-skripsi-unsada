@@ -182,10 +182,229 @@ useEffect(() => {
     }
   };
 
+  
+
+
+
+  const [jadwalFixSempro, setJadwalFixSempro] = useState([]);
+  
+    useEffect(() => {
+      const unsub = onSnapshot(collection(db, "jadwalFixSempro"), (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setJadwalFixSempro(data);
+      });
+  
+      return () => unsub();
+    }, []);
+  
+    const filteredJadwalFixSempro = jadwalFixSempro.filter((item) =>
+      item.nim?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  
+    
+  
+  const handleSendToSidangSemproFix = async (item, index) => {
+    try {
+      await addDoc(collection(db, "admin_to_sempro"), {
+        nim: item.nim,
+        dosen_pembimbing: item.dosen_pembimbing,
+        dosen_penguji: item.dosen_penguji,
+        dosen_penguji2: item.dosen_penguji2,
+        dosen_penguji3: item.dosen_penguji3,
+        // dosen_penguji4: item.dosen_penguji4,
+        tanggal_sidang: item.tanggal_sidang,
+        link_zoom: zoomLinks[index] || "", 
+        jam_sidang: item.jam_sidang,
+        timestamp: new Date()
+      });
+      alert("✅ Data berhasil dikirim ke DashboardSempro.");
+    } catch (err) {
+      console.error("❌ Gagal kirim:", err);
+    }
+  };
+  
+  
+    const handleChangeZoomLinkFix = (index, value) => {
+    setZoomLinks((prev) => ({
+      ...prev,
+      [index]: value,
+    }));
+  };
+
+
+  const [jadwalFixSkripsi, setJadwalFixSkripsi] = useState([]);
+  
+    useEffect(() => {
+      const unsub = onSnapshot(collection(db, "jadwalFixSkripsi"), (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setJadwalFixSkripsi(data);
+      });
+  
+      return () => unsub();
+    }, []);
+  
+    const filteredJadwalFixSkripsi = jadwalFixSkripsi.filter((item) =>
+      item.nim?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  
+    
+  
+  const handleSendToSidangSkripsiFix = async (item, index) => {
+    try {
+      await addDoc(collection(db, "admin_to_sempro"), {
+        nim: item.nim,
+        dosen_pembimbing: item.dosen_pembimbing,
+        dosen_penguji: item.dosen_penguji,
+        dosen_penguji2: item.dosen_penguji2,
+        dosen_penguji3: item.dosen_penguji3,
+        // dosen_penguji4: item.dosen_penguji4,
+        tanggal_sidang: item.tanggal_sidang,
+        link_zoom: zoomLinks[index] || "", 
+        jam_sidang: item.jam_sidang,
+        timestamp: new Date()
+      });
+      alert("✅ Data berhasil dikirim ke DashboardSempro.");
+    } catch (err) {
+      console.error("❌ Gagal kirim:", err);
+    }
+  };
+  
+  
+  //   const handleChangeZoomLinkFix = (index, value) => {
+  //   setZoomLinks((prev) => ({
+  //     ...prev,
+  //     [index]: value,
+  //   }));
+  // };
+  
+
   return (
     <>
       <Navbar isLoggedIn={isLoggedIn} />
       <div className={styles.container}>
+        
+        <motion.div
+      className={styles.wrapper}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
+
+      <input
+        type="text"
+        placeholder="🔍 Cari NIM mahasiswa..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className={styles.search}
+      />
+
+      <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Fix:</h2>
+      <ul className={styles.scheduleList}>
+        {filteredJadwalFixSempro.map((item, index) => (
+          <li key={index} className={styles.card}>
+            <p className={styles.tanggal}>
+              {item.tanggal_sidang} • {item.jam_sidang}
+            </p>
+            <div className={styles.details}>
+              <strong>NIM:</strong> {item.nim}
+              <br />
+              <strong>Pembimbing:</strong> {item.dosen_pembimbing}
+              <br />
+              <strong>Penguji:</strong> {item.dosen_penguji}
+              <br />
+              <strong>Penguji 2:</strong> {item.dosen_penguji2}
+              <br />
+              <strong>Penguji 3:</strong> {item.dosen_penguji3}
+              {/* <br />
+              <label>
+                <strong>Link Zoom:</strong>
+                <br />
+                <input
+                  type="text"
+                  placeholder="Masukkan link Zoom"
+                  value={zoomLinks[index] || ""}
+                  onChange={(e) => handleChangeZoomLinkFix(index, e.target.value)}
+                  className={styles.inputZoom}
+                />
+              </label>
+              <br /> */}
+              {/* <button
+                className={styles.sendButton}
+                onClick={() => handleSendToSemproFix(item, index)}
+              >
+                Kirim ke DashboardSempro
+              </button> */}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+
+    <motion.div
+              className={styles.wrapper}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
+        
+              <input
+                type="text"
+                placeholder="🔍 Cari NIM mahasiswa..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.search}
+              />
+        
+              <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Fix:</h2>
+              <ul className={styles.scheduleList}>
+                {filteredJadwalFixSkripsi.map((item, index) => (
+                  <li key={index} className={styles.card}>
+                    <p className={styles.tanggal}>
+                      {item.tanggal_sidang} • {item.jam_sidang}
+                    </p>
+                    <div className={styles.details}>
+                      <strong>NIM:</strong> {item.nim}
+                      <br />
+                      <strong>Pembimbing:</strong> {item.dosen_pembimbing}
+                      <br />
+                      <strong>Penguji:</strong> {item.dosen_penguji}
+                      <br />
+                      <strong>Penguji 2:</strong> {item.dosen_penguji2}
+                      <br />
+                      <strong>Penguji 3:</strong> {item.dosen_penguji3}
+                      <br />
+                      <label>
+                        <strong>Link Zoom:</strong>
+                        <br />
+                        <input
+                          type="text"
+                          placeholder="Masukkan link Zoom"
+                          value={zoomLinks[index] || ""}
+                          onChange={(e) => handleChangeZoomLinkFix(index, e.target.value)}
+                          className={styles.inputZoom}
+                        />
+                      </label>
+                      <br />
+                      <button
+                        className={styles.sendButton}
+                        onClick={() => handleSendToSidangSkripsiFix(item, index)}
+                      >
+                        Kirim ke DashboardSempro
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+    
         <div className={styles.header}>
           {showRevisiAlert && (
   <div className={styles.revisiAlert}>
