@@ -1954,6 +1954,7 @@ const handleKirimKeAdmin = async () => {
             📅 <strong>Tanggal:</strong> {item.tanggal_sidang || "Belum dijadwalkan"}{"\n"}
             🕒 <strong>Jam:</strong> {item.jam_sidang || "-"}{"\n\n"}
             👨‍🏫 <strong>Dosen Pembimbing:</strong> {item.dosen_pembimbing || "-"}{"\n"}
+                        👨‍🏫 <strong>Ruangan:</strong> {item.ruangan|| "-"}{"\n"}
             🧑‍🔬 <strong>Penguji 1:</strong> {item.dosen_penguji || "-"}{"\n"}
             👩‍🔬 <strong>Penguji 2:</strong> {item.dosen_penguji2 || "-"}{"\n"}
             👨‍🔬 <strong>Penguji 3:</strong> {item.dosen_penguji3 || "-"}{"\n\n"}
@@ -1985,6 +1986,7 @@ const handleKirimKeAdmin = async () => {
           <th>Nama</th>
           <th>Judul</th>
           <th>Tanggal</th>
+
           <th>Jam</th>
           <th>Pembimbing</th>
           <th>Penguji 1</th>
@@ -2001,6 +2003,7 @@ const handleKirimKeAdmin = async () => {
             <td>{item.nama}</td>
             <td>{item.judul}</td>
             <td>{item.tanggal_sidang}</td>
+            <td>{item.ruangan}</td>
             <td>{item.jam_sidang}</td>
             <td>{item.dosen_pembimbing}</td>
             <td>{item.dosen_penguji}</td>

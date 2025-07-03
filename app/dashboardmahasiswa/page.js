@@ -7,7 +7,7 @@ import Link from 'next/link';
 import styles from './dashboard.module.scss';
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, getDocs, doc, getDoc, query, where, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where, setDoc, onSnapshot } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 
@@ -216,7 +216,7 @@ useEffect(() => {
         dosen_penguji3: item.dosen_penguji3,
         // dosen_penguji4: item.dosen_penguji4,
         tanggal_sidang: item.tanggal_sidang,
-        link_zoom: zoomLinks[index] || "", 
+        // link_zoom: zoomLinks[index] || "", 
         jam_sidang: item.jam_sidang,
         timestamp: new Date()
       });
@@ -227,12 +227,12 @@ useEffect(() => {
   };
   
   
-    const handleChangeZoomLinkFix = (index, value) => {
-    setZoomLinks((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
+  //   const handleChangeZoomLinkFix = (index, value) => {
+  //   setZoomLinks((prev) => ({
+  //     ...prev,
+  //     [index]: value,
+  //   }));
+  // };
 
 
   const [jadwalFixSkripsi, setJadwalFixSkripsi] = useState([]);
@@ -265,7 +265,7 @@ useEffect(() => {
         dosen_penguji3: item.dosen_penguji3,
         // dosen_penguji4: item.dosen_penguji4,
         tanggal_sidang: item.tanggal_sidang,
-        link_zoom: zoomLinks[index] || "", 
+        // link_zoom: zoomLinks[index] || "", 
         jam_sidang: item.jam_sidang,
         timestamp: new Date()
       });
@@ -288,14 +288,12 @@ useEffect(() => {
     <>
       <Navbar isLoggedIn={isLoggedIn} />
       <div className={styles.container}>
-        
-        <motion.div
-      className={styles.wrapper}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
+
+
+=
+
+
+              <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
 
       <input
         type="text"
@@ -305,7 +303,7 @@ useEffect(() => {
         className={styles.search}
       />
 
-      <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Fix:</h2>
+      <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Skripsi Fix:</h2>
       <ul className={styles.scheduleList}>
         {filteredJadwalFixSempro.map((item, index) => (
           <li key={index} className={styles.card}>
@@ -345,14 +343,6 @@ useEffect(() => {
           </li>
         ))}
       </ul>
-    </motion.div>
-
-    <motion.div
-              className={styles.wrapper}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
               <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
         
               <input
@@ -363,7 +353,7 @@ useEffect(() => {
                 className={styles.search}
               />
         
-              <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Fix:</h2>
+              <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Sempro Fix:</h2>
               <ul className={styles.scheduleList}>
                 {filteredJadwalFixSkripsi.map((item, index) => (
                   <li key={index} className={styles.card}>
@@ -380,7 +370,7 @@ useEffect(() => {
                       <strong>Penguji 2:</strong> {item.dosen_penguji2}
                       <br />
                       <strong>Penguji 3:</strong> {item.dosen_penguji3}
-                      <br />
+                      {/* <br />
                       <label>
                         <strong>Link Zoom:</strong>
                         <br />
@@ -392,7 +382,7 @@ useEffect(() => {
                           className={styles.inputZoom}
                         />
                       </label>
-                      <br />
+                      <br /> */}
                       <button
                         className={styles.sendButton}
                         onClick={() => handleSendToSidangSkripsiFix(item, index)}
@@ -403,9 +393,11 @@ useEffect(() => {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            
+          
     
         <div className={styles.header}>
+          
           {showRevisiAlert && (
   <div className={styles.revisiAlert}>
     <h3>⚠️ Anda Diminta Melakukan Revisi</h3>
