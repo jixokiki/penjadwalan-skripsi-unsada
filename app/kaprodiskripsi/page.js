@@ -1522,6 +1522,53 @@ const handleGenerateBatch = async () => {
     item.nim.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+
+const [startDate, setStartDate] = useState("");
+const [startTime, setStartTime] = useState("08:00");
+const [endTime, setEndTime] = useState("16:00");
+const [durasiHari, setDurasiHari] = useState(1);
+// const [selectedIds, setSelectedIds] = useState<string[]>([]);
+const [selectedIds, setSelectedIds] = useState([]);
+
+
+// const toggleMahasiswaSelection = (id: string) => {
+const toggleMahasiswaSelection = (id) => {
+
+  setSelectedIds(prev =>
+    prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+  );
+};
+
+const handleTerapkanJadwal = () => {
+  const totalMahasiswa = selectedIds.length;
+  const jamMulai = parseInt(startTime.split(":")[0]);
+  const jamSelesai = parseInt(endTime.split(":")[0]);
+  const slotPerHari = jamSelesai - jamMulai;
+  const maxPerHari = slotPerHari; // 1 mahasiswa per jam
+
+  const jadwalBaru = [...jadwalFix];
+
+  selectedIds.forEach((id, idx) => {
+    const hariKe = Math.floor(idx / maxPerHari);
+    const jamKe = idx % maxPerHari;
+    const tanggalSidang = new Date(startDate);
+    tanggalSidang.setDate(tanggalSidang.getDate() + hariKe);
+
+    const jamSidang = `${jamMulai + jamKe}:00`;
+
+    const index = jadwalBaru.findIndex(item => item.id === id);
+    if (index !== -1) {
+      jadwalBaru[index].tanggal_sidang = tanggalSidang.toISOString().split("T")[0];
+      jadwalBaru[index].jam_sidang = jamSidang;
+    }
+  });
+
+  // Update state jadwalFix
+  setJadwalFix(jadwalBaru);
+};
+
+
   return (
     <div className={styles.wrapper}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -1627,6 +1674,73 @@ const handleGenerateBatch = async () => {
       <button onClick={() => exportToExcel()}>📊 Export Excel</button>
       <button onClick={() => exportToWord()}>📝 Export Word</button>
     </div>
+
+{/* Kalender & Pilihan Jadwal */}
+<div className={styles.kalenderSection}>
+  <h3>📆 Atur Jadwal Fix Sidang</h3>
+
+  {/* Pilih Tanggal Mulai */}
+  <label>
+    Tanggal Mulai Sidang:
+    <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+  </label>
+
+  {/* Jam Mulai dan Selesai */}
+  <div className={styles.timeRange}>
+    <label>
+      Jam Mulai:
+      <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} />
+    </label>
+    <label>
+      Jam Selesai:
+      <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} />
+    </label>
+  </div>
+
+  {/* Pilih Mahasiswa */}
+  <div className={styles.pilihMahasiswa}>
+    <label>Pilih Mahasiswa untuk Disidangkan:</label>
+    {jadwalFix.map((item) => (
+      <div key={item.id}>
+        <input
+          type="checkbox"
+          checked={selectedIds.includes(item.id)}
+          onChange={() => toggleMahasiswaSelection(item.id)}
+        />
+        <span>{item.nama} ({item.nim})</span>
+      </div>
+    ))}
+  </div>
+
+  {/* Berapa Hari Selesai */}
+  <label>
+    Target Hari Selesai Sidang:
+    <input
+      type="number"
+      value={durasiHari}
+      min={1}
+      onChange={e => setDurasiHari(Number(e.target.value))}
+    />
+  </label>
+
+  {/* Tombol Terapkan */}
+  <button onClick={handleTerapkanJadwal}>
+    🔄 Terapkan Jadwal untuk Mahasiswa Terpilih
+  </button>
+</div>
+{/* Hasil Jadwal Fix */}
+<div className={styles.hasilJadwal}>
+  <h4>📋 Jadwal Fix Mahasiswa</h4>
+  <ul>
+    {jadwalFix
+      .filter(item => selectedIds.includes(item.id)) // atau tampilkan semuanya
+      .map(item => (
+        <li key={item.id}>
+          {item.nama} ({item.nim}) - {item.tanggal_sidang || "Belum dijadwalkan"} jam {item.jam_sidang || "-"}- {item.dosen_pembimbing} - DOSEN PENGUJI 1 {item.dosen_penguji} {"\n"} - DOSEN PENGUJI 2{item.dosen_penguji2}  {"\n"} - DOSEN PENGUJI 3 {item.dosen_penguji3} - {item.link_zoom || "Belum diisi"}
+        </li>
+      ))}
+  </ul>
+</div>
 
     <table className={styles.dataTable}>
       <thead>

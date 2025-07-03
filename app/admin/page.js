@@ -836,7 +836,7 @@ const [searchTermJadwal, setSearchTermJadwal] = useState("");
       dosen_penguji: item.dosen_penguji,
       dosen_penguji2: item.dosen_penguji2,
       dosen_penguji3: item.dosen_penguji3,
-      dosen_penguji4: item.dosen_penguji4,
+      // dosen_penguji4: item.dosen_penguji4,
       tanggal_sidang: item.tanggal_sidang,
       link_zoom: zoomLinks[index] || "", // Tambahkan ini
       jam_sidang: item.jam_sidang,
@@ -856,7 +856,7 @@ const handleSendToSidangSempro = async (item, index) => {
       dosen_penguji: item.dosen_penguji,
       dosen_penguji2: item.dosen_penguji2,
       dosen_penguji3: item.dosen_penguji3,
-      dosen_penguji4: item.dosen_penguji4,
+      // dosen_penguji4: item.dosen_penguji4,
       tanggal_sidang: item.tanggal_sidang,
       link_zoom: zoomLinks[index] || "", 
       jam_sidang: item.jam_sidang,
@@ -886,108 +886,142 @@ const handleSendToSidangSempro = async (item, index) => {
 };
 
 
+const handleSkripsiButtonClick = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      router.push("/adminskripsi"); // Redirect to dashboardskripsi
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
+  const handleSemproButtonClick = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      router.push("/adminsempro"); // Redirect to dashboardskripsi
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <motion.div
-        className={styles.wrapper}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
+//     <div className={styles.container}>
+//       <motion.div
+//         className={styles.wrapper}
+//         initial={{ opacity: 0, y: 20 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.6, ease: "easeOut" }}
+//       >
+//         <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
 
-        <input
-          type="text"
-          placeholder="🔍 Cari NIM mahasiswa..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.search}
-        />
+//         <input
+//           type="text"
+//           placeholder="🔍 Cari NIM mahasiswa..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//           className={styles.search}
+//         />
 
-        <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang:</h2>
-        <ul className={styles.scheduleList}>
-          {filteredJadwal.map((item, index) => (
-            <li key={index} className={styles.card}>
-              <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
-              <div className={styles.details}>
-                <strong>NIM:</strong> {item.nim}<br />
-                <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
-                <strong>Penguji:</strong> {item.dosen_penguji}<br />
-                <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
-                <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
-                <strong>Penguji 4:</strong> {item.dosen_penguji4}<br />
-                <label>
-          <strong>Link Zoom:</strong><br />
-          <input
-            type="text"
-            placeholder="Masukkan link Zoom"
-            value={zoomLinks[index] || ""}
-            onChange={(e) => handleChangeZoomLink(index, e.target.value)}
-            className={styles.inputZoom}
-          />
-        </label>
+//         <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang:</h2>
+//         <ul className={styles.scheduleList}>
+//           {filteredJadwal.map((item, index) => (
+//             <li key={index} className={styles.card}>
+//               <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
+//               <div className={styles.details}>
+//                 <strong>NIM:</strong> {item.nim}<br />
+//                 <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
+//                 <strong>Penguji:</strong> {item.dosen_penguji}<br />
+//                 <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
+//                 <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
+//                 {/* <strong>Penguji 4:</strong> {item.dosen_penguji4}<br /> */}
+//                 <label>
+//           <strong>Link Zoom:</strong><br />
+//           <input
+//             type="text"
+//             placeholder="Masukkan link Zoom"
+//             value={zoomLinks[index] || ""}
+//             onChange={(e) => handleChangeZoomLink(index, e.target.value)}
+//             className={styles.inputZoom}
+//           />
+//         </label>
         
-        <br />
-                <button
-  className={styles.sendButton}
-  onClick={() => handleSendToSempro(item, index)}
->
-  Kirim ke DashboardSempro
-</button>
+//         <br />
+//                 <button
+//   className={styles.sendButton}
+//   onClick={() => handleSendToSempro(item, index)}
+// >
+//   Kirim ke DashboardSempro
+// </button>
 
-              </div>
-            </li>
-          ))}
-        </ul>
-        <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Hasil Generate:</h2>
+//               </div>
+//             </li>
+//           ))}
+//         </ul>
+//         <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Hasil Generate:</h2>
 
-<input
-  type="text"
-  placeholder="🔍 Cari NIM mahasiswa..."
-  value={searchTermJadwal}
-  onChange={(e) => setSearchTermJadwal(e.target.value)}
-  className={styles.search}
-/>
+// <input
+//   type="text"
+//   placeholder="🔍 Cari NIM mahasiswa..."
+//   value={searchTermJadwal}
+//   onChange={(e) => setSearchTermJadwal(e.target.value)}
+//   className={styles.search}
+// />
 
-<ul className={styles.scheduleList}>
-  {filteredJadwalSidang.map((item, index) => (
-    <li key={index} className={styles.card}>
-      <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
-      <div className={styles.details}>
-                <strong>Formulir:</strong> {item.formulir}<br />
-                        <strong>Ruangan:</strong> {item.ruangan}<br />
-        <strong>NIM:</strong> {item.nim}<br />
-        <strong>Judul:</strong> {item.judul}<br />
-        <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
-        <strong>Penguji:</strong> {item.dosen_penguji}<br />
-        <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
-        <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
-        <strong>Penguji 4:</strong> {item.dosen_penguji4}<br />
-                        <strong>Formulir:</strong> {item.formulir}<br />
-                                <strong>Ruangan:</strong> {item.ruangan}<br />
-{/* <strong>Times Stamp:</strong> {item.timestamp.toDate().toLocaleString()}<br /> */}
+// <ul className={styles.scheduleList}>
+//   {filteredJadwalSidang.map((item, index) => (
+//     <li key={index} className={styles.card}>
+//       <p className={styles.tanggal}>{item.tanggal_sidang} • {item.jam_sidang}</p>
+//       <div className={styles.details}>
+//                 <strong>Formulir:</strong> {item.formulir}<br />
+//                         <strong>Ruangan:</strong> {item.ruangan}<br />
+//         <strong>NIM:</strong> {item.nim}<br />
+//         <strong>Judul:</strong> {item.judul}<br />
+//         <strong>Pembimbing:</strong> {item.dosen_pembimbing}<br />
+//         <strong>Penguji:</strong> {item.dosen_penguji}<br />
+//         <strong>Penguji 2:</strong> {item.dosen_penguji2}<br />
+//         <strong>Penguji 3:</strong> {item.dosen_penguji3}<br />
+//         {/* <strong>Penguji 4:</strong> {item.dosen_penguji4}<br /> */}
+//                         <strong>Formulir:</strong> {item.formulir}<br />
+//                                 <strong>Ruangan:</strong> {item.ruangan}<br />
+// {/* <strong>Times Stamp:</strong> {item.timestamp.toDate().toLocaleString()}<br /> */}
 
-        <label>
-          <strong>Link Zoom:</strong><br />
-          <input
-            type="text"
-            placeholder="Masukkan link Zoom"
-            value={zoomLinks[index] || ""}
-            onChange={(e) => handleChangeZoomLink(index, e.target.value)}
-            className={styles.inputZoom}
-          />
-        </label>
-        <br />
-        <button
-          className={styles.sendButton}
-          onClick={() => handleSendToSidangSempro(item, index)}
-        >
-          Kirim ke DashboardSempro
-        </button>
-      </div>
-    </li>
-  ))}
-</ul>
+//         <label>
+//           <strong>Link Zoom:</strong><br />
+//           <input
+//             type="text"
+//             placeholder="Masukkan link Zoom"
+//             value={zoomLinks[index] || ""}
+//             onChange={(e) => handleChangeZoomLink(index, e.target.value)}
+//             className={styles.inputZoom}
+//           />
+//         </label>
+//         <br />
+//         <button
+//           className={styles.sendButton}
+//           onClick={() => handleSendToSidangSempro(item, index)}
+//         >
+//           Kirim ke DashboardSempro
+//         </button>
+//       </div>
+//     </li>
+//   ))}
+// </ul>
+
+//       </motion.div>
+//     </div>
+    <div className={styles.wrapper}>
+      <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        {/* <NavbarKaprodi isLoggedIn={isLoggedIn} /> */}
+       <motion.div className="maxContainer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+  <h1 className="heroTitle fadeInUp">Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
+  <p className="heroSubtitle fadeInUp">Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
+
+  <div className={styles.buttons}>
+    <button onClick={handleSemproButtonClick} className="btnAdmin fadeInUp">Pengiriman Jadwal Mahasiswa Sempro</button>
+    <button onClick={handleSkripsiButtonClick} className="btnAdmin fadeInUp">Pengiriman Jadwal Mahasiswa Skripsi</button>
+  </div>
+</motion.div>
+
 
       </motion.div>
     </div>

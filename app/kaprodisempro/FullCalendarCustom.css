@@ -1,0 +1,6 @@
+.calendar-panel input,
+.calendar-panel button {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+}

@@ -9,6 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fullcalendar/common": "^5.11.5",
+    "@fullcalendar/core": "^6.1.18",
+    "@fullcalendar/daygrid": "^6.1.18",
+    "@fullcalendar/interaction": "^6.1.18",
+    "@fullcalendar/react": "^6.1.18",
+    "@fullcalendar/timegrid": "^6.1.18",
+    "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "firebase": "^11.6.1",
     "framer-motion": "^12.15.0",
@@ -16,6 +23,7 @@
     "jspdf-autotable": "^5.0.2",
     "next": "15.3.1",
     "react": "^19.0.0",
+    "react-big-calendar": "^1.19.4",
     "react-dom": "^19.0.0",
     "sass": "^1.89.0",
     "swr": "^2.3.3",
