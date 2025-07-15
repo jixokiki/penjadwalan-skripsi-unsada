@@ -580,13 +580,31 @@ const handleRegister = async (e) => {
     let spesialis_penguji = "";
     const lowerJudul = judul.toLowerCase();
 
-    if (lowerJudul.includes("web") || lowerJudul.includes("website") || lowerJudul.includes("frontend") || lowerJudul.includes("backend")) {
-      spesialis_penguji = "web";
-    } else if (lowerJudul.includes("iot") || lowerJudul.includes("internet of things")) {
-      spesialis_penguji = "IOT";
-    } else if (lowerJudul.includes("data mining") || lowerJudul.includes("klasifikasi") || lowerJudul.includes("clustering")) {
-      spesialis_penguji = "Data Mining";
-    }
+    // if (lowerJudul.includes("web") || lowerJudul.includes("website") || lowerJudul.includes("frontend") || lowerJudul.includes("backend")) {
+    //   spesialis_penguji = "web";
+    // } else if (lowerJudul.includes("iot") || lowerJudul.includes("internet of things")) {
+    //   spesialis_penguji = "IOT";
+    // } else if (lowerJudul.includes("data mining") || lowerJudul.includes("klasifikasi") || lowerJudul.includes("clustering")) {
+    //   spesialis_penguji = "Data Mining";
+    // }
+
+
+
+// Penentuan berbasis keyword lebih luas
+if (
+  /(web|website|frontend|backend|next\.js|react|php|html|css|js|javascript|fullstack|node\.js|ui\/ux)/.test(lowerJudul)
+) {
+  spesialis_penguji = "web";
+} else if (
+  /(iot|internet of things|arduino|sensor|mikrokontroler|esp32|esp8266|node mcu)/.test(lowerJudul)
+) {
+  spesialis_penguji = "IOT";
+} else if (
+  /(data mining|klasifikasi|clustering|k-means|kmeans|c4\.5|decision tree|regresi|naive bayes|prediksi|peramalan)/.test(lowerJudul)
+) {
+  spesialis_penguji = "Data Mining";
+}
+
 
     // Daftar penguji berdasarkan spesialisasi
     const pengujiMap = {
@@ -608,21 +626,69 @@ const handleRegister = async (e) => {
       return;
     }
 
-    await setDoc(doc(db, "usersSempro", nim), {
-      ...combinedData,
-      nim,
-      sksditempuh,
-      sksberjalan,
-      judul,
-      noWhatsapp,
-      dosen: selectedDosen,
-      ...uploadedFileUrls,
-      butuhRevisi: false,
-      catatanRevisi: "",
-      statusSempro: "Masih Disidangkan",
-      formulir: "Sempro",
-      ...pengujiData // tambahkan data penguji berdasarkan judul
-    });
+    // await setDoc(doc(db, "usersSempro", nim), {
+    //   ...combinedData,
+    //   nim,
+    //   sksditempuh,
+    //   sksberjalan,
+    //   judul,
+    //   noWhatsapp,
+    //   dosen: selectedDosen,
+    //   ...uploadedFileUrls,
+    //   butuhRevisi: false,
+    //   catatanRevisi: "",
+    //   statusSempro: "Masih Disidangkan",
+    //   formulir: "Sempro",
+    //   ...pengujiData // tambahkan data penguji berdasarkan judul
+    // });
+
+    // Simpan data ke collection "usersSempro"
+await setDoc(doc(db, "usersSempro", nim), {
+  ...combinedData,
+  nim,
+  sksditempuh,
+  sksberjalan,
+  judul,
+  noWhatsapp,
+  dosen: selectedDosen,
+  ...uploadedFileUrls,
+  butuhRevisi: false,
+  catatanRevisi: "",
+  statusSempro: "Masih Disidangkan",
+  formulir: "Sempro",
+  ...pengujiData
+});
+
+// Duplikat data ke "usersSeminarIsi"
+await setDoc(doc(db, "usersSeminarIsi", nim), {
+  ...combinedData,
+  nim,
+  sksditempuh,
+  sksberjalan,
+  judul,
+  noWhatsapp,
+  dosen: selectedDosen,
+  ...uploadedFileUrls,
+  statusSempro: "Belum Diajukan",
+  formulir: "Sempro",
+  ...pengujiData
+});
+
+// Duplikat data ke "usersSkripsi"
+await setDoc(doc(db, "usersSkripsi", nim), {
+  ...combinedData,
+  nim,
+  sksditempuh,
+  sksberjalan,
+  judul,
+  noWhatsapp,
+  dosen: selectedDosen,
+  ...uploadedFileUrls,
+  statusSkripsi: "Belum Diajukan",
+  formulir: "Skripsi",
+  ...pengujiData
+});
+
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
     router.push("/dashboardmahasiswa");
@@ -813,18 +879,18 @@ const fetchUserDataByNim = async (inputId) => {
               type="text"
               className={styles.inputField}
               value={noWhatsapp}
-              readOnly
-              // onChange={(e) => setNoWhatsapp(e.target.value)}
-              // placeholder="Masukkan No WhatsApp"
+              // readOnly
+              onChange={(e) => setNoWhatsapp(e.target.value)}
+              placeholder="Masukkan No WhatsApp"
             />
 
 <input
               type="text"
               className={styles.inputField}
               value={judul}
-              readOnly
-              // onChange={(e) => setJudul(e.target.value)}
-              // placeholder="Masukkan Judul Sempro"
+              // readOnly
+              onChange={(e) => setJudul(e.target.value)}
+              placeholder="Masukkan Judul Sempro"
             />
             {/* File inputs for multiple files */}
             <label>Lembar Pengajuan Sidang</label>
