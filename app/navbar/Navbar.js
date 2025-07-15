@@ -42,7 +42,7 @@ export default function Navbar({ isLoggedIn }) {
       </div>
       <ul className={`${styles.menu} ${isOpen ? styles.active : ""}`}>
         <li className={styles.menuItem}>
-          <Link href="/">Home</Link> {/* Home link */}
+          <Link href="/dashboardmahasiswa">Home</Link> {/* Home link */}
         </li>
         <li className={styles.menuItem}>
           <Link href="/dosenlist">Dosen List</Link> {/* Dosen List link */}

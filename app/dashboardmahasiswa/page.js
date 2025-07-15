@@ -182,6 +182,15 @@ useEffect(() => {
     }
   };
 
+    const handleSeminarIsiButtonClick = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      router.push("/dashboardseminarisi"); // Redirect to dashboardskripsi
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   
 
 
@@ -288,112 +297,6 @@ useEffect(() => {
     <>
       <Navbar isLoggedIn={isLoggedIn} />
       <div className={styles.container}>
-
-
-=
-
-
-              <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
-
-      <input
-        type="text"
-        placeholder="🔍 Cari NIM mahasiswa..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className={styles.search}
-      />
-
-      <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Skripsi Fix:</h2>
-      <ul className={styles.scheduleList}>
-        {filteredJadwalFixSempro.map((item, index) => (
-          <li key={index} className={styles.card}>
-            <p className={styles.tanggal}>
-              {item.tanggal_sidang} • {item.jam_sidang}
-            </p>
-            <div className={styles.details}>
-              <strong>NIM:</strong> {item.nim}
-              <br />
-              <strong>Pembimbing:</strong> {item.dosen_pembimbing}
-              <br />
-              <strong>Penguji:</strong> {item.dosen_penguji}
-              <br />
-              <strong>Penguji 2:</strong> {item.dosen_penguji2}
-              <br />
-              <strong>Penguji 3:</strong> {item.dosen_penguji3}
-              {/* <br />
-              <label>
-                <strong>Link Zoom:</strong>
-                <br />
-                <input
-                  type="text"
-                  placeholder="Masukkan link Zoom"
-                  value={zoomLinks[index] || ""}
-                  onChange={(e) => handleChangeZoomLinkFix(index, e.target.value)}
-                  className={styles.inputZoom}
-                />
-              </label>
-              <br /> */}
-              {/* <button
-                className={styles.sendButton}
-                onClick={() => handleSendToSemproFix(item, index)}
-              >
-                Kirim ke DashboardSempro
-              </button> */}
-            </div>
-          </li>
-        ))}
-      </ul>
-              <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
-        
-              <input
-                type="text"
-                placeholder="🔍 Cari NIM mahasiswa..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.search}
-              />
-        
-              <h2 className={styles.subheading}>📝 Daftar Jadwal Sidang Sempro Fix:</h2>
-              <ul className={styles.scheduleList}>
-                {filteredJadwalFixSkripsi.map((item, index) => (
-                  <li key={index} className={styles.card}>
-                    <p className={styles.tanggal}>
-                      {item.tanggal_sidang} • {item.jam_sidang}
-                    </p>
-                    <div className={styles.details}>
-                      <strong>NIM:</strong> {item.nim}
-                      <br />
-                      <strong>Pembimbing:</strong> {item.dosen_pembimbing}
-                      <br />
-                      <strong>Penguji:</strong> {item.dosen_penguji}
-                      <br />
-                      <strong>Penguji 2:</strong> {item.dosen_penguji2}
-                      <br />
-                      <strong>Penguji 3:</strong> {item.dosen_penguji3}
-                      {/* <br />
-                      <label>
-                        <strong>Link Zoom:</strong>
-                        <br />
-                        <input
-                          type="text"
-                          placeholder="Masukkan link Zoom"
-                          value={zoomLinks[index] || ""}
-                          onChange={(e) => handleChangeZoomLinkFix(index, e.target.value)}
-                          className={styles.inputZoom}
-                        />
-                      </label>
-                      <br /> */}
-                      <button
-                        className={styles.sendButton}
-                        onClick={() => handleSendToSidangSkripsiFix(item, index)}
-                      >
-                        Kirim ke DashboardSempro
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            
           
     
         <div className={styles.header}>
@@ -467,6 +370,9 @@ useEffect(() => {
             <button className={styles.btn}>Seminar Proposal</button>
           </Link>
           {/* When clicked, sign out and redirect to /dashboardskripsi */}
+                    <button onClick={handleSeminarIsiButtonClick} className={styles.btnAdmin}>
+            Seminar Isi
+          </button>
           <button onClick={handleSkripsiButtonClick} className={styles.btnAdmin}>
             Skripsi
           </button>

@@ -764,7 +764,7 @@ import { useRouter } from "next/navigation";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
-import styles from "./admindashboard.module.scss";
+import styles from "./admin.module.scss";
 
 export default function AdminPage() {
   const [jadwal, setJadwal] = useState([]);
@@ -904,6 +904,15 @@ const handleSkripsiButtonClick = async () => {
     }
   };
 
+    const handleSeminarIsiButtonClick = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      router.push("/adminseminarisi"); // Redirect to dashboardskripsi
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
 //     <div className={styles.container}>
 //       <motion.div
@@ -1009,21 +1018,29 @@ const handleSkripsiButtonClick = async () => {
 
 //       </motion.div>
 //     </div>
-    <div className={styles.wrapper}>
+    // <div className={styles.wrapper}>
+    <>
+    <div className={styles.container}>
+          
+    
+        <div className={styles.header}>
       <motion.div className="max-w-6xl mx-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         {/* <NavbarKaprodi isLoggedIn={isLoggedIn} /> */}
        <motion.div className="maxContainer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
   <h1 className="heroTitle fadeInUp">Selamat Datang di Penjadwalan Sidang Mahasiswa</h1>
   <p className="heroSubtitle fadeInUp">Atur jadwal sidang Anda dengan mudah, di mana saja.</p>
 
-  <div className={styles.buttons}>
-    <button onClick={handleSemproButtonClick} className="btnAdmin fadeInUp">Pengiriman Jadwal Mahasiswa Sempro</button>
-    <button onClick={handleSkripsiButtonClick} className="btnAdmin fadeInUp">Pengiriman Jadwal Mahasiswa Skripsi</button>
-  </div>
 </motion.div>
+  <div className={styles.buttons}>
+    <button onClick={handleSemproButtonClick} className={styles.btn}>Pengiriman Jadwal Mahasiswa Sempro</button>
+        <button onClick={handleSeminarIsiButtonClick} className={styles.btn}>Pengiriman Jadwal Mahasiswa Seminar Isi</button>
+    <button onClick={handleSkripsiButtonClick} className={styles.btnAdmin}>Pengiriman Jadwal Mahasiswa Skripsi</button>
+  </div>
 
 
       </motion.div>
     </div>
+    </div>
+    </>
   );
 }

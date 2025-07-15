@@ -89,42 +89,82 @@ export default function LoginPage() {
 //     }
 //   };
 
+//INIIIIII JANGAN DIHAPUS YAA ANAK PUKIII
+// const handleLogin = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const email = nimOrEmail.includes('@') ? nimOrEmail : `${nimOrEmail}@email.com`;
+//       await signInWithEmailAndPassword(auth, email, password);
+  
+//       // Cek role di Firestore
+//       const userQuery = query(collection(db, "users"), where("email", "==", email));
+//       const querySnapshot = await getDocs(userQuery);
+  
+//       if (!querySnapshot.empty) {
+//         const userData = querySnapshot.docs[0].data();
+//         const role = userData.role;
+//         if (role === "admin") {
+//           router.push('/admin');
+//         } else if(role === "kaprodi"){
+//           router.push('/kaprodi');
+//         } else if(role === "mahasiswa"){
+//           router.push('/dashboardmahasiswa');
+//         }
+//         else if(role === "penguji"){
+//           router.push('/penguji');
+//         }
+//         else {
+//           router.push('/dashboard');
+//         }
+//       } else {
+//         alert('Role tidak ditemukan di database!');
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       alert('Login gagal! Pastikan NIM atau Email dan Password benar.');
+//     }
+//   };
+  
+
 
 const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const email = nimOrEmail.includes('@') ? nimOrEmail : `${nimOrEmail}@email.com`;
-      await signInWithEmailAndPassword(auth, email, password);
-  
-      // Cek role di Firestore
-      const userQuery = query(collection(db, "users"), where("email", "==", email));
-      const querySnapshot = await getDocs(userQuery);
-  
-      if (!querySnapshot.empty) {
-        const userData = querySnapshot.docs[0].data();
-        const role = userData.role;
-        if (role === "admin") {
-          router.push('/admin');
-        } else if(role === "kaprodi"){
-          router.push('/kaprodi');
-        } else if(role === "mahasiswa"){
-          router.push('/dashboardmahasiswa');
-        }
-        else if(role === "penguji"){
-          router.push('/penguji');
-        }
-        else {
-          router.push('/dashboard');
-        }
+  e.preventDefault();
+  try {
+    const email = nimOrEmail.includes('@') ? nimOrEmail : `${nimOrEmail}@gmail.com`;
+
+    // Login ke Firebase Authentication
+    await signInWithEmailAndPassword(auth, email, password);
+
+    // Ambil data user berdasarkan email
+    const userQuery = query(collection(db, "users"), where("email", "==", email));
+    const querySnapshot = await getDocs(userQuery);
+
+    if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data();
+      const role = userData.role;
+
+      // Routing berdasarkan role
+      if (role === "admin") {
+        router.push('/admin');
+      } else if (role === "kaprodi") {
+        router.push('/kaprodi');
+      } else if (role === "mahasiswa") {
+        router.push('/dashboardmahasiswa');
+      } else if (role === "penguji") {
+        router.push('/penguji');
       } else {
-        alert('Role tidak ditemukan di database!');
+        router.push('/dashboard');
       }
-    } catch (error) {
-      console.error(error);
-      alert('Login gagal! Pastikan NIM atau Email dan Password benar.');
+    } else {
+      alert('Akun ditemukan, tapi role belum ditentukan di Firestore.');
     }
-  };
-  
+
+  } catch (error) {
+    console.error(error);
+    alert('Login gagal! Pastikan NIM atau Email dan Password benar.');
+  }
+};
+
 
   return (
     // <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">

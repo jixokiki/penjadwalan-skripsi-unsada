@@ -1,0 +1,488 @@
+/* KaprodiPage.module.scss */
+
+.analyticsContainer {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.analyticsBoxGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.analyticsBox {
+  flex: 1;
+  min-width: 200px;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.analyticsBox:hover {
+  background-color: #d4e7ff;
+  transform: translateY(-2px);
+}
+
+.analyticsBox.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.analyticsDetailBox {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.analyticsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.analyticsTable th,
+.analyticsTable td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.analyticsTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.analyticsTable tbody tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+.generateButton,
+.saveButton {
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.generateButton:hover,
+.saveButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+
+.fitnessLog {
+  margin-top: 1rem;
+  background: #fefefe;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  background-color: #fcfcfc;
+}
+
+
+// KaprodiPage.module.scss
+.container {
+  padding: 2rem;
+}
+
+.gridAnalyticBox {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #f0f4ff;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  font-weight: 500;
+}
+
+.card:hover {
+  background: #dbe9ff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.logBox {
+  background: #fff7e6;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.resultSection {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tanggalLabel {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.gridPerTanggal {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+}
+
+.kolomRuangan {
+  min-width: 360px;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.jadwalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.jadwalTable th,
+.jadwalTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.jadwalTable th {
+  background: #eef2f7;
+}
+
+.rowConflict {
+  background-color: #ffe3e3 !important;
+  animation: conflictFlash 0.8s ease-in-out;
+}
+
+@keyframes conflictFlash {
+  0% { background-color: #ffe3e3; }
+  50% { background-color: #ffcccc; }
+  100% { background-color: #ffe3e3; }
+}
+
+/* Tambahan untuk filter dosen */
+.filterBox {
+  margin: 1rem 0;
+}
+
+.filterBox select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+
+
+// KaprodiPage.module.scss (Final Versi dengan Statistik + Fix Layout Grid Per Ruangan)
+.container {
+  padding: 2rem;
+}
+
+.gridAnalyticBox {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #f0f4ff;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  font-weight: 500;
+}
+
+.card:hover {
+  background: #dbe9ff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.logBox {
+  background: #fff7e6;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.resultSection {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.tanggalLabel {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.gridPerTanggal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.kolomRuangan {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.jadwalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.jadwalTable th,
+.jadwalTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.jadwalTable th {
+  background: #eef2f7;
+}
+
+.rowConflict {
+  background-color: #ffe3e3 !important;
+  animation: conflictFlash 0.8s ease-in-out;
+}
+
+@keyframes conflictFlash {
+  0% { background-color: #ffe3e3; }
+  50% { background-color: #ffcccc; }
+  100% { background-color: #ffe3e3; }
+}
+
+.filterBox {
+  margin: 1rem 0;
+}
+
+.filterBox select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+/* Statistik dosen */
+.statistikDosen {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.statistikDosen h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.statistikDosen ul {
+  margin-left: 1.5rem;
+  list-style-type: square;
+}
+
+
+
+// KaprodiPage.module.scss (Final Versi dengan Statistik + Fix Layout Grid Per Ruangan + Highlight Dosen Sibuk)
+.container {
+  padding: 2rem;
+}
+
+.gridAnalyticBox {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #f0f4ff;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  font-weight: 500;
+}
+
+.card:hover {
+  background: #dbe9ff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.logBox {
+  background: #fff7e6;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.resultSection {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.tanggalLabel {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.gridPerTanggal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.kolomRuangan {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.jadwalTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.jadwalTable th,
+.jadwalTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.jadwalTable th {
+  background: #eef2f7;
+}
+
+.rowConflict {
+  background-color: #ffe3e3 !important;
+  animation: conflictFlash 0.8s ease-in-out;
+}
+
+@keyframes conflictFlash {
+  0% { background-color: #ffe3e3; }
+  50% { background-color: #ffcccc; }
+  100% { background-color: #ffe3e3; }
+}
+
+.filterBox {
+  margin: 1rem 0;
+}
+
+.filterBox select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+/* Statistik dosen */
+.statistikDosen {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.statistikDosen h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.statistikDosen ul {
+  margin-left: 1.5rem;
+  list-style-type: square;
+}
+
+.highlightSibuk {
+  color: #d10000;
+  font-weight: bold;
+}
+
+.barchartBox {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}

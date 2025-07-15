@@ -178,52 +178,52 @@ export default function DashboardSempro() {
   //   }
   // };
 
+//INI JANGAN DULU DIHAPUS TANGGAL 7 JULI
+// const fetchUserDataByNim = async (nim) => {
+//   if (!nim) return;
 
-const fetchUserDataByNim = async (nim) => {
-  if (!nim) return;
+//   try {
+//     let userData = {};
+//     let mahasiswaData = {};
 
-  try {
-    let userData = {};
-    let mahasiswaData = {};
+//     // Cek data dari "users"
+//     const userDocRef = collection(db, "users");
+//     const userSnapshot = await getDocs(userDocRef);
+//     const userDoc = userSnapshot.docs.find(doc => doc.data().nim === nim);
 
-    // Cek data dari "users"
-    const userDocRef = collection(db, "users");
-    const userSnapshot = await getDocs(userDocRef);
-    const userDoc = userSnapshot.docs.find(doc => doc.data().nim === nim);
+//     if (userDoc) {
+//       userData = userDoc.data();
+//     }
 
-    if (userDoc) {
-      userData = userDoc.data();
-    }
+//     // Cek data dari "mahasiswa"
+//     const mhsCollection = collection(db, "mahasiswa");
+//     const mhsSnapshot = await getDocs(mhsCollection);
+//     const mhsDoc = mhsSnapshot.docs.find(doc => doc.data().nim === nim);
 
-    // Cek data dari "mahasiswa"
-    const mhsCollection = collection(db, "mahasiswa");
-    const mhsSnapshot = await getDocs(mhsCollection);
-    const mhsDoc = mhsSnapshot.docs.find(doc => doc.data().nim === nim);
+//     if (mhsDoc) {
+//       mahasiswaData = mhsDoc.data();
+//     }
 
-    if (mhsDoc) {
-      mahasiswaData = mhsDoc.data();
-    }
+//     // Gabungkan data dari kedua koleksi
+//     const combinedData = {
+//       nama: mahasiswaData.nama || userData.nama || "",
+//       jurusan: userData.jurusan || "",
+//       angkatan: userData.angkatan || "",
+//       cabangKampus: userData.cabangKampus || "",
+//       role: userData.role || "mahasiswa"
+//     };
 
-    // Gabungkan data dari kedua koleksi
-    const combinedData = {
-      nama: mahasiswaData.nama || userData.nama || "",
-      jurusan: userData.jurusan || "",
-      angkatan: userData.angkatan || "",
-      cabangKampus: userData.cabangKampus || "",
-      role: userData.role || "mahasiswa"
-    };
+//     setNama(combinedData.nama);
+//     setJurusan(combinedData.jurusan);
+//     setAngkatan(combinedData.angkatan);
+//     setCabangKampus(combinedData.cabangKampus);
+//     setRole(combinedData.role);
 
-    setNama(combinedData.nama);
-    setJurusan(combinedData.jurusan);
-    setAngkatan(combinedData.angkatan);
-    setCabangKampus(combinedData.cabangKampus);
-    setRole(combinedData.role);
-
-  } catch (error) {
-    console.error("Error fetching user data: ", error);
-    setError("Gagal mengambil data berdasarkan NIM");
-  }
-};
+//   } catch (error) {
+//     console.error("Error fetching user data: ", error);
+//     setError("Gagal mengambil data berdasarkan NIM");
+//   }
+// };
 
 
   // Panggil fetchUserDataByNim setiap kali nim berubah
@@ -456,6 +456,84 @@ const handleGenerateSempro = async () => {
 //   }
 // };
 
+//JANGAN DIHAPUS YA IKI INI UPDATE TGL 12 JULI 2025
+// const handleRegister = async (e) => {
+//   e.preventDefault();
+//   setError(null);
+//   setLoading(true);
+
+//   try {
+//     let userData = {};
+//     let mahasiswaData = {};
+
+//     // Ambil data dari "users"
+//     const usersSnapshot = await getDocs(collection(db, "users"));
+//     usersSnapshot.forEach(doc => {
+//       const data = doc.data();
+//       if (data.nim === nim) {
+//         userData = data;
+//       }
+//     });
+
+//     // Ambil data dari "mahasiswa"
+//     const mahasiswaSnapshot = await getDocs(collection(db, "mahasiswa"));
+//     mahasiswaSnapshot.forEach(doc => {
+//       const data = doc.data();
+//       if (data.nim === nim) {
+//         mahasiswaData = data;
+//       }
+//     });
+
+//     if (Object.keys(userData).length === 0 && Object.keys(mahasiswaData).length === 0) {
+//       setError("NIM tidak ditemukan di database");
+//       setLoading(false);
+//       return;
+//     }
+
+//     const combinedData = {
+//       nama: nama || mahasiswaData.nama || userData.nama || "",
+//       jurusan: jurusan || userData.jurusan || "",
+//       angkatan: angkatan || userData.angkatan || "",
+//       cabangKampus: cabangKampus || userData.cabangKampus || "",
+//       role: role || userData.role || "mahasiswa",
+//     };
+
+//     const uploadedFileUrls = await uploadFiles();
+//     if (!uploadedFileUrls) {
+//       setError("Gagal upload file");
+//       setLoading(false);
+//       return;
+//     }
+
+//     await setDoc(doc(db, "usersSempro", nim), {
+//       ...combinedData,
+//       nim,
+//       sksditempuh,
+//       sksberjalan,
+//       judul,
+//       noWhatsapp,
+//       dosen: selectedDosen,
+//       ...uploadedFileUrls,
+//       butuhRevisi: false,
+//       catatanRevisi: "",
+//       formulir: "Sempro",
+//     });
+
+//     // // ✅ Setelah register berhasil, langsung panggil generate batch
+//     // await handleGenerateSempro();
+
+//     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
+//     router.push("/dashboardmahasiswa");
+//     alert("Form berhasil dikirim!");
+//   } catch (error) {
+//     console.error("Terjadi kesalahan:", error.message);
+//     setError("Gagal menyimpan data: " + error.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
 
 const handleRegister = async (e) => {
   e.preventDefault();
@@ -498,6 +576,31 @@ const handleRegister = async (e) => {
       role: role || userData.role || "mahasiswa",
     };
 
+    // Tentukan spesialisasi penguji berdasarkan judul
+    let spesialis_penguji = "";
+    const lowerJudul = judul.toLowerCase();
+
+    if (lowerJudul.includes("web") || lowerJudul.includes("website") || lowerJudul.includes("frontend") || lowerJudul.includes("backend")) {
+      spesialis_penguji = "web";
+    } else if (lowerJudul.includes("iot") || lowerJudul.includes("internet of things")) {
+      spesialis_penguji = "IOT";
+    } else if (lowerJudul.includes("data mining") || lowerJudul.includes("klasifikasi") || lowerJudul.includes("clustering")) {
+      spesialis_penguji = "Data Mining";
+    }
+
+    // Daftar penguji berdasarkan spesialisasi
+    const pengujiMap = {
+      web: ["yan sofyan andhana saputra","suzuki syofiyan", "bagus tri mahardika", "afri yudha"],
+      IOT: ["andi susilo", "timor setiyaningsih", "adam arif budiman"],
+      "Data Mining": ["herianto", "linda nur afifa", "aji setiawan"]
+    };
+
+    let pengujiData = {};
+    if (spesialis_penguji && pengujiMap[spesialis_penguji]) {
+      const [penguji1, penguji2, penguji3] = pengujiMap[spesialis_penguji];
+      pengujiData = { penguji1, penguji2, penguji3, spesialis_penguji };
+    }
+
     const uploadedFileUrls = await uploadFiles();
     if (!uploadedFileUrls) {
       setError("Gagal upload file");
@@ -516,11 +619,10 @@ const handleRegister = async (e) => {
       ...uploadedFileUrls,
       butuhRevisi: false,
       catatanRevisi: "",
+      statusSempro: "Masih Disidangkan",
       formulir: "Sempro",
+      ...pengujiData // tambahkan data penguji berdasarkan judul
     });
-
-    // // ✅ Setelah register berhasil, langsung panggil generate batch
-    // await handleGenerateSempro();
 
     setMessage({ type: "success", text: "Pendaftaran berhasil disimpan!" });
     router.push("/dashboardmahasiswa");
@@ -530,6 +632,43 @@ const handleRegister = async (e) => {
     setError("Gagal menyimpan data: " + error.message);
   } finally {
     setLoading(false);
+  }
+};
+
+
+
+const [searchKey, setSearchKey] = useState(""); // untuk document ID yang diketik user
+
+///INI DIA IOO
+const fetchUserDataByNim = async (inputId) => {
+  if (!inputId) return;
+
+  try {
+    const docRef = doc(db, "usersSempro", inputId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setNama(data.nama || "");
+      setJurusan(data.jurusan || "");
+      setAngkatan(data.angkatan || "");
+      setCabangKampus(data.cabangKampus || "");
+      setRole(data.role || "mahasiswa");
+      setSksditempuh(data.sksditempuh || "");
+      setSksberjalan(data.sksberjalan || "");
+      setNoWhatsapp(data.noWhatsapp || "");
+      setJudul(data.judul || "");
+      setSelectedDosen(data.dosen || "");
+      // setNim(inputId); // <- penting: nim tetap diisi agar input readonly tetap muncul
+      setNim(data.nim || ""); // ← ambil field nim dari Firestore
+
+    } else {
+      setError("Data tidak ditemukan.");
+      setNama(""); // reset agar form kosong
+    }
+  } catch (error) {
+    console.error("Gagal ambil data dari usersSempro:", error);
+    setError("Terjadi kesalahan saat mengambil data.");
   }
 };
 
@@ -548,7 +687,7 @@ const handleRegister = async (e) => {
         <h1 className={styles.title}>Pengajuan Seminar Proposal</h1>
 
         {/* Form to fetch NIM */}
-        <form onSubmit={(e) => { e.preventDefault(); fetchUserDataByNim(nim); }} className={styles.form}>
+        {/* <form onSubmit={(e) => { e.preventDefault(); fetchUserDataByNim(nim); }} className={styles.form}>
           <input
             type="text"
             value={nim}
@@ -559,7 +698,46 @@ const handleRegister = async (e) => {
           <button type="submit" className={styles.button}>
             Cek NIM
           </button>
-        </form>
+        </form> */}
+        {/* <form
+  onSubmit={(e) => {
+    e.preventDefault();
+    fetchUserDataByNim(nim); // nim = "Julio"
+  }}
+  className={styles.form}
+>
+  <input
+    type="text"
+    value={nim}
+    onChange={(e) => setNim(e.target.value)}
+    placeholder="Masukkan ID / NIM"
+    className={styles.inputField}
+  />
+  <button type="submit" className={styles.button}>
+    Cek NIM
+  </button>
+</form> */}
+
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    fetchUserDataByNim(searchKey); // ⬅️ gunakan document ID di sini
+  }}
+  className={styles.form}
+>
+  <input
+    type="text"
+    value={searchKey}
+    onChange={(e) => setSearchKey(e.target.value)} // ⬅️ update searchKey, bukan nim
+    placeholder="Masukkan NIM / Nama"
+    className={styles.inputField}
+  />
+  <button type="submit" className={styles.button}>
+    Cek NIM
+  </button>
+</form>
+
+
 
         {/* Display auto-filled data if NIM is found */}
         {nama && (
@@ -582,26 +760,26 @@ const handleRegister = async (e) => {
               type="text"
               className={styles.inputField}
               value={jurusan}
-              // readOnly
-                            onChange={(e) => setJurusan(e.target.value)}
-                            placeholder="Masukkan Jurusan Anda...."
+              readOnly
+                            // onChange={(e) => setJurusan(e.target.value)}
+                            // placeholder="Masukkan Jurusan Anda...."
             />
             <input
               type="text"
               className={styles.inputField}
               value={angkatan}
-              // readOnly
-                            onChange={(e) => setAngkatan(e.target.value)}
-                            placeholder="Angkatan Berapa..."
+              readOnly
+                            // onChange={(e) => setAngkatan(e.target.value)}
+                            // placeholder="Angkatan Berapa..."
             />
-            <input
+            {/* <input
               type="text"
               className={styles.inputField}
               value={cabangKampus}
               // readOnly
                             onChange={(e) => setCabangKampus(e.target.value)}
                             placeholder="Masukkan Nama Kampus..."
-            />
+            /> */}
             <input
               type="text"
               className={styles.inputField}
@@ -619,31 +797,34 @@ const handleRegister = async (e) => {
               type="text"
               className={styles.inputField}
               value={sksditempuh}
-              onChange={(e) => setSksditempuh(e.target.value)}
-              placeholder="Masukkan SKS Ditempuh"
+              readOnly
+              // onChange={(e) => setSksditempuh(e.target.value)}
+              // placeholder="Masukkan SKS Ditempuh"
             />
-            <input
+            {/* <input
               type="text"
               className={styles.inputField}
               value={sksberjalan}
               onChange={(e) => setSksberjalan(e.target.value)}
               placeholder="Masukkan SKS Berjalan"
-            />
+            /> */}
 
             <input
               type="text"
               className={styles.inputField}
               value={noWhatsapp}
-              onChange={(e) => setNoWhatsapp(e.target.value)}
-              placeholder="Masukkan No WhatsApp"
+              readOnly
+              // onChange={(e) => setNoWhatsapp(e.target.value)}
+              // placeholder="Masukkan No WhatsApp"
             />
 
 <input
               type="text"
               className={styles.inputField}
               value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Masukkan Judul Sempro"
+              readOnly
+              // onChange={(e) => setJudul(e.target.value)}
+              // placeholder="Masukkan Judul Sempro"
             />
             {/* File inputs for multiple files */}
             <label>Lembar Pengajuan Sidang</label>
