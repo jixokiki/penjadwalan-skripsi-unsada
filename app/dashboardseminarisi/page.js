@@ -618,7 +618,7 @@ const handleRegister = async (e) => {
       ...uploadedFileUrls,
       butuhRevisi: false,
       catatanRevisi: "",
-      statusSempro: "Masih Disidangkan",
+      statusSeminarIsi: "Masih Disidangkan",
       formulir: "Seminar Isi",
       ...pengujiData // tambahkan data penguji berdasarkan judul
     });
@@ -811,18 +811,18 @@ const fetchUserDataByNim = async (inputId) => {
               type="text"
               className={styles.inputField}
               value={noWhatsapp}
-              readOnly
-              // onChange={(e) => setNoWhatsapp(e.target.value)}
-              // placeholder="Masukkan No WhatsApp"
+              // readOnly
+              onChange={(e) => setNoWhatsapp(e.target.value)}
+              placeholder="Masukkan No WhatsApp"
             />
 
 <input
               type="text"
               className={styles.inputField}
               value={judul}
-              readOnly
-              // onChange={(e) => setJudul(e.target.value)}
-              // placeholder="Masukkan Judul Sempro"
+              // readOnly
+              onChange={(e) => setJudul(e.target.value)}
+              placeholder="Masukkan Judul Sempro"
             />
             {/* File inputs for multiple files */}
             <label>Lembar Pengajuan Sidang</label>

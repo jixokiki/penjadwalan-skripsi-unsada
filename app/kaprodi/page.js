@@ -1459,6 +1459,15 @@ const handleSkripsiButtonClick = async () => {
     }
   };
 
+  const handleSeminarIsiButtonClick = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      router.push("/kaprodiseminarisi"); // Redirect to dashboardskripsi
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   const handleSemproButtonClick = async () => {
     try {
       await signOut(auth); // Sign out the user
@@ -1502,6 +1511,7 @@ const handleSkripsiButtonClick = async () => {
 
   <div className={styles.buttons}>
     <button onClick={handleSemproButtonClick} className="btnAdmin fadeInUp">Atur Mahasiswa Sempro</button>
+        <button onClick={handleSeminarIsiButtonClick} className="btnAdmin fadeInUp">Atur Mahasiswa Seminar Isi</button>
     <button onClick={handleSkripsiButtonClick} className="btnAdmin fadeInUp">Atur Mahasiswa Skripsi</button>
   </div>
 </motion.div>

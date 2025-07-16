@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
-import styles from "./adminskripsidashboard.module.scss";
+import styles from "./adminseminarisidashboard.module.scss";
 import NavbarAdmin from "../navbaradmin/page";
 
 export default function AdminPage() {

@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link"; // Import Link from Next.js
 import { signOut } from "firebase/auth"; // Import signOut from Firebase
 import { useRouter } from 'next/navigation'; // Import useRouter
-import styles from "./navbarpenguji.module.scss"; // Create this CSS file for styling
+import styles from "./navbaradmin.module.scss"; // Create this CSS file for styling
 // import DosenListKaprodi from "../kaprodilist/page";
 
 
 import { auth, db } from "@/lib/firebase";
 
-export default function NavbarPenguji({ isLoggedIn }) {
+export default function NavbarAdmin({ isLoggedIn }) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter(); // Create router instance
 
@@ -30,7 +30,7 @@ export default function NavbarPenguji({ isLoggedIn }) {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <Link href="/penguji">Penguji</Link> {/* Dashboard link */}
+        <Link href="/admin">admin</Link> {/* Dashboard link */}
       </div>
       <div className={styles.hamburger} onClick={toggleMenu}>
         {/* Hamburger Icon */}
@@ -40,38 +40,38 @@ export default function NavbarPenguji({ isLoggedIn }) {
       </div>
       <ul className={`${styles.menu} ${isOpen ? styles.active : ""}`}>
         <li className={styles.menuItem}>
-          <Link href="/penguji">Home</Link> {/* Home link */}
+          <Link href="/admin">Home</Link> {/* Home link */}
         </li>
         {/* <li className={styles.menuItem}>
           <Link href="/tampilankaprodilist2">Kaprodi List</Link> 
         </li> */}
-        <li className={styles.menuItem}>
+        {/* <li className={styles.menuItem}>
           <Link href="/revisimahasiswasempro">Document Revisi Sempro</Link> 
-        </li>
+        </li> */}
         {/* <li className={styles.menuItem}> */}
           {/* <Link href="/mahasiswalist">Mahasiswa List</Link> Mahasiswa List link */}
         {/* </li> */}
-        <li className={styles.menuItem}>
-          <Link href="/pengujilist">Penguji List</Link> {/* Mahasiswa List link */}
+        {/* <li className={styles.menuItem}>
+          <Link href="/pengujilist">Penguji List</Link> Mahasiswa List link
         </li>
         <li className={styles.menuItem}>
-          <Link href="/tampilanlistaccpenguji">Penguji Sempro Mahasiswa Acc</Link> {/* Dosen List link */}
+          <Link href="/tampilanlistaccpenguji">Penguji Sempro Mahasiswa Acc</Link> Dosen List link
         </li>
         <li className={styles.menuItem}>
-          <Link href="/tampilanlistaccpenguji2">Penguji Seminar Isi Acc</Link> {/* Dosen List link */}
-        </li>
+          <Link href="/tampilanlistaccpenguji2">Penguji Seminar Isi Acc</Link> Dosen List link
+        </li> */}
         {/* <li className={styles.menuItem}>
           <Link href="/services">Services</Link> 
         </li> */}
         {/* <li className={styles.menuItem}>
           <Link href="/jadwalpenguji">Jadwal Penguji</Link> Services link
         </li> */}
-                <li className={styles.menuItem}>
-          <Link href="/tampilanlistaccpenguji3">Penguji Skripsi Acc</Link> {/* Dosen List link */}
+                {/* <li className={styles.menuItem}>
+          <Link href="/tampilanlistaccpenguji3">Penguji Skripsi Acc</Link> Dosen List link
         </li>
         <li className={styles.menuItem}>
           <Link href="/jadwalsidangsemprofix">Pengiriman Link Jadwal</Link> 
-        </li>
+        </li> */}
         {/* Show logout option only if logged in */}
         {isLoggedIn && (
           <li className={styles.menuItem}>

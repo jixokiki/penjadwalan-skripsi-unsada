@@ -7,6 +7,7 @@ import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import styles from "./adminsemprodashboard.module.scss";
+import NavbarAdmin from "../navbaradmin/page";
 
 export default function AdminPage() {
   const [jadwal, setJadwal] = useState([]);
@@ -188,6 +189,7 @@ const handleSendToSidangSemproFix = async (item, index) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
+      <NavbarAdmin isLoggedIn={true} />
       <h1 className={styles.heading}>📅 Admin Jadwal Sidang</h1>
 
       <input

@@ -1,0 +1,135 @@
+.container {
+  min-height: 100vh;
+  padding: 40px 24px;
+  background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+  font-family: 'Inter', sans-serif;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: 40px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 48px;
+  color: #4338ca; // indigo-700
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+  }
+}
+
+.search {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+  margin-bottom: 48px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  }
+}
+
+.subheading {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #374151; // gray-700
+  margin-bottom: 28px;
+}
+
+.scheduleList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  font-size: 14.5px;
+  line-height: 1.6;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  strong {
+    color: #111827; // gray-900
+  }
+
+  .tanggal {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4b5563; // gray-600
+    margin-bottom: 10px;
+  }
+
+  .details {
+    font-size: 14px;
+    color: #374151;
+  }
+}
+
+.sendButton {
+  margin-top: 16px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  background-color: #4f46e5; // Indigo-600
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #4338ca; // Indigo-700
+    transform: scale(1.03);
+  }
+
+  &:disabled {
+    background-color: #e5e7eb; // Gray-200
+    color: #9ca3af; // Gray-400
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+
+.details {
+  .inputZoom {
+    width: 100%;
+    padding: 6px;
+    margin: 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border-color: #0070f3;
+      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+    }
+  }
+}
+

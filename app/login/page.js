@@ -152,6 +152,8 @@ const handleLogin = async (e) => {
         router.push('/dashboardmahasiswa');
       } else if (role === "penguji") {
         router.push('/penguji');
+      } else if (role === "dosen") {
+        router.push('/dosen');
       } else {
         router.push('/dashboard');
       }

@@ -1077,14 +1077,14 @@
 
 
 
-//JANGAN DIHAPUS YA IKI TANGGAL 13 JULI 2025
+//INI JANGAN DIHAPUS YA IKI INIII JANGAN DIHAPUSSS OIII IKIIII
 // // KaprodiPage.jsx
 // "use client";
 // import { useState, useEffect } from "react";
 // import { auth, db } from "@/lib/firebase";
 // import { signOut, onAuthStateChanged } from "firebase/auth";
 // import { useRouter } from "next/navigation";
-// import { collection, query, limit, getDocs, doc, setDoc, addDoc, onSnapshot } from "firebase/firestore";
+// import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 // import jsPDF from "jspdf";
 // import { motion } from "framer-motion";
 // import NavbarKaprodi from "../navbarkaprodi/page";
@@ -1093,12 +1093,6 @@
 // import * as XLSX from "xlsx";
 // import { saveAs } from "file-saver";
 // import { useRef } from "react";
-// import KalenderPenjadwalan from "./KalenderPenjadwalan";
-
-
-
-
-
 
 
 // export default function KaprodiPage() {
@@ -1112,11 +1106,8 @@
 //   const [isLoggedIn, setIsLoggedIn] = useState(false);
 //   const router = useRouter();
 //   const [jadwalFix, setJadwalFix] = useState([]);
-// const [showFixTable, setShowFixTable] = useState(false);
+//   const [showFixTable, setShowFixTable] = useState(false);
 // const tableFixRef = useRef(null);
-
-
-
 
 //   const [filterAngkatan, setFilterAngkatan] = useState("");
 // const [filterJurusan, setFilterJurusan] = useState("");
@@ -1221,146 +1212,6 @@
 //     }
 //   };
 
-
-// const fetchJadwalFix = async () => {
-//   const snapshot = await getDocs(collection(db, "jadwal_sidang_sempro"));
-//   const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//   setJadwalFix(data);
-// };
-
-
-// useEffect(() => {
-//   const unsubscribe = onSnapshot(collection(db, "jadwal_sidang_sempro"), (snapshot) => {
-//     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//     setJadwalFix(data);
-//   });
-
-//   return () => unsubscribe(); // cleanup saat komponen unmount
-// }, []);
-
-
-// // useEffect(() => {
-// //   fetchJadwalFix();
-// // }, []);
-
-
-// //JANGAN DIHAPUS YAA IKI
-// // const handleGenerateFix = async () => {
-// //   setLoading(true);
-// //   try {
-// //     const q = query(collection(db, "jadwal_sidang"));
-// //     const snapshot = await getDocs(q);
-// //     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-// //     // Cek jika ada minimal 10 data
-// //     if (data.length >= 10) {
-// //       const first10 = data.slice(0, 10);
-
-// //       for (const item of first10) {
-// //         const newDocRef = doc(db, "jadwal_sidang_sempro", item.id); // Simpan dengan ID sama
-// //         await setDoc(newDocRef, item); // Menyalin data ke koleksi baru
-// //       }
-
-// //       alert("✅ Jadwal fix berhasil dimasukkan ke jadwal_sidang_sempro.");
-// //       // ⬇️ Scroll otomatis ke tabel setelah generate
-// //       setTimeout(() => {
-// //         if (tableFixRef.current) {
-// //           tableFixRef.current.scrollIntoView({ behavior: "smooth" });
-// //         }
-// //       }, 300);
-// //       fetchJadwalFix(); // refresh tampilan tabel fix
-// //       setShowFixTable(true); // tampilkan tabel
-// //     } else {
-// //       alert("⚠️ Data belum mencapai 10 mahasiswa.");
-// //     }
-// //   } catch (error) {
-// //     console.error("❌ Gagal generate fix:", error);
-// //     alert("Terjadi kesalahan saat memindahkan data.");
-// //   } finally {
-// //     setLoading(false);
-// //   }
-// // };
-
-// const handleGenerateFix = async () => {
-//   setLoading(true);
-//   try {
-//     // Ambil semua mahasiswa yang belum punya jadwal
-//     const mahasiswaBelumFix = mahasiswaSemproJadwal.filter((mhs) =>
-//       mahasiswaBaruBelumAdaJadwal.some((baru) => baru.nim === mhs.nim)
-//     );
-
-//     // Gabungkan dengan mahasiswa yang sudah ada jadwal fix (misalnya di halaman 1)
-//     const q = query(collection(db, "jadwal_sidang"));
-//     const snapshot = await getDocs(q);
-//     const jadwalEksisting = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-//     // Gabungkan data eksisting + mahasiswa baru
-//     const combined = [...jadwalEksisting, ...mahasiswaBelumFix.map(m => m.jadwal)];
-
-//     // Simpan ke jadwal_sidang_sempro
-//     const batchLimit = 10;
-//     if (combined.length >= batchLimit) {
-//       for (const item of combined) {
-//         const newDocRef = doc(db, "jadwal_sidang_sempro", item.id || item.nim); // fallback pakai nim
-//         await setDoc(newDocRef, item);
-//       }
-
-//       alert("✅ Jadwal fix berhasil digabung dan dimasukkan.");
-//       setTimeout(() => {
-//         if (tableFixRef.current) {
-//           tableFixRef.current.scrollIntoView({ behavior: "smooth" });
-//         }
-//       }, 300);
-
-//       setShowFixTable(true);
-//     } else {
-//       alert("⚠️ Belum cukup data untuk digabungkan (minimal 10).");
-//     }
-//   } catch (error) {
-//     console.error("❌ Gagal generate fix:", error);
-//     alert("Terjadi kesalahan saat memindahkan data.");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-
-
-// const exportToPDF = () => {
-//   const doc = new jsPDF();
-//   autoTable(doc, {
-//     head: [["No", "NIM", "Nama", "Judul", "Tanggal", "Jam", "Pembimbing", "Penguji", "Zoom"]],
-//     body: jadwalFix.map((item, i) => [
-//       i + 1, item.nim, item.nama, item.judul, item.tanggal_sidang,
-//       item.jam_sidang, item.dosen_pembimbing, item.dosen_penguji, item.link_zoom || "-"
-//     ])
-//   });
-//   doc.save("jadwal_fix_sempro.pdf");
-// };
-
-// const exportToExcel = () => {
-//   const worksheet = XLSX.utils.json_to_sheet(jadwalFix);
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "JadwalFix");
-//   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-//   const data = new Blob([excelBuffer], { type: "application/octet-stream" });
-//   saveAs(data, "jadwal_fix_sempro.xlsx");
-// };
-
-// const exportToWord = () => {
-//   let html = "<table border='1'><tr><th>No</th><th>NIM</th><th>Nama</th><th>Judul</th><th>Tanggal</th><th>Jam</th><th>Pembimbing</th><th>Penguji</th><th>Zoom</th></tr>";
-//   jadwalFix.forEach((item, i) => {
-//     html += `<tr><td>${i + 1}</td><td>${item.nim}</td><td>${item.nama}</td><td>${item.judul}</td><td>${item.tanggal_sidang}</td><td>${item.jam_sidang}</td><td>${item.dosen_pembimbing}</td><td>${item.dosen_penguji}</td><td>${item.link_zoom || "-"}</td></tr>`;
-//   });
-//   html += "</table>";
-
-//   const blob = new Blob(["\ufeff" + html], {
-//     type: "application/msword"
-//   });
-
-//   saveAs(blob, "jadwal_fix_sempro.doc");
-// };
-
 //   const generateSchedule = async () => {
 //     await fetch("/api/generate-schedule", {
 //       method: "POST",
@@ -1407,12 +1258,20 @@
 //   }
 // };
 
+// useEffect(() => {
+//   const unsubscribe = onSnapshot(collection(db, "jadwal_sidang_skripsi"), (snapshot) => {
+//     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     setJadwalFix(data);
+//   });
+
+//   return () => unsubscribe(); // cleanup saat komponen unmount
+// }, []);
 
 // const [mahasiswaBaruBelumAdaJadwal, setMahasiswaBaruBelumAdaJadwal] = useState([]);
 
 // useEffect(() => {
 //   const fetchData = async () => {
-//     const usersRef = collection(db, "usersSempro");
+//     const usersRef = collection(db, "usersSkripsi");
 //     const jadwalRef = collection(db, "jadwal_sidang");
 
 //     const [usersSnap, jadwalSnap] = await Promise.all([
@@ -1456,6 +1315,40 @@
 //   currentPage * pageSize
 // );
 
+// const exportToPDF = () => {
+//   const doc = new jsPDF();
+//   autoTable(doc, {
+//     head: [["No", "NIM", "Nama", "Judul", "Tanggal", "Jam", "Pembimbing", "Penguji", "Zoom"]],
+//     body: jadwalFix.map((item, i) => [
+//       i + 1, item.nim, item.nama, item.judul, item.tanggal_sidang,
+//       item.jam_sidang, item.dosen_pembimbing, item.dosen_penguji, item.link_zoom || "-"
+//     ])
+//   });
+//   doc.save("jadwal_fix_skripsi.pdf");
+// };
+
+// const exportToExcel = () => {
+//   const worksheet = XLSX.utils.json_to_sheet(jadwalFix);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "JadwalFix");
+//   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+//   const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+//   saveAs(data, "jadwal_fix_skripsi.xlsx");
+// };
+
+// const exportToWord = () => {
+//   let html = "<table border='1'><tr><th>No</th><th>NIM</th><th>Nama</th><th>Judul</th><th>Tanggal</th><th>Jam</th><th>Pembimbing</th><th>Penguji</th><th>Zoom</th></tr>";
+//   jadwalFix.forEach((item, i) => {
+//     html += `<tr><td>${i + 1}</td><td>${item.nim}</td><td>${item.nama}</td><td>${item.judul}</td><td>${item.tanggal_sidang}</td><td>${item.jam_sidang}</td><td>${item.dosen_pembimbing}</td><td>${item.dosen_penguji}</td><td>${item.link_zoom || "-"}</td></tr>`;
+//   });
+//   html += "</table>";
+
+//   const blob = new Blob(["\ufeff" + html], {
+//     type: "application/msword"
+//   });
+
+//   saveAs(blob, "jadwal_fix_skripsi.doc");
+// };
 
 
 // const handleGenerateSkripsi = async (nim) => {
@@ -1527,32 +1420,11 @@
 // //   fetchData();
 // // }, []);
 
-// useEffect(() => {
-//   const totalPages = Math.ceil(mahasiswaSemproJadwal.length / pageSize);
-//   const startIndex = (totalPages - 1) * pageSize;
-//   const lastPageData = mahasiswaSemproJadwal.slice(startIndex);
-
-//   const mahasiswaBaruTanpaJadwal = lastPageData.filter(mhs =>
-//     mahasiswaBaruBelumAdaJadwal.some(item => item.nim === mhs.nim)
-//   );
-
-//   if (mahasiswaBaruTanpaJadwal.length >= 10) {
-//     fetch("/api/generate-batch", { method: "POST" })
-//       .then((res) => res.json())
-//       .then((data) => {
-//         console.log("✅ Jadwal batch baru dibuat:", data.message);
-//       })
-//       .catch((err) => {
-//         console.error("❌ Gagal membuat jadwal batch:", err);
-//       });
-//   }
-// }, [mahasiswaSemproJadwal, mahasiswaBaruBelumAdaJadwal]);
-
 
 // // ====================
 // useEffect(() => {
 //   const usersRef = collection(db, "usersSempro");
-//   const jadwalRef = collection(db, "jadwal_sidang");
+//   const jadwalRef = collection(db, "jadwal_sidang_sempro");
 
 //   // Listen realtime dari jadwal_sidang:
 //   const unsubscribeJadwal = onSnapshot(jadwalRef, async (jadwalSnap) => {
@@ -1587,13 +1459,6 @@
 // }, []);
 
 
-// useEffect(() => {
-//   const totalPage = Math.ceil(mahasiswaSemproJadwal.length / pageSize);
-//   setCurrentPage(totalPage); // pindahkan ke halaman terakhir
-// }, [mahasiswaSemproJadwal.length]);
-
-
-
 // // const handleGenerateBatch = async () => {
 // //   setLoading(true);
 // //   try {
@@ -1619,7 +1484,7 @@
 // const handleGenerateBatch = async () => {
 //   setLoading(true);
 //   try {
-//     const res = await fetch("/api/generate-batch", { method: "POST" });
+//     const res = await fetch("/api/generate-batch-skripsi", { method: "POST" });
 //     const result = await res.json();
 //     alert(result.message);
 //     // ✅ Tidak perlu panggil fetchData atau reload
@@ -1656,7 +1521,6 @@
 //   const filteredJadwal = jadwal.filter(item =>
 //     item.nim.toLowerCase().includes(searchTerm.toLowerCase())
 //   );
-
 
 
 
@@ -1705,7 +1569,6 @@
 // };
 
 
-
 // const handleKirimKeAdmin = async () => {
 //   const dataUntukAdmin = jadwalFix.filter(
 //     item => selectedIds.includes(item.id) && item.tanggal_sidang && item.jam_sidang
@@ -1714,7 +1577,7 @@
 //   try {
 //     // Jika pakai Firebase:
 //     for (const data of dataUntukAdmin) {
-//       await addDoc(collection(db, "jadwalFixSempro"), data); // atau setDoc jika pakai id tertentu
+//       await addDoc(collection(db, "jadwalFixSkripsi"), data); // atau setDoc jika pakai id tertentu
 //     }
 
 //     alert("🎉 Jadwal berhasil dikirim ke Admin!");
@@ -1723,8 +1586,6 @@
 //     alert("❌ Gagal mengirim jadwal ke Admin.");
 //   }
 // };
-
-
 
 //   return (
 //     <div className={styles.wrapper}>
@@ -1746,52 +1607,13 @@
 //       <p>Zoom: {mhs.jadwal.link_zoom || "Belum diisi"}</p>
 //     </div>
 //   ))}
-//   <p>Total Mahasiswa: {mahasiswaSemproJadwal.length}</p>
-// <p>Page: {currentPage} of {Math.ceil(mahasiswaSemproJadwal.length / pageSize)}</p>
-
 // </div>
-
-// {/* <div className={styles.pagination}>
-//   <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
-//   <button
-//   disabled={currentPage === 1}
-//   onClick={() => setCurrentPage(p => p - 1)}
-// >
-//   ⬅️ Prev
-// </button>
-
-//   <span>Page {currentPage}</span>
-//   <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
-//   <button
-//   disabled={currentPage >= Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
-//   onClick={() => setCurrentPage(p => p + 1)}
-// >
-//   Next ➡️
-// </button>
-
-
-// </div> */}
 
 // <div className={styles.pagination}>
-//   <button
-//     disabled={currentPage <= 1}
-//     onClick={() => setCurrentPage(p => p - 1)}
-//   >
-//     ⬅️ Prev
-//   </button>
-
-//   <span>
-//     Page {currentPage} of {Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
-//   </span>
-
-//   <button
-//     disabled={currentPage >= Math.ceil(mahasiswaSemproJadwal.length / pageSize)}
-//     onClick={() => setCurrentPage(p => p + 1)}
-//   >
-//     Next ➡️
-//   </button>
+//   <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>⬅️ Prev</button>
+//   <span>Page {currentPage}</span>
+//   <button disabled={currentPage * pageSize >= mahasiswaSemproJadwal.length} onClick={() => setCurrentPage(p => p + 1)}>Next ➡️</button>
 // </div>
-
 // {/* {mahasiswaBaruBelumAdaJadwal.length >= 10 && (
 //   <button onClick={handleGenerateBatch} className={styles.generateButton}>
 //     🔥 Generate Batch Baru
@@ -1815,13 +1637,10 @@
 //   {loading ? "Memproses..." : "🔥 Generate Batch Baru"}
 // </button>
 
-// <button onClick={handleGenerateFix} className={styles.generateButton}>
-//   {loading ? "Memproses..." : "✅ Generate Jadwal Fix"}
-// </button>
 
 // {showFixTable && jadwalFix.length > 0 && (
 //   <div className={styles.tableWrapper}>
-//     <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Sempro)</h2>
+//     <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Skripsi)</h2>
 
 //     <div className={styles.exportButtons}>
 //       <button onClick={() => exportToPDF()}>📄 Export PDF</button>
@@ -1866,13 +1685,81 @@
 // {jadwalFix.length > 0 && (
 //   <div className={styles.tableWrapper} ref={tableFixRef}>
 
-//     <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Sempro)</h2>
+//     <h2 className={styles.subheading}>📑 Jadwal Fix Sidang (Skripsi)</h2>
 
 //     <div className={styles.exportButtons}>
 //       <button onClick={() => exportToPDF()}>📄 Export PDF</button>
 //       <button onClick={() => exportToExcel()}>📊 Export Excel</button>
 //       <button onClick={() => exportToWord()}>📝 Export Word</button>
 //     </div>
+
+// {/* Kalender & Pilihan Jadwal
+// <div className={styles.kalenderSection}>
+//   <h3>📆 Atur Jadwal Fix Sidang</h3>
+
+//   Pilih Tanggal Mulai
+//   <label>
+//     Tanggal Mulai Sidang:
+//     <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+//   </label>
+
+//   Jam Mulai dan Selesai
+//   <div className={styles.timeRange}>
+//     <label>
+//       Jam Mulai:
+//       <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} />
+//     </label>
+//     <label>
+//       Jam Selesai:
+//       <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} />
+//     </label>
+//   </div>
+
+//   Pilih Mahasiswa
+//   <div className={styles.pilihMahasiswa}>
+//     <label>Pilih Mahasiswa untuk Disidangkan:</label>
+//     {jadwalFix.map((item) => (
+//       <div key={item.id}>
+//         <input
+//           type="checkbox"
+//           checked={selectedIds.includes(item.id)}
+//           onChange={() => toggleMahasiswaSelection(item.id)}
+//         />
+//         <span>{item.nama} ({item.nim})</span>
+//       </div>
+//     ))}
+//   </div>
+
+//   Berapa Hari Selesai
+//   <label>
+//     Target Hari Selesai Sidang:
+//     <input
+//       type="number"
+//       value={durasiHari}
+//       min={1}
+//       onChange={e => setDurasiHari(Number(e.target.value))}
+//     />
+//   </label>
+
+//   Tombol Terapkan
+//   <button onClick={handleTerapkanJadwal}>
+//     🔄 Terapkan Jadwal untuk Mahasiswa Terpilih
+//   </button>
+// </div>
+// Hasil Jadwal Fix
+// <div className={styles.hasilJadwal}>
+//   <h4>📋 Jadwal Fix Mahasiswa</h4>
+//   <ul>
+//     {jadwalFix
+//       .filter(item => selectedIds.includes(item.id)) // atau tampilkan semuanya
+//       .map(item => (
+//         <li key={item.id}>
+//           {item.nama} ({item.nim}) - {item.tanggal_sidang || "Belum dijadwalkan"} jam {item.jam_sidang || "-"}- {item.dosen_pembimbing} - DOSEN PENGUJI 1 {item.dosen_penguji} {"\n"} - DOSEN PENGUJI 2{item.dosen_penguji2}  {"\n"} - DOSEN PENGUJI 3 {item.dosen_penguji3} - {item.link_zoom || "Belum diisi"}
+//         </li>
+//       ))}
+//   </ul>
+// </div> */}
+
 
 //     {/* Kalender & Pilihan Jadwal */}
 // <div className={styles.kalenderSection}>
@@ -1927,19 +1814,8 @@
 //     🔄 Terapkan Jadwal untuk Mahasiswa Terpilih
 //   </button>
 // </div>
-// {/* Hasil Jadwal Fix */}
-// {/* <div className={styles.hasilJadwal}>
-//   <h4>📋 Jadwal Fix Mahasiswa</h4>
-//   <ul>
-//     {jadwalFix
-//       .filter(item => selectedIds.includes(item.id)) // atau tampilkan semuanya
-//       .map(item => (
-//         <li key={item.id}>
-//           {item.nama} ({item.nim}) - {item.tanggal_sidang || "Belum dijadwalkan"} jam {item.jam_sidang || "-"}- {item.dosen_pembimbing} - DOSEN PENGUJI 1 {item.dosen_penguji} {"\n"} - DOSEN PENGUJI 2{item.dosen_penguji2}  {"\n"} - DOSEN PENGUJI 3 {item.dosen_penguji3} - {item.link_zoom || "Belum diisi"}
-//         </li>
-//       ))}
-//   </ul>
-// </div> */}
+
+
 // <div className={styles.hasilJadwal}>
 //   <h4>📋 Jadwal Fix Mahasiswa</h4>
 //   <div className={styles.jadwalGrid}>
@@ -1954,7 +1830,6 @@
 //             📅 <strong>Tanggal:</strong> {item.tanggal_sidang || "Belum dijadwalkan"}{"\n"}
 //             🕒 <strong>Jam:</strong> {item.jam_sidang || "-"}{"\n\n"}
 //             👨‍🏫 <strong>Dosen Pembimbing:</strong> {item.dosen_pembimbing || "-"}{"\n"}
-//                         👨‍🏫 <strong>Ruangan:</strong> {item.ruangan|| "-"}{"\n"}
 //             🧑‍🔬 <strong>Penguji 1:</strong> {item.dosen_penguji || "-"}{"\n"}
 //             👩‍🔬 <strong>Penguji 2:</strong> {item.dosen_penguji2 || "-"}{"\n"}
 //             👨‍🔬 <strong>Penguji 3:</strong> {item.dosen_penguji3 || "-"}{"\n\n"}
@@ -1974,10 +1849,6 @@
 
 // </div>
 
-
-// {/* <KalenderPenjadwalan jadwalFix={jadwalFix} setJadwalFix={setJadwalFix} /> */}
-
-
 //     <table className={styles.dataTable}>
 //       <thead>
 //         <tr>
@@ -1986,12 +1857,9 @@
 //           <th>Nama</th>
 //           <th>Judul</th>
 //           <th>Tanggal</th>
-
 //           <th>Jam</th>
 //           <th>Pembimbing</th>
 //           <th>Penguji 1</th>
-//                     <th>Penguji 2</th>
-//                               <th>Penguji 3</th>
 //           <th>Zoom</th>
 //         </tr>
 //       </thead>
@@ -2003,12 +1871,9 @@
 //             <td>{item.nama}</td>
 //             <td>{item.judul}</td>
 //             <td>{item.tanggal_sidang}</td>
-//             <td>{item.ruangan}</td>
 //             <td>{item.jam_sidang}</td>
 //             <td>{item.dosen_pembimbing}</td>
 //             <td>{item.dosen_penguji}</td>
-//                         <td>{item.dosen_penguji2}</td>
-//                                     <td>{item.dosen_penguji3}</td>
 //             <td>{item.link_zoom || "-"}</td>
 //           </tr>
 //         ))}
@@ -2233,443 +2098,6 @@
 
 
 
-
-// // KaprodiPage.jsx (Final Struktur + GA + Animasi Framer Motion + Log Generasi)
-// "use client"
-// import { useEffect, useState } from "react";
-// import { collection, getDocs, addDoc } from "firebase/firestore";
-// import { auth, db } from "@/lib/firebase";
-// import styles from "./KaprodiPage.module.scss";
-// import { motion, AnimatePresence } from "framer-motion";
-
-// const KaprodiPage = () => {
-//   const [selectedCategory, setSelectedCategory] = useState("Sempro");
-//   const [dataSempro, setDataSempro] = useState([]);
-//   const [dataSeminarIsi, setDataSeminarIsi] = useState([]);
-//   const [dataSkripsi, setDataSkripsi] = useState([]);
-//   const [jadwalTerbaik, setJadwalTerbaik] = useState([]);
-//   const [fitnessTerbaik, setFitnessTerbaik] = useState(null);
-//   const [logGenerasi, setLogGenerasi] = useState([]);
-
-//   const fetchData = async () => {
-//     const semproSnap = await getDocs(collection(db, "usersSempro"));
-//     const seminarSnap = await getDocs(collection(db, "usersSeminarIsi"));
-//     const skripsiSnap = await getDocs(collection(db, "usersSkripsi"));
-
-//     setDataSempro(semproSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//     setDataSeminarIsi(seminarSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//     setDataSkripsi(skripsiSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//   };
-
-//   useEffect(() => { fetchData(); }, []);
-
-//   const waktuSidang = ["08:00", "09:30", "11:00", "13:00", "14:30", "16:00"];
-//   const ruangan = ["Ruang A", "Ruang B", "Ruang C"];
-//   const dosen = ["Dr. A", "Dr. B", "Dr. C", "Dr. D"];
-
-//   const generateGA = (dataset) => {
-//     const jumlahPopulasi = 20;
-//     const totalGenerasi = 10;
-//     let populasi = [];
-//     let log = [];
-
-//     for (let i = 0; i < jumlahPopulasi; i++) {
-//       const solusi = dataset.map((mhs) => {
-//         const waktu = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//         const ruang = ruangan[Math.floor(Math.random() * ruangan.length)];
-//         const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-//         let penguji = dosen[Math.floor(Math.random() * dosen.length)];
-//         while (penguji === pembimbing) penguji = dosen[Math.floor(Math.random() * dosen.length)];
-//         return {
-//           mahasiswaId: mhs.id,
-//           namaMahasiswa: mhs.nama,
-//           tanggal: "2025-07-22",
-//           jam: waktu,
-//           ruangan: ruang,
-//           pembimbing,
-//           penguji,
-//         };
-//       });
-//       const fitness = hitungFitness(solusi);
-//       populasi.push({ solusi, fitness });
-//     }
-
-//     for (let g = 0; g < totalGenerasi; g++) {
-//       populasi.sort((a, b) => b.fitness - a.fitness);
-//       log.push(`Generasi ${g + 1}: fitness terbaik ${populasi[0].fitness}`);
-
-//       const parentA = populasi[0].solusi;
-//       const parentB = populasi[1].solusi;
-//       const crossoverPoint = Math.floor(parentA.length / 2);
-
-//       const child = [
-//         ...parentA.slice(0, crossoverPoint),
-//         ...parentB.slice(crossoverPoint)
-//       ];
-
-//       // Mutasi
-//       for (let i = 0; i < child.length; i++) {
-//         if (Math.random() < 0.1) {
-//           child[i].jam = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//         }
-//       }
-
-//       const fitnessAnak = hitungFitness(child);
-//       populasi.pop();
-//       populasi.push({ solusi: child, fitness: fitnessAnak });
-//     }
-
-//     populasi.sort((a, b) => b.fitness - a.fitness);
-//     setJadwalTerbaik(populasi[0].solusi);
-//     setFitnessTerbaik(populasi[0].fitness);
-//     setLogGenerasi(log);
-//   };
-
-//   const hitungFitness = (solusi) => {
-//     let score = 100;
-//     for (let i = 0; i < solusi.length; i++) {
-//       for (let j = i + 1; j < solusi.length; j++) {
-//         if (solusi[i].jam === solusi[j].jam && solusi[i].tanggal === solusi[j].tanggal) {
-//           if (solusi[i].ruangan === solusi[j].ruangan) score -= 10;
-//           if (solusi[i].pembimbing === solusi[j].pembimbing) score -= 10;
-//           if (solusi[i].penguji === solusi[j].penguji) score -= 10;
-//         }
-//       }
-//     }
-//     return score;
-//   };
-
-//   const simpanKeFirestore = async () => {
-//     for (const jadwal of jadwalTerbaik) {
-//       await addDoc(collection(db, "jadwal_sidang_sempro"), jadwal);
-//     }
-//     alert("Jadwal berhasil disimpan ke Firestore!");
-//   };
-
-//   const getCurrentDataset = () => {
-//     if (selectedCategory === "SeminarIsi") return dataSeminarIsi;
-//     if (selectedCategory === "Skripsi") return dataSkripsi;
-//     return dataSempro;
-//   };
-
-//   return (
-//     <motion.div className={styles.container} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-//       <div className={styles.gridAnalyticBox}>
-//         <div className={styles.card} onClick={() => setSelectedCategory("Sempro")}>📘 Mahasiswa Sempro ({dataSempro.length})</div>
-//         <div className={styles.card} onClick={() => setSelectedCategory("SeminarIsi")}>📕 Seminar Isi ({dataSeminarIsi.length})</div>
-//         <div className={styles.card} onClick={() => setSelectedCategory("Skripsi")}>📗 Skripsi ({dataSkripsi.length})</div>
-//       </div>
-
-//       <div className={styles.actionButtons}>
-//         <button onClick={() => generateGA(getCurrentDataset())}>🚀 Jalankan Genetic Algorithm</button>
-//         {jadwalTerbaik.length > 0 && <button onClick={simpanKeFirestore}>💾 Simpan Jadwal ke Firestore</button>}
-//       </div>
-
-//       <AnimatePresence>
-//         {logGenerasi.length > 0 && (
-//           <motion.div className={styles.logBox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-//             <h4>🧬 Log Proses Generasi:</h4>
-//             <ul>
-//               {logGenerasi.map((log, idx) => <li key={idx}>{log}</li>)}
-//             </ul>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-
-//       <div className={styles.resultSection}>
-//         <h3>📊 Fitness Terbaik: {fitnessTerbaik ?? "Belum dihitung"}</h3>
-//         <table>
-//           <thead>
-//             <tr>
-//               <th>Nama</th>
-//               <th>Tanggal</th>
-//               <th>Jam</th>
-//               <th>Ruangan</th>
-//               <th>Pembimbing</th>
-//               <th>Penguji</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {jadwalTerbaik.map((row, i) => (
-//               <tr key={i}>
-//                 <td>{row.namaMahasiswa}</td>
-//                 <td>{row.tanggal}</td>
-//                 <td>{row.jam}</td>
-//                 <td>{row.ruangan}</td>
-//                 <td>{row.pembimbing}</td>
-//                 <td>{row.penguji}</td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </motion.div>
-//   );
-// };
-
-// export default KaprodiPage;
-
-
-
-
-
-
-
-
-
-// // KaprodiPage.jsx (Final Struktur + GA + Visualisasi Chart + Animasi Mewah + Simpan Riwayat + Beban Dosen + UI Analitik GA)
-// "use client"
-// import { useEffect, useState } from "react";
-// import { collection, getDocs, addDoc } from "firebase/firestore";
-// import { auth, db } from "@/lib/firebase";
-// import styles from "./KaprodiPage.module.scss";
-// import { motion, AnimatePresence } from "framer-motion";
-// import {
-//   LineChart,
-//   Line,
-//   CartesianGrid,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   ResponsiveContainer,
-// } from "recharts";
-
-// const KaprodiPage = () => {
-//   const [selectedCategory, setSelectedCategory] = useState("Sempro");
-//   const [dataSempro, setDataSempro] = useState([]);
-//   const [dataSeminarIsi, setDataSeminarIsi] = useState([]);
-//   const [dataSkripsi, setDataSkripsi] = useState([]);
-//   const [jadwalTerbaik, setJadwalTerbaik] = useState([]);
-//   const [fitnessTerbaik, setFitnessTerbaik] = useState(null);
-//   const [logGenerasi, setLogGenerasi] = useState([]);
-//   const [chartData, setChartData] = useState([]);
-//   const [dosenLoad, setDosenLoad] = useState({});
-//   const [processSteps, setProcessSteps] = useState([]);
-
-//   const fetchData = async () => {
-//     const semproSnap = await getDocs(collection(db, "usersSempro"));
-//     const seminarSnap = await getDocs(collection(db, "usersSeminarIsi"));
-//     const skripsiSnap = await getDocs(collection(db, "usersSkripsi"));
-
-//     setDataSempro(semproSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//     setDataSeminarIsi(seminarSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//     setDataSkripsi(skripsiSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//   };
-
-//   useEffect(() => { fetchData(); }, []);
-
-//   const waktuSidang = ["08:00", "09:30", "11:00", "13:00", "14:30", "16:00"];
-//   const tanggalSidang = ["2025-07-22", "2025-07-23"];
-//   const ruangan = ["Ruang A", "Ruang B", "Ruang C"];
-//   const dosen = ["Dr. A", "Dr. B", "Dr. C", "Dr. D"];
-
-//   const generateGA = async (dataset) => {
-//     const jumlahPopulasi = 20;
-//     const totalGenerasi = 10;
-//     let populasi = [];
-//     let log = [];
-//     let chartLog = [];
-//     let steps = [];
-
-//     const createRandomSolution = () => dataset.map((mhs) => {
-//       const waktu = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//       const tanggal = tanggalSidang[Math.floor(Math.random() * tanggalSidang.length)];
-//       const ruang = ruangan[Math.floor(Math.random() * ruangan.length)];
-//       const pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-//       let penguji = dosen[Math.floor(Math.random() * dosen.length)];
-//       while (penguji === pembimbing) penguji = dosen[Math.floor(Math.random() * dosen.length)];
-//       return { mahasiswaId: mhs.id, namaMahasiswa: mhs.nama, tanggal, jam: waktu, ruangan: ruang, pembimbing, penguji };
-//     });
-
-//     for (let i = 0; i < jumlahPopulasi; i++) {
-//       const solusi = createRandomSolution();
-//       const fitness = hitungFitness(solusi);
-//       populasi.push({ solusi, fitness });
-//     }
-
-//     for (let g = 0; g < totalGenerasi; g++) {
-//       populasi.sort((a, b) => b.fitness - a.fitness);
-//       const best = populasi[0];
-//       log.push(`Generasi ${g + 1}: fitness terbaik ${best.fitness}`);
-//       chartLog.push({ generasi: `Gen-${g + 1}`, fitness: best.fitness });
-
-//       await addDoc(collection(db, "riwayat_GA"), {
-//         waktu: new Date().toISOString(),
-//         generasi: g + 1,
-//         fitness: best.fitness,
-//         jadwal: best.solusi
-//       });
-
-//       steps.push(`🎯 Seleksi Gen-${g + 1}: ${best.fitness}`);
-
-//       const selectParent = () => {
-//         const kandidat = [
-//           populasi[Math.floor(Math.random() * populasi.length)],
-//           populasi[Math.floor(Math.random() * populasi.length)]
-//         ];
-//         return kandidat.sort((a, b) => b.fitness - a.fitness)[0].solusi;
-//       };
-
-//       const parentA = selectParent();
-//       const parentB = selectParent();
-//       const crossoverPoint = Math.floor(parentA.length / 2);
-//       const child = [...parentA.slice(0, crossoverPoint), ...parentB.slice(crossoverPoint)].map(gene => ({ ...gene }));
-
-//       steps.push(`🔀 Crossover Gen-${g + 1}: titik potong ${crossoverPoint}`);
-
-//       for (let i = 0; i < child.length; i++) {
-//         if (Math.random() < 0.1) {
-//           const tipeMutasi = Math.floor(Math.random() * 4);
-//           if (tipeMutasi === 0) child[i].jam = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//           if (tipeMutasi === 1) child[i].ruangan = ruangan[Math.floor(Math.random() * ruangan.length)];
-//           if (tipeMutasi === 2) child[i].pembimbing = dosen[Math.floor(Math.random() * dosen.length)];
-//           if (tipeMutasi === 3) child[i].penguji = dosen[Math.floor(Math.random() * dosen.length)];
-//         }
-//       }
-
-//       steps.push(`🧪 Mutasi Gen-${g + 1}`);
-
-//       const fitnessAnak = hitungFitness(child);
-//       populasi.pop();
-//       populasi.push({ solusi: child, fitness: fitnessAnak });
-//     }
-
-//     populasi.sort((a, b) => b.fitness - a.fitness);
-//     setJadwalTerbaik(populasi[0].solusi);
-//     setFitnessTerbaik(populasi[0].fitness);
-//     setLogGenerasi(log);
-//     setChartData(chartLog);
-//     setProcessSteps(steps);
-
-//     const dosenCounter = {};
-//     populasi[0].solusi.forEach(({ pembimbing, penguji }) => {
-//       dosenCounter[pembimbing] = (dosenCounter[pembimbing] || 0) + 1;
-//       dosenCounter[penguji] = (dosenCounter[penguji] || 0) + 1;
-//     });
-//     setDosenLoad(dosenCounter);
-//   };
-
-//   const hitungFitness = (solusi) => {
-//     let score = 100;
-//     const dosenLoad = {};
-//     for (let i = 0; i < solusi.length; i++) {
-//       const { jam, tanggal, ruangan, pembimbing, penguji } = solusi[i];
-//       for (let j = i + 1; j < solusi.length; j++) {
-//         const b = solusi[j];
-//         if (jam === b.jam && tanggal === b.tanggal) {
-//           if (ruangan === b.ruangan) score -= 10;
-//           if (pembimbing === b.pembimbing) score -= 10;
-//           if (penguji === b.penguji) score -= 10;
-//         }
-//       }
-//       dosenLoad[pembimbing] = (dosenLoad[pembimbing] || 0) + 1;
-//       dosenLoad[penguji] = (dosenLoad[penguji] || 0) + 1;
-//     }
-//     const nilaiMax = Math.max(...Object.values(dosenLoad));
-//     const nilaiMin = Math.min(...Object.values(dosenLoad));
-//     score -= (nilaiMax - nilaiMin) * 5;
-//     return score;
-//   };
-
-//   const simpanKeFirestore = async () => {
-//     for (const jadwal of jadwalTerbaik) {
-//       await addDoc(collection(db, "jadwal_sidang_sempro"), jadwal);
-//     }
-//     alert("Jadwal berhasil disimpan ke Firestore!");
-//   };
-
-//   const getCurrentDataset = () => {
-//     if (selectedCategory === "SeminarIsi") return dataSeminarIsi;
-//     if (selectedCategory === "Skripsi") return dataSkripsi;
-//     return dataSempro;
-//   };
-
-//   return (
-//     <motion.div className={styles.container} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-//       <div className={styles.gridAnalyticBox}>
-//         <div className={styles.card} onClick={() => setSelectedCategory("Sempro")}>📘 Mahasiswa Sempro ({dataSempro.length})</div>
-//         <div className={styles.card} onClick={() => setSelectedCategory("SeminarIsi")}>📕 Seminar Isi ({dataSeminarIsi.length})</div>
-//         <div className={styles.card} onClick={() => setSelectedCategory("Skripsi")}>📗 Skripsi ({dataSkripsi.length})</div>
-//       </div>
-
-//       <div className={styles.actionButtons}>
-//         <motion.button whileTap={{ scale: 0.95 }} onClick={() => generateGA(getCurrentDataset())}>🚀 Jalankan Genetic Algorithm</motion.button>
-//         {jadwalTerbaik.length > 0 && <motion.button whileTap={{ scale: 0.95 }} onClick={simpanKeFirestore}>💾 Simpan Jadwal ke Firestore</motion.button>}
-//       </div>
-
-//       <AnimatePresence>
-//         {logGenerasi.length > 0 && (
-//           <motion.div className={styles.logBox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-//             <h4>🧬 Log Proses Generasi:</h4>
-//             <ul>
-//               {logGenerasi.map((log, idx) => <li key={idx}>{log}</li>)}
-//             </ul>
-//             <h4>⚙️ Detail Proses GA:</h4>
-//             <ul>
-//               {processSteps.map((step, idx) => <li key={idx}>{step}</li>)}
-//             </ul>
-//             <ResponsiveContainer width="100%" height={300}>
-//               <LineChart data={chartData}>
-//                 <Line type="monotone" dataKey="fitness" stroke="#8884d8" strokeWidth={2} />
-//                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-//                 <XAxis dataKey="generasi" />
-//                 <YAxis domain={[0, 100]} />
-//                 <Tooltip />
-//               </LineChart>
-//             </ResponsiveContainer>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-
-//       <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-//   <h3>📊 Fitness Terbaik: {fitnessTerbaik ?? "Belum dihitung"}</h3>
-//   {Array.from(new Set(jadwalTerbaik.map(j => j.tanggal))).map((tanggal, i) => (
-//     <div key={i}>
-//       <h4 style={{ marginTop: "1rem" }}>📅 Tanggal: {tanggal}</h4>
-//       <div style={{ display: "flex", gap: "2rem", overflowX: "auto" }}>
-//         {ruangan.map((ruang, j) => (
-//           <div key={j} style={{ minWidth: "300px" }}>
-//             <h5 style={{ textAlign: "center" }}>🏛 {ruang}</h5>
-//             <table>
-//               <thead>
-//                 <tr>
-//                   <th>Nama</th>
-//                   <th>Jam</th>
-//                   <th>Pembimbing</th>
-//                   <th>Penguji</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {jadwalTerbaik.filter(row => row.tanggal === tanggal && row.ruangan === ruang).map((row, k) => (
-//                   <tr key={k}>
-//                     <td>{row.namaMahasiswa}</td>
-//                     <td>{row.jam}</td>
-//                     <td>{row.pembimbing}</td>
-//                     <td>{row.penguji}</td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   ))}
-// </motion.div>
-
-//       <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-//         <h4>📚 Beban Dosen (Pembimbing + Penguji)</h4>
-//         <ul>
-//           {Object.entries(dosenLoad).map(([nama, jumlah], i) => (
-//             <li key={i}>{nama}: {jumlah} sidang</li>
-//           ))}
-//         </ul>
-//       </motion.div>
-//     </motion.div>
-//   );
-// };
-
-// export default KaprodiPage;
 
 
 
@@ -3561,7 +2989,6 @@ const [activeTab, setActiveTab] = useState("log");
                         .filter(row => row.tanggal === tanggal && row.ruangan === ruang)
                         // .filter(row => !filterDosen || [row.pembimbing, row.penguji1, row.penguji2, row.penguji3].includes(filterDosen))
                         .filter(row => !filterDosen || [row.pembimbing, row.dosen, row.penguji1, row.penguji2, row.penguji3].includes(filterDosen))
-
                         .map((row, k) => (
                           <motion.tr
                             key={k}
@@ -3576,7 +3003,6 @@ const [activeTab, setActiveTab] = useState("log");
                           >
                             <td>{row.namaMahasiswa}</td>
                             <td>{row.jam}</td>
-                            {/* <td>{row.pembimbing}</td> */}
                             <td>{row.dosen || row.pembimbing}</td>
                             <td>{row.penguji1}</td>
                             <td>{row.penguji2}</td>
