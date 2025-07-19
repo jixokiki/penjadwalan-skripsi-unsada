@@ -3102,27 +3102,74 @@ const KaprodiPage = () => {
 };
 
 
+  // const hitungFitness = (solusi) => {
+  //   let score = 100;
+  //   const dosenLoad = {};
+  //   for (let i = 0; i < solusi.length; i++) {
+  //     const { jam, tanggal, ruangan, pembimbing, penguji } = solusi[i];
+  //     for (let j = i + 1; j < solusi.length; j++) {
+  //       const b = solusi[j];
+  //       if (jam === b.jam && tanggal === b.tanggal) {
+  //         if (ruangan === b.ruangan) score -= 10;
+  //         if (pembimbing === b.pembimbing) score -= 10;
+  //         if (penguji === b.penguji) score -= 10;
+  //       }
+  //     }
+  //     dosenLoad[pembimbing] = (dosenLoad[pembimbing] || 0) + 1;
+  //     dosenLoad[penguji] = (dosenLoad[penguji] || 0) + 1;
+  //   }
+  //   const nilaiMax = Math.max(...Object.values(dosenLoad));
+  //   const nilaiMin = Math.min(...Object.values(dosenLoad));
+  //   score -= (nilaiMax - nilaiMin) * 5;
+  //   return score;
+  // };
+
+
   const hitungFitness = (solusi) => {
-    let score = 100;
-    const dosenLoad = {};
-    for (let i = 0; i < solusi.length; i++) {
-      const { jam, tanggal, ruangan, pembimbing, penguji } = solusi[i];
-      for (let j = i + 1; j < solusi.length; j++) {
-        const b = solusi[j];
-        if (jam === b.jam && tanggal === b.tanggal) {
-          if (ruangan === b.ruangan) score -= 10;
-          if (pembimbing === b.pembimbing) score -= 10;
-          if (penguji === b.penguji) score -= 10;
+  let score = 100;
+  const dosenLoad = {};
+
+  for (let i = 0; i < solusi.length; i++) {
+    const a = solusi[i];
+    for (let j = i + 1; j < solusi.length; j++) {
+      const b = solusi[j];
+
+      const waktuSama = a.jam === b.jam && a.tanggal === b.tanggal;
+
+      if (waktuSama) {
+        // Penalti: Bentrok ruangan
+        if (a.ruangan === b.ruangan) score -= 10;
+
+        // Penalti: Pembimbing sama
+        if (a.pembimbing === b.pembimbing) score -= 10;
+
+        // Penalti: Bentrok penguji walau beda ruangan
+        const pengujiA = [a.penguji1, a.penguji2].filter(Boolean);
+        const pengujiB = [b.penguji1, b.penguji2].filter(Boolean);
+
+        const pengujiBentrok = pengujiA.some(p => pengujiB.includes(p));
+        if (pengujiBentrok) {
+          score -= 15; // Penalti untuk bentrok antar penguji (jam & tanggal sama)
         }
       }
-      dosenLoad[pembimbing] = (dosenLoad[pembimbing] || 0) + 1;
-      dosenLoad[penguji] = (dosenLoad[penguji] || 0) + 1;
     }
-    const nilaiMax = Math.max(...Object.values(dosenLoad));
-    const nilaiMin = Math.min(...Object.values(dosenLoad));
-    score -= (nilaiMax - nilaiMin) * 5;
-    return score;
-  };
+
+    // Load dosen
+    [a.pembimbing, a.penguji1, a.penguji2, a.penguji3]
+      .filter(Boolean)
+      .forEach(d => {
+        dosenLoad[d] = (dosenLoad[d] || 0) + 1;
+      });
+  }
+
+  // Penalti distribusi beban tidak merata
+  const nilaiMax = Math.max(...Object.values(dosenLoad));
+  const nilaiMin = Math.min(...Object.values(dosenLoad));
+  score -= (nilaiMax - nilaiMin) * 5;
+
+  return score;
+};
+
 
   // const simpanKeFirestore = async () => {
   //   for (const jadwal of jadwalTerbaik) {
