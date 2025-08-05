@@ -124,7 +124,7 @@ export const exportToPDF = async (grouped) => {
       head: [["No", "NIM", "Nama", "Judul", "Jam", "Pembimbing", "Penguji", "Zoom", "Tanda Tangan"]],
       body: rows.map((row, i) => [
         i + 1,
-        row.nim ?? "-",
+        row.mahasiswaId ?? "-",
         row.namaMahasiswa ?? "-",
         row.judul ?? "-",
         row.jam ?? "-",
@@ -258,7 +258,7 @@ export const exportToWord = (grouped) => {
       content += `
         <tr>
           <td>${i + 1}</td>
-          <td>${item.nim ?? "-"}</td>
+          <td>${item.mahasiswaId ?? "-"}</td>
           <td>${item.namaMahasiswa ?? "-"}</td>
           <td>${item.judul ?? "-"}</td>
           <td>${item.jam ?? "-"}</td>

@@ -4233,732 +4233,10 @@
 
 
 
-// // KaprodiPage.jsx
-// "use client"
-// import { useEffect, useState } from "react";
-// import { collection, getDocs, addDoc, doc, updateDoc, getDoc, query, where } from "firebase/firestore";
-// import { auth, db } from "@/lib/firebase";
-// import styles from "./KaprodiPage.module.scss";
-// import { motion, AnimatePresence } from "framer-motion";
-// import {
-//   LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar
-// } from "recharts";
-// import { saveAs } from "file-saver";
-// import * as XLSX from "xlsx";
-// import jsPDF from "jspdf";
-// import autoTable from "jspdf-autotable";
-// import { exportToWord, exportToPDF, exportToExcel } from "../lib/exportHelpers";
-
-// const KaprodiPage = () => {
-//   const [dataSempro, setDataSempro] = useState([]);
-//   const [dataSeminarIsi, setDataSeminarIsi] = useState([]);
-//   const [jadwalSeminarIsi, setJadwalSeminarIsi] = useState([]);
-//   const [listDosen, setListDosen] = useState([]);
-//   const [jadwalTerbaik, setJadwalTerbaik] = useState([]);
-//   const [fitnessTerbaik, setFitnessTerbaik] = useState(null);
-
-
-//   const [selectedCategory, setSelectedCategory] = useState("SeminarIsi");
-    
-//     // const [dataSeminarIsi, setDataSeminarIsi] = useState([]);
-//     // const [dataSkripsi, setDataSkripsi] = useState([]);
-    
-//     const [logGenerasi, setLogGenerasi] = useState([]);
-//     const [chartData, setChartData] = useState([]);
-//     const [dosenLoad, setDosenLoad] = useState({});
-//     const [processSteps, setProcessSteps] = useState([]);
-    
-
-//   useEffect(() => {
-//     fetchData();
-//     fetchSeminarIsiDariSempro();
-//   }, []);
-
-//   const fetchData = async () => {
-//     const semproSnap = await getDocs(collection(db, "usersSempro"));
-//     const seminarSnap = await getDocs(collection(db, "usersSeminarIsi"));
-//     const pembimbingSnap = await getDocs(collection(db, "dosen"));
-//     const pengujiSnap = await getDocs(collection(db, "penguji"));
-
-//     setDataSempro(semproSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-//     setDataSeminarIsi(seminarSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-
-//     const pembimbingList = pembimbingSnap.docs.map(doc => doc.data().nama);
-//     const pengujiList = pengujiSnap.docs.map(doc => doc.data().nama);
-//     const combinedDosen = Array.from(new Set([...pembimbingList, ...pengujiList]));
-//     setListDosen(combinedDosen);
-//   };
-
-//   const fetchSeminarIsiDariSempro = async () => {
-//     const q = query(collection(db, "jadwal_sempro_GA"));
-//     const snapshot = await getDocs(q);
-//     const hasil = snapshot.docs.map(doc => doc.data());
-
-//     const transformed = hasil.map(item => {
-//       return {
-//         mahasiswaId: item.mahasiswaId,
-//         namaMahasiswa: item.namaMahasiswa,
-//         pembimbing: item.penguji1 ?? "-",
-//         penguji1: item.penguji2 ?? "-",
-//         penguji2: item.penguji3 ?? "-",
-//       };
-//     });
-
-//     setJadwalSeminarIsi(transformed);
-//   };
-
-
-//     const getCurrentDataset = () => dataSempro;
-
-//       const maxLoad = Math.max(...Object.values(dosenLoad));
-
-
-// const [activeTab, setActiveTab] = useState("log");
-//   const [showCrossover, setShowCrossover] = useState(true);
-//   const [showMutasi, setShowMutasi] = useState(true);
-
-//   const maxFitness = Math.max(...chartData.map((d) => d.fitness));
-
-//   const filteredLog = logGenerasi.filter((log) => {
-//     if (log.includes("Crossover") && !showCrossover) return false;
-//     if (log.includes("Mutasi") && !showMutasi) return false;
-//     return true;
-//   });
-
-//   const exportLogToTxt = (logData) => {
-//     const blob = new Blob([logData.join("\n")], {
-//       type: "text/plain;charset=utf-8",
-//     });
-//     const link = document.createElement("a");
-//     link.href = URL.createObjectURL(blob);
-//     link.download = "log_generasi.txt";
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-//   };
-
-// const formatDataForExport = () => {
-//   const grouped = {};
-//   jadwalTerbaik.forEach(entry => {
-//     const key = `${entry.tanggal}-${entry.ruangan}`;
-//     if (!grouped[key]) grouped[key] = [];
-//     grouped[key].push(entry);
-//   });
-//   return grouped;
-// };
-
-
-
-
-
-
-
-//   const waktuSidang = ["07:00","08:00", "09:00","10:00","11:00", "12:30", "13:30", "14:30", "15:30","16:30","17:30"];
-//   const tanggalSidang = ["2025-07-22", "2025-07-23"];
-//   // const ruangan = ["Ruang A", "Ruang B", "Ruang C"];
-//   const [ruangan, setRuangan] = useState(["Ruang A", "Ruang B", "Ruang C"]);
-//   const [filterDosen, setFilterDosen] = useState("");
-
-//   // Deteksi konflik: dosen/penguji yang sama di jam & tanggal yang sama di ruangan berbeda
-//   const konflikSet = new Set();
-//   const semuaSidang = jadwalTerbaik;
-//   semuaSidang.forEach((a, idx) => {
-//     semuaSidang.forEach((b, jdx) => {
-//       if (
-//         idx !== jdx &&
-//         a.jam === b.jam &&
-//         a.tanggal === b.tanggal &&
-//         a.ruangan !== b.ruangan &&
-//         [a.pembimbing, a.penguji1, a.penguji2, a.penguji3].some((dosen) =>
-//           [b.pembimbing, b.penguji1, b.penguji2, b.penguji3].includes(dosen)
-//         )
-//       ) {
-//         konflikSet.add(`${a.namaMahasiswa}-${a.jam}`);
-//         konflikSet.add(`${b.namaMahasiswa}-${b.jam}`);
-//       }
-//     });
-//   });
-
-// // Fungsi Hitung Fitness
-// const hitungFitness = (solusi) => {
-//   let score = 1000;
-//   const jadwalMap = {};
-//   const dosenMap = {};
-
-//   solusi.forEach((entry) => {
-//     const key = `${entry.tanggal}-${entry.jam}-${entry.ruangan}`;
-//     if (!jadwalMap[key]) jadwalMap[key] = [];
-//     jadwalMap[key].push(entry);
-
-//     [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3].filter(Boolean).forEach((dosen) => {
-//       const dosKey = `${entry.tanggal}-${entry.jam}-${dosen}`;
-//       if (!dosenMap[dosKey]) dosenMap[dosKey] = 0;
-//       dosenMap[dosKey]++;
-//     });
-//   });
-
-//   Object.values(jadwalMap).forEach(list => {
-//     if (list.length > 1) score -= 50 * (list.length - 1);
-//   });
-
-//   Object.values(dosenMap).forEach(count => {
-//     if (count > 1) score -= 50 * (count - 1);
-//   });
-
-//   solusi.forEach(entry => {
-//     if (entry.penguji1 && entry.penguji2 && entry.penguji1 === entry.penguji2) score -= 30;
-//     if (entry.penguji1 && entry.penguji3 && entry.penguji1 === entry.penguji3) score -= 30;
-//     if (entry.penguji2 && entry.penguji3 && entry.penguji2 === entry.penguji3) score -= 30;
-//   });
-
-//   const dosenTotal = {};
-//   solusi.forEach(entry => {
-//     [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3].filter(Boolean).forEach(d => {
-//       dosenTotal[d] = (dosenTotal[d] || 0) + 1;
-//     });
-//   });
-
-//   const bebanDosen = Object.values(dosenTotal);
-//   const max = Math.max(...bebanDosen);
-//   const min = Math.min(...bebanDosen);
-//   score -= (max - min) * 10;
-
-//   return score;
-// };
-
-// // Fungsi Tanggal Sidang Dinamis
-// const getTanggalSidang = (jumlahMahasiswa) => {
-//   const baseTanggal = new Date("2025-07-22");
-//   const jumlahSlotPerHari = ruangan.length * waktuSidang.length;
-//   const jumlahHari = Math.ceil(jumlahMahasiswa / jumlahSlotPerHari);
-//   const hasil = [];
-
-//   for (let i = 0; i < jumlahHari; i++) {
-//     const tgl = new Date(baseTanggal);
-//     tgl.setDate(tgl.getDate() + i);
-//     hasil.push(tgl.toISOString().split("T")[0]);
-//   }
-
-//   return hasil;
-// };
-
-// // ✅ Fungsi Pemindahan Entry Bentrok ke Hari Berikutnya dengan Batas Maksimal Hari
-// const resolveBentrokDenganPindahHari = (
-//   solusi,
-//   tanggalSidang,
-//   maxHari = 10,
-//   maxPerRuangan = 15,
-//   maxTotalHari = 4
-// ) => {
-//   const hasil = [...solusi];
-//   const dosenMap = {};
-//   const ruangMap = {};
-//   const ruangTotalMap = {}; // key: tanggal-ruangan
-
-//   for (let i = 0; i < hasil.length; i++) {
-//     let entry = hasil[i];
-//     let tanggalIndex = tanggalSidang.indexOf(entry.tanggal);
-//     let percobaan = 0;
-
-//     while (percobaan < maxHari) {
-//       const waktu = `${entry.tanggal}-${entry.jam}`;
-//       const ruangKey = `${entry.tanggal}-${entry.ruangan}`;
-//       const bentrokDosen = [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
-//         .filter(Boolean)
-//         .some(d => dosenMap[`${waktu}-${d}`]);
-//       const bentrokRuang = ruangMap[`${waktu}-${entry.ruangan}`];
-//       const overloadRuang = (ruangTotalMap[ruangKey] || 0) >= maxPerRuangan;
-
-//       if (!bentrokDosen && !bentrokRuang && !overloadRuang) break;
-
-//       tanggalIndex++;
-//       if (tanggalIndex >= tanggalSidang.length) {
-//         if (tanggalSidang.length >= maxTotalHari) break;
-//         const nextDate = new Date(tanggalSidang[tanggalSidang.length - 1]);
-//         nextDate.setDate(nextDate.getDate() + 1);
-//         const nextStr = nextDate.toISOString().split("T")[0];
-//         tanggalSidang.push(nextStr);
-//       }
-
-//       entry.tanggal = tanggalSidang[tanggalIndex];
-//       percobaan++;
-//     }
-
-//     const waktuBaru = `${entry.tanggal}-${entry.jam}`;
-//     const ruangKeyBaru = `${entry.tanggal}-${entry.ruangan}`;
-//     [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
-//       .filter(Boolean)
-//       .forEach(d => {
-//         dosenMap[`${waktuBaru}-${d}`] = true;
-//       });
-//     ruangMap[`${waktuBaru}-${entry.ruangan}`] = true;
-//     ruangTotalMap[ruangKeyBaru] = (ruangTotalMap[ruangKeyBaru] || 0) + 1;
-//   }
-
-//   return hasil;
-// };
-
-// // Fungsi Utama GA
-// const generateGA = async (datasetOriginal) => {
-//   let dataset = [...datasetOriginal];
-
-//   if (selectedCategory === "Sempro") {
-//     dataset = dataset.filter(m => m.statusSempro === "Masih Disidangkan");
-//     if (dataset.length === 0) {
-//       alert("Tidak ada mahasiswa Sempro dengan status 'Masih Disidangkan'");
-//       return;
-//     }
-//   }
-
-//   if (listDosen.length < 4) {
-//     alert("Minimal butuh 4 dosen untuk pembimbing + penguji.");
-//     return;
-//   }
-
-//   const tanggalSidang = getTanggalSidang(dataset.length);
-//   const jumlahPopulasi = 20;
-//   const totalGenerasi = 10;
-//   let populasi = [], log = [], chartLog = [], steps = [];
-
-//   const getPengujiSempro = (namaMahasiswa) => {
-//     const mhs = dataSempro.find(d => d.nama === namaMahasiswa);
-//     return {
-//       penguji1: mhs?.penguji1 || listDosen[Math.floor(Math.random() * listDosen.length)],
-//       penguji2: mhs?.penguji2 || listDosen[Math.floor(Math.random() * listDosen.length)],
-//     };
-//   };
-
-//   const createRandomSolution = () => dataset.map((mhs) => {
-//     const waktu = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//     const tanggal = tanggalSidang[Math.floor(Math.random() * tanggalSidang.length)];
-//     const ruang = ruangan[Math.floor(Math.random() * ruangan.length)];
-//     const pembimbing = mhs.dosen || listDosen[Math.floor(Math.random() * listDosen.length)];
-//         const judul = mhs.judul || "-";
-
-//     if (selectedCategory === "Sempro") {
-//       let penguji1 = pembimbing, penguji2 = pembimbing;
-//       while (penguji1 === pembimbing) penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       while (penguji2 === pembimbing || penguji2 === penguji1) penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       return { mahasiswaId: mhs.id, namaMahasiswa: mhs.nama, tanggal, jam: waktu, ruangan: ruang, pembimbing, penguji1, penguji2 };
-//     }
-
-//     // if (selectedCategory === "SeminarIsi" || selectedCategory === "Skripsi") {
-//     //   const { penguji1, penguji2 } = getPengujiSempro(mhs.nama);
-//     //   return {
-//     //     mahasiswaId: mhs.id, namaMahasiswa: mhs.nama,
-//     //     tanggal, jam: waktu, ruangan: ruang,
-//     //     pembimbing,
-//     //     penguji1: pembimbing,
-//     //     penguji2,
-//     //     penguji3: listDosen[Math.floor(Math.random() * listDosen.length)]
-//     //   };
-//     // }
-//      if (selectedCategory === "SeminarIsi" || selectedCategory === "Skripsi") {
-//       // Butuh 3 penguji, tidak boleh sama satu sama lain & pembimbing
-//       let penguji1 = pembimbing;
-//       let penguji2 = pembimbing;
-//       let penguji3 = pembimbing;
-
-//       while (penguji1 === pembimbing) {
-//         penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       }
-
-//       while (penguji2 === pembimbing || penguji2 === penguji1) {
-//         penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       }
-
-//       while (
-//         penguji3 === pembimbing ||
-//         penguji3 === penguji1 ||
-//         penguji3 === penguji2
-//       ) {
-//         penguji3 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       }
-
-//       return {
-//         mahasiswaId: mhs.id,
-//         namaMahasiswa: mhs.nama,
-//         tanggal,
-//         jam: waktu,
-//         ruangan: ruang,
-//         pembimbing,
-//         judul,
-//         penguji1,
-//         penguji2,
-//         penguji3,
-//       };
-//     }
-
-//     return null; // fallback
-//   });
-
-//   for (let i = 0; i < jumlahPopulasi; i++) {
-//     let solusi = createRandomSolution();
-//     solusi = resolveBentrokDenganPindahHari(solusi, tanggalSidang, 10, 15, 4);
-//     const fitness = hitungFitness(solusi);
-//     populasi.push({ solusi, fitness });
-//   }
-
-//   for (let g = 0; g < totalGenerasi; g++) {
-//     populasi.sort((a, b) => b.fitness - a.fitness);
-//     const best = populasi[0];
-//     log.push(`Generasi ${g + 1}: fitness terbaik ${best.fitness}`);
-//     chartLog.push({ generasi: `Gen-${g + 1}`, fitness: best.fitness });
-
-//     await addDoc(collection(db, "riwayat_GA"), {
-//       waktu: new Date().toISOString(),
-//       kategori: selectedCategory,
-//       generasi: g + 1,
-//       fitness: best.fitness,
-//       jadwal: best.solusi,
-//     });
-
-//     steps.push(`🎯 Seleksi Gen-${g + 1}: ${best.fitness}`);
-
-//     const selectParent = () => {
-//       const kandidat = [
-//         populasi[Math.floor(Math.random() * populasi.length)],
-//         populasi[Math.floor(Math.random() * populasi.length)]
-//       ];
-//       return kandidat.sort((a, b) => b.fitness - a.fitness)[0].solusi;
-//     };
-
-//     const parentA = selectParent();
-//     const parentB = selectParent();
-//     const crossoverPoint = Math.floor(parentA.length / 2);
-//     let child = [...parentA.slice(0, crossoverPoint), ...parentB.slice(crossoverPoint)].map(gene => ({ ...gene }));
-
-//     steps.push(`🔀 Crossover Gen-${g + 1}: titik potong ${crossoverPoint}`);
-
-//     for (let i = 0; i < child.length; i++) {
-//       if (Math.random() < 0.1) {
-//         const tipeMutasi = Math.floor(Math.random() * 5);
-//         if (tipeMutasi === 0) child[i].jam = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
-//         if (tipeMutasi === 1) child[i].ruangan = ruangan[Math.floor(Math.random() * ruangan.length)];
-//         if (tipeMutasi === 2) child[i].pembimbing = listDosen[Math.floor(Math.random() * listDosen.length)];
-//         if (tipeMutasi === 3) child[i].penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//         if (tipeMutasi === 4 && child[i].penguji2) child[i].penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
-//       }
-//     }
-
-//     steps.push(`🧪 Mutasi Gen-${g + 1}`);
-//     child = resolveBentrokDenganPindahHari(child, tanggalSidang, 10, 15, 4);
-//     const fitnessAnak = hitungFitness(child);
-//     populasi.pop();
-//     populasi.push({ solusi: child, fitness: fitnessAnak });
-//   }
-
-//   populasi.sort((a, b) => b.fitness - a.fitness);
-//   setJadwalTerbaik(populasi[0].solusi);
-//   setFitnessTerbaik(populasi[0].fitness);
-//   setLogGenerasi(log);
-//   setChartData(chartLog);
-//   setProcessSteps(steps);
-
-//   const dosenCounter = {};
-//   populasi[0].solusi.forEach((entry) => {
-//     [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
-//       .filter(Boolean)
-//       .forEach(d => dosenCounter[d] = (dosenCounter[d] || 0) + 1);
-//   });
-//   setDosenLoad(dosenCounter);
-// };
-//   return (
-//     // <div className={styles.resultSection}>
-//     //   <h3>📘 Jadwal Sidang Seminar Isi (Dari Hasil Sempro)</h3>
-//     //   <table className={styles.jadwalTable}>
-//     //     <thead>
-//     //       <tr>
-//     //         <th>Nama Mahasiswa</th>
-//     //         <th>Pembimbing (eks Penguji1)</th>
-//     //         <th>Penguji 1 (eks Penguji2)</th>
-//     //         <th>Penguji 2 (eks Penguji3)</th>
-//     //       </tr>
-//     //     </thead>
-//     //     <tbody>
-//     //       {jadwalSeminarIsi.map((item, i) => (
-//     //         <tr key={i}>
-//     //           <td>{item.namaMahasiswa}</td>
-//     //           <td>{item.pembimbing}</td>
-//     //           <td>{item.penguji1}</td>
-//     //           <td>{item.penguji2}</td>
-//     //         </tr>
-//     //       ))}
-//     //     </tbody>
-//     //   </table>
-//     // </div>
-//      <motion.div className={styles.container} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-//           <div className={styles.gridAnalyticBox}>
-//             {/* <div className={styles.card} onClick={() => setSelectedCategory("Sempro")}>📘 Mahasiswa Sempro ({dataSempro.length})</div> */}
-//             <div className={styles.card} onClick={() => setSelectedCategory("SeminarIsi")}>📕 Seminar Isi ({dataSeminarIsi.length})</div>
-//             {/* <div className={styles.card} onClick={() => setSelectedCategory("Skripsi")}>📗 Skripsi ({dataSkripsi.length})</div> */}
-//           </div>
-    
-//           <div className={styles.actionButtons}>
-//             <motion.button whileTap={{ scale: 0.95 }} onClick={() => generateGA(getCurrentDataset())}>🚀 Jalankan Genetic Algorithm</motion.button>
-//             {/* {jadwalTerbaik.length > 0 && <motion.button whileTap={{ scale: 0.95 }} onClick={simpanHasilGAkeFirestore}>💾 Simpan Jadwal ke Firestore</motion.button>} */}
-//           </div>
-    
-//     <AnimatePresence>
-//           {logGenerasi.length > 0 && (
-//             <motion.div
-//               className={styles.logBox}
-//               initial={{ opacity: 0, y: 20 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               exit={{ opacity: 0, y: 20 }}
-//               transition={{ duration: 0.5 }}
-//             >
-//               <div className={styles.header}>
-//                 <h3>🧠 Proses Genetic Algorithm</h3>
-//                 <div className={styles.badge}>🔥 Fitness Terbaik: {maxFitness}</div>
-//               </div>
-    
-//               <div className={styles.tabs}>
-//                 <button
-//                   className={activeTab === "log" ? styles.active : ""}
-//                   onClick={() => setActiveTab("log")}
-//                 >
-//                   Log
-//                 </button>
-//                 <button
-//                   className={activeTab === "detail" ? styles.active : ""}
-//                   onClick={() => setActiveTab("detail")}
-//                 >
-//                   Detail
-//                 </button>
-//                 <button
-//                   className={activeTab === "chart" ? styles.active : ""}
-//                   onClick={() => setActiveTab("chart")}
-//                 >
-//                   Grafik
-//                 </button>
-//               </div>
-    
-//               {activeTab === "log" && (
-//                 <div className={styles.section}>
-//                   <div className={styles.exportButtonWrap}>
-//                     <button
-//                       className={styles.exportButton}
-//                       onClick={() => exportLogToTxt(filteredLog)}
-//                     >
-//                       📁 Export Log
-//                     </button>
-//                   </div>
-    
-//                   <div className={styles.filterBox}>
-//                     <label>
-//                       <input
-//                         type="checkbox"
-//                         checked={showCrossover}
-//                         onChange={() => setShowCrossover(!showCrossover)}
-//                       />
-//                       Crossover
-//                     </label>
-//                     <label>
-//                       <input
-//                         type="checkbox"
-//                         checked={showMutasi}
-//                         onChange={() => setShowMutasi(!showMutasi)}
-//                       />
-//                       Mutasi
-//                     </label>
-//                   </div>
-    
-//                   <ul className={styles.scrollArea}>
-//                     {filteredLog.map((log, idx) => (
-//                       <motion.li
-//                         key={idx}
-//                         initial={{ opacity: 0, x: -10 }}
-//                         animate={{ opacity: 1, x: 0 }}
-//                         transition={{ delay: idx * 0.02 }}
-//                       >
-//                         {log}
-//                       </motion.li>
-//                     ))}
-//                   </ul>
-//                 </div>
-//               )}
-    
-//               {activeTab === "detail" && (
-//                 <div className={styles.section}>
-//                   <ul className={styles.scrollArea}>
-//                     {processSteps.map((step, idx) => (
-//                       <motion.li
-//                         key={idx}
-//                         initial={{ opacity: 0, x: -10 }}
-//                         animate={{ opacity: 1, x: 0 }}
-//                         transition={{ delay: idx * 0.02 }}
-//                       >
-//                         {step}
-//                       </motion.li>
-//                     ))}
-//                   </ul>
-//                 </div>
-//               )}
-    
-//               {activeTab === "chart" && (
-//                 <div className={styles.section}>
-//                   <ResponsiveContainer width="100%" height={300}>
-//                     <LineChart
-//                       data={chartData}
-//                       margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-//                     >
-//                       <Line
-//                         type="monotone"
-//                         dataKey="fitness"
-//                         stroke="#4f46e5"
-//                         strokeWidth={3}
-//                         dot={{ r: 4 }}
-//                       />
-//                       <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-//                       <XAxis dataKey="generasi" tick={{ fontSize: 12 }} />
-//                       <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-//                       <Tooltip contentStyle={{ fontSize: 12 }} />
-//                     </LineChart>
-//                   </ResponsiveContainer>
-//                 </div>
-//               )}
-//             </motion.div>
-//           )}
-//         </AnimatePresence>
-    
-//           <div className={styles.filterBox}>
-//       <label htmlFor="filterDosen">Filter Dosen: </label>
-//       <select id="filterDosen" value={filterDosen} onChange={(e) => setFilterDosen(e.target.value)}>
-//         <option value="">Semua</option>
-//         {listDosen.map((d, idx) => <option key={idx} value={d}>{d}</option>)}
-//       </select>
-//     </div>
-    
-//     <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-//       <h3>📊 Fitness Terbaik: {fitnessTerbaik ?? "Belum dihitung"}</h3>
-//       {/* <motion.button whileTap={{ scale: 0.95 }} onClick={simpanFixKeFirestore}>
-//       💾 Simpan Jadwal ke Firestore & Export
-//     </motion.button> */}
-//     <button onClick={() => exportToWord(formatDataForExport())}>Export Word</button>
-//     <button onClick={() => exportToPDF(formatDataForExport())}>Export PDF</button>
-//     <button onClick={() => exportToExcel(formatDataForExport())}>Export Excel</button>
-//     {/* <button onClick={simpanJadwalYangDitampilkan}>
-//       💾 Simpan Jadwal Tampilan Ini
-//     </button> */}
-    
-    
-    
-//       {Array.from(new Set(jadwalTerbaik.map((j) => j.tanggal))).map((tanggal, i) => (
-//         <div key={i}>
-//           <h4 className={styles.tanggalLabel}>📅 Tanggal: {tanggal}</h4>
-//           <div className={styles.gridPerTanggal}>
-//             {ruangan.map((ruang, j) => (
-//               <div key={j} className={styles.kolomRuangan}>
-//                 <h5>🏛 {ruang}</h5>
-//                 <table className={styles.jadwalTable}>
-//                   <thead>
-//                     <tr>
-//                       <th>Nama</th>
-//                       <th>Jam</th>
-//                       <th>Pembimbing</th>
-//                       <th>Penguji 1</th>
-//                       <th>Penguji 2</th>
-//                       <th>Penguji 3</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {jadwalTerbaik
-//                       .filter(row => row.tanggal === tanggal && row.ruangan === ruang)
-//                       .filter(row => {
-//                         const dosens = [row.pembimbing, row.penguji1, row.penguji2, row.penguji3].filter(Boolean);
-//                         return !filterDosen || dosens.includes(filterDosen);
-//                       })
-//                       .map((row, k) => (
-//                         <motion.tr
-//                           key={k}
-//                           initial={{ opacity: 0, y: 10 }}
-//                           animate={{ opacity: 1, y: 0 }}
-//                           transition={{ delay: k * 0.03 }}
-//                           className={
-//                             konflikSet.has(`${row.namaMahasiswa}-${row.jam}`)
-//                               ? styles.rowConflict
-//                               : ""
-//                           }
-//                         >
-//                           <td>{row.namaMahasiswa}</td>
-//                           <td>{row.jam}</td>
-//                           <td>{row.pembimbing}</td>
-//                           <td>{row.penguji1}</td>
-//                           <td>{row.penguji2}</td>
-//                           <td>{row.penguji3 ?? "-"}</td>
-//                         </motion.tr>
-//                       ))}
-//                   </tbody>
-//                 </table>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-        
-//       ))}
-//     </motion.div>
-    
-//           <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-//             <h4>📚 Beban Dosen (Pembimbing + Penguji)</h4>
-//             {/* <ul>{Object.entries(dosenLoad).map(([nama, jumlah], i) => <li key={i}>{nama}: {jumlah} sidang</li>)}</ul> */}
-//             <ul>
-//       {Object.entries(dosenLoad).map(([nama, jumlah], i) => (
-//         <li key={i} className={jumlah === maxLoad ? styles.highlightSibuk : ""}>
-//           {nama}: {jumlah} sidang
-//         </li>
-//       ))}
-//     </ul>
-//     <motion.div className={styles.barchartBox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-//       <h4>📊 Grafik Beban Dosen</h4>
-//       <ResponsiveContainer width="100%" height={300}>
-//         <BarChart data={Object.entries(dosenLoad).map(([nama, jumlah]) => ({ nama, jumlah }))}>
-//           <CartesianGrid strokeDasharray="3 3" />
-//           <XAxis dataKey="nama" />
-//           <YAxis />
-//           <Tooltip />
-//           <Bar dataKey="jumlah" fill="#8884d8" />
-//         </BarChart>
-//       </ResponsiveContainer>
-//     </motion.div>
-    
-//           </motion.div>
-//           <div className={styles.resultSection}>
-//       <h3>📘 Jadwal Sidang Seminar Isi (Dari Hasil Sempro)</h3>
-//       <table className={styles.jadwalTable}>
-//         <thead>
-//           <tr>
-//             <th>Nama Mahasiswa</th>
-//             <th>Pembimbing (eks Penguji1)</th>
-//             <th>Penguji 1 (eks Penguji2)</th>
-//             <th>Penguji 2 (eks Penguji3)</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {jadwalSeminarIsi.map((item, i) => (
-//             <tr key={i}>
-//               <td>{item.namaMahasiswa}</td>
-//               <td>{item.pembimbing}</td>
-//               <td>{item.penguji1}</td>
-//               <td>{item.penguji2}</td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//         </motion.div>
-//   );
-// };
-
-// export default KaprodiPage;
-
-
-
-
 // KaprodiPage.jsx
 "use client"
 import { useEffect, useState } from "react";
-import { collection, getDocs, addDoc, doc, updateDoc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, updateDoc, getDoc, query, where, orderBy, limit } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import styles from "./KaprodiPage.module.scss";
 import { motion, AnimatePresence } from "framer-motion";
@@ -4978,6 +4256,18 @@ const KaprodiPage = () => {
   const [listDosen, setListDosen] = useState([]);
   const [jadwalTerbaik, setJadwalTerbaik] = useState([]);
   const [fitnessTerbaik, setFitnessTerbaik] = useState(null);
+
+
+  const [selectedCategory, setSelectedCategory] = useState("SeminarIsi");
+    
+    // const [dataSeminarIsi, setDataSeminarIsi] = useState([]);
+    // const [dataSkripsi, setDataSkripsi] = useState([]);
+    
+    const [logGenerasi, setLogGenerasi] = useState([]);
+    const [chartData, setChartData] = useState([]);
+    const [dosenLoad, setDosenLoad] = useState({});
+    const [processSteps, setProcessSteps] = useState([]);
+    
 
   useEffect(() => {
     fetchData();
@@ -5000,7 +4290,7 @@ const KaprodiPage = () => {
   };
 
   const fetchSeminarIsiDariSempro = async () => {
-    const q = query(collection(db, "jadwal_sidang_sempro"));
+    const q = query(collection(db, "jadwal_sempro_GA"));
     const snapshot = await getDocs(q);
     const hasil = snapshot.docs.map(doc => doc.data());
 
@@ -5017,44 +4307,782 @@ const KaprodiPage = () => {
     setJadwalSeminarIsi(transformed);
   };
 
-  const simpanHasilGAkeFirestore = async () => {
-    try {
-      const q = query(collection(db, "riwayat_GA"));
-      const snapshot = await getDocs(q);
 
-      if (snapshot.empty) {
-        alert("❌ Tidak ada data hasil GA di koleksi riwayat_GA.");
-        return;
-      }
+    const getCurrentDataset = () => dataSempro;
 
-      let semuaJadwal = [];
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (Array.isArray(data.jadwal)) {
-          semuaJadwal = semuaJadwal.concat(data.jadwal);
-        }
-      });
+      const maxLoad = Math.max(...Object.values(dosenLoad));
 
-      if (!semuaJadwal.length) {
-        alert("⚠️ Tidak ditemukan array 'jadwal' dari hasil GA.");
-        return;
-      }
 
-      for (const entry of semuaJadwal) {
-        await addDoc(collection(db, "jadwal_sempro_GA"), entry);
-      }
+const [activeTab, setActiveTab] = useState("log");
+  const [showCrossover, setShowCrossover] = useState(true);
+  const [showMutasi, setShowMutasi] = useState(true);
 
-      alert("✅ Semua hasil GA berhasil disimpan ke koleksi 'jadwal_sempro_GA'.");
-    } catch (error) {
-      console.error("❌ Gagal menyimpan hasil GA:", error);
-      alert("❌ Terjadi kesalahan saat menyimpan ke Firestore.");
-    }
+  const maxFitness = Math.max(...chartData.map((d) => d.fitness));
+
+  const filteredLog = logGenerasi.filter((log) => {
+    if (log.includes("Crossover") && !showCrossover) return false;
+    if (log.includes("Mutasi") && !showMutasi) return false;
+    return true;
+  });
+
+  const exportLogToTxt = (logData) => {
+    const blob = new Blob([logData.join("\n")], {
+      type: "text/plain;charset=utf-8",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "log_generasi.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
+const formatDataForExport = () => {
+  const grouped = {};
+  jadwalTerbaik.forEach(entry => {
+    const key = `${entry.tanggal}-${entry.ruangan}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(entry);
+  });
+  return grouped;
+};
+
+
+
+
+
+
+
+  const waktuSidang = ["07:00","08:00", "09:00","10:00","11:00", "12:30", "13:30", "14:30", "15:30","16:30","17:30"];
+  const tanggalSidang = ["2025-07-22", "2025-07-23"];
+  // const ruangan = ["Ruang A", "Ruang B", "Ruang C"];
+  const [ruangan, setRuangan] = useState(["Ruang A", "Ruang B", "Ruang C"]);
+  const [filterDosen, setFilterDosen] = useState("");
+
+  // Deteksi konflik: dosen/penguji yang sama di jam & tanggal yang sama di ruangan berbeda
+  const konflikSet = new Set();
+  const semuaSidang = jadwalTerbaik;
+  semuaSidang.forEach((a, idx) => {
+    semuaSidang.forEach((b, jdx) => {
+      if (
+        idx !== jdx &&
+        a.jam === b.jam &&
+        a.tanggal === b.tanggal &&
+        a.ruangan !== b.ruangan &&
+        [a.pembimbing, a.penguji1, a.penguji2, a.penguji3].some((dosen) =>
+          [b.pembimbing, b.penguji1, b.penguji2, b.penguji3].includes(dosen)
+        )
+      ) {
+        konflikSet.add(`${a.namaMahasiswa}-${a.jam}`);
+        konflikSet.add(`${b.namaMahasiswa}-${b.jam}`);
+      }
+    });
+  });
+
+// Fungsi Hitung Fitness
+const hitungFitness = (solusi) => {
+  let score = 1000;
+  const jadwalMap = {};
+  const dosenMap = {};
+
+  solusi.forEach((entry) => {
+    const key = `${entry.tanggal}-${entry.jam}-${entry.ruangan}`;
+    if (!jadwalMap[key]) jadwalMap[key] = [];
+    jadwalMap[key].push(entry);
+
+    [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3].filter(Boolean).forEach((dosen) => {
+      const dosKey = `${entry.tanggal}-${entry.jam}-${dosen}`;
+      if (!dosenMap[dosKey]) dosenMap[dosKey] = 0;
+      dosenMap[dosKey]++;
+    });
+  });
+
+  Object.values(jadwalMap).forEach(list => {
+    if (list.length > 1) score -= 50 * (list.length - 1);
+  });
+
+  Object.values(dosenMap).forEach(count => {
+    if (count > 1) score -= 50 * (count - 1);
+  });
+
+  solusi.forEach(entry => {
+    if (entry.penguji1 && entry.penguji2 && entry.penguji1 === entry.penguji2) score -= 30;
+    if (entry.penguji1 && entry.penguji3 && entry.penguji1 === entry.penguji3) score -= 30;
+    if (entry.penguji2 && entry.penguji3 && entry.penguji2 === entry.penguji3) score -= 30;
+  });
+
+  const dosenTotal = {};
+  solusi.forEach(entry => {
+    [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3].filter(Boolean).forEach(d => {
+      dosenTotal[d] = (dosenTotal[d] || 0) + 1;
+    });
+  });
+
+  const bebanDosen = Object.values(dosenTotal);
+  const max = Math.max(...bebanDosen);
+  const min = Math.min(...bebanDosen);
+  score -= (max - min) * 10;
+
+  return score;
+};
+
+// Fungsi Tanggal Sidang Dinamis
+const getTanggalSidang = (jumlahMahasiswa) => {
+  const baseTanggal = new Date("2025-07-22");
+  const jumlahSlotPerHari = ruangan.length * waktuSidang.length;
+  const jumlahHari = Math.ceil(jumlahMahasiswa / jumlahSlotPerHari);
+  const hasil = [];
+
+  for (let i = 0; i < jumlahHari; i++) {
+    const tgl = new Date(baseTanggal);
+    tgl.setDate(tgl.getDate() + i);
+    hasil.push(tgl.toISOString().split("T")[0]);
+  }
+
+  return hasil;
+};
+
+// ✅ Fungsi Pemindahan Entry Bentrok ke Hari Berikutnya dengan Batas Maksimal Hari
+const resolveBentrokDenganPindahHari = (
+  solusi,
+  tanggalSidang,
+  maxHari = 10,
+  maxPerRuangan = 15,
+  maxTotalHari = 4
+) => {
+  const hasil = [...solusi];
+  const dosenMap = {};
+  const ruangMap = {};
+  const ruangTotalMap = {}; // key: tanggal-ruangan
+
+  for (let i = 0; i < hasil.length; i++) {
+    let entry = hasil[i];
+    let tanggalIndex = tanggalSidang.indexOf(entry.tanggal);
+    let percobaan = 0;
+
+    while (percobaan < maxHari) {
+      const waktu = `${entry.tanggal}-${entry.jam}`;
+      const ruangKey = `${entry.tanggal}-${entry.ruangan}`;
+      const bentrokDosen = [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
+        .filter(Boolean)
+        .some(d => dosenMap[`${waktu}-${d}`]);
+      const bentrokRuang = ruangMap[`${waktu}-${entry.ruangan}`];
+      const overloadRuang = (ruangTotalMap[ruangKey] || 0) >= maxPerRuangan;
+
+      if (!bentrokDosen && !bentrokRuang && !overloadRuang) break;
+
+      tanggalIndex++;
+      if (tanggalIndex >= tanggalSidang.length) {
+        if (tanggalSidang.length >= maxTotalHari) break;
+        const nextDate = new Date(tanggalSidang[tanggalSidang.length - 1]);
+        nextDate.setDate(nextDate.getDate() + 1);
+        const nextStr = nextDate.toISOString().split("T")[0];
+        tanggalSidang.push(nextStr);
+      }
+
+      entry.tanggal = tanggalSidang[tanggalIndex];
+      percobaan++;
+    }
+
+    const waktuBaru = `${entry.tanggal}-${entry.jam}`;
+    const ruangKeyBaru = `${entry.tanggal}-${entry.ruangan}`;
+    [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
+      .filter(Boolean)
+      .forEach(d => {
+        dosenMap[`${waktuBaru}-${d}`] = true;
+      });
+    ruangMap[`${waktuBaru}-${entry.ruangan}`] = true;
+    ruangTotalMap[ruangKeyBaru] = (ruangTotalMap[ruangKeyBaru] || 0) + 1;
+  }
+
+  return hasil;
+};
+
+// Fungsi Utama GA
+const generateGA = async (datasetOriginal) => {
+  let dataset = [...datasetOriginal];
+
+  if (selectedCategory === "Sempro") {
+    dataset = dataset.filter(m => m.statusSempro === "Masih Disidangkan");
+    if (dataset.length === 0) {
+      alert("Tidak ada mahasiswa Sempro dengan status 'Masih Disidangkan'");
+      return;
+    }
+  }
+
+  if (listDosen.length < 4) {
+    alert("Minimal butuh 4 dosen untuk pembimbing + penguji.");
+    return;
+  }
+
+  const tanggalSidang = getTanggalSidang(dataset.length);
+  const jumlahPopulasi = 20;
+  const totalGenerasi = 10;
+  let populasi = [], log = [], chartLog = [], steps = [];
+
+  const getPengujiSempro = (namaMahasiswa) => {
+    const mhs = dataSempro.find(d => d.nama === namaMahasiswa);
+    return {
+      penguji1: mhs?.penguji1 || listDosen[Math.floor(Math.random() * listDosen.length)],
+      penguji2: mhs?.penguji2 || listDosen[Math.floor(Math.random() * listDosen.length)],
+    };
+  };
+
+  const createRandomSolution = () => dataset.map((mhs) => {
+    const waktu = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
+    const tanggal = tanggalSidang[Math.floor(Math.random() * tanggalSidang.length)];
+    const ruang = ruangan[Math.floor(Math.random() * ruangan.length)];
+    const pembimbing = mhs.dosen || listDosen[Math.floor(Math.random() * listDosen.length)];
+        const judul = mhs.judul || "-";
+
+    if (selectedCategory === "Sempro") {
+      let penguji1 = pembimbing, penguji2 = pembimbing;
+      while (penguji1 === pembimbing) penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      while (penguji2 === pembimbing || penguji2 === penguji1) penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      return { mahasiswaId: mhs.id, namaMahasiswa: mhs.nama, tanggal, jam: waktu, ruangan: ruang, pembimbing, penguji1, penguji2 };
+    }
+
+    // if (selectedCategory === "SeminarIsi" || selectedCategory === "Skripsi") {
+    //   const { penguji1, penguji2 } = getPengujiSempro(mhs.nama);
+    //   return {
+    //     mahasiswaId: mhs.id, namaMahasiswa: mhs.nama,
+    //     tanggal, jam: waktu, ruangan: ruang,
+    //     pembimbing,
+    //     penguji1: pembimbing,
+    //     penguji2,
+    //     penguji3: listDosen[Math.floor(Math.random() * listDosen.length)]
+    //   };
+    // }
+     if (selectedCategory === "SeminarIsi" || selectedCategory === "Skripsi") {
+      // Butuh 3 penguji, tidak boleh sama satu sama lain & pembimbing
+      let penguji1 = pembimbing;
+      let penguji2 = pembimbing;
+      let penguji3 = pembimbing;
+
+      while (penguji1 === pembimbing) {
+        penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      }
+
+      while (penguji2 === pembimbing || penguji2 === penguji1) {
+        penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      }
+
+      while (
+        penguji3 === pembimbing ||
+        penguji3 === penguji1 ||
+        penguji3 === penguji2
+      ) {
+        penguji3 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      }
+
+      return {
+        mahasiswaId: mhs.id,
+        namaMahasiswa: mhs.nama,
+        tanggal,
+        jam: waktu,
+        ruangan: ruang,
+        pembimbing,
+        judul,
+        penguji1,
+        penguji2,
+        penguji3,
+      };
+    }
+
+    return null; // fallback
+  });
+
+  for (let i = 0; i < jumlahPopulasi; i++) {
+    let solusi = createRandomSolution();
+    solusi = resolveBentrokDenganPindahHari(solusi, tanggalSidang, 10, 15, 4);
+    const fitness = hitungFitness(solusi);
+    populasi.push({ solusi, fitness });
+  }
+
+  for (let g = 0; g < totalGenerasi; g++) {
+    populasi.sort((a, b) => b.fitness - a.fitness);
+    const best = populasi[0];
+    log.push(`Generasi ${g + 1}: fitness terbaik ${best.fitness}`);
+    chartLog.push({ generasi: `Gen-${g + 1}`, fitness: best.fitness });
+
+    await addDoc(collection(db, "riwayat_GA"), {
+      waktu: new Date().toISOString(),
+      kategori: selectedCategory,
+      generasi: g + 1,
+      fitness: best.fitness,
+      jadwal: best.solusi,
+            timestamp: new Date(),  // <= wajib
+    });
+
+    steps.push(`🎯 Seleksi Gen-${g + 1}: ${best.fitness}`);
+
+    const selectParent = () => {
+      const kandidat = [
+        populasi[Math.floor(Math.random() * populasi.length)],
+        populasi[Math.floor(Math.random() * populasi.length)]
+      ];
+      return kandidat.sort((a, b) => b.fitness - a.fitness)[0].solusi;
+    };
+
+    const parentA = selectParent();
+    const parentB = selectParent();
+    const crossoverPoint = Math.floor(parentA.length / 2);
+    let child = [...parentA.slice(0, crossoverPoint), ...parentB.slice(crossoverPoint)].map(gene => ({ ...gene }));
+
+    steps.push(`🔀 Crossover Gen-${g + 1}: titik potong ${crossoverPoint}`);
+
+    for (let i = 0; i < child.length; i++) {
+      if (Math.random() < 0.1) {
+        const tipeMutasi = Math.floor(Math.random() * 5);
+        if (tipeMutasi === 0) child[i].jam = waktuSidang[Math.floor(Math.random() * waktuSidang.length)];
+        if (tipeMutasi === 1) child[i].ruangan = ruangan[Math.floor(Math.random() * ruangan.length)];
+        if (tipeMutasi === 2) child[i].pembimbing = listDosen[Math.floor(Math.random() * listDosen.length)];
+        if (tipeMutasi === 3) child[i].penguji1 = listDosen[Math.floor(Math.random() * listDosen.length)];
+        if (tipeMutasi === 4 && child[i].penguji2) child[i].penguji2 = listDosen[Math.floor(Math.random() * listDosen.length)];
+      }
+    }
+
+    steps.push(`🧪 Mutasi Gen-${g + 1}`);
+    child = resolveBentrokDenganPindahHari(child, tanggalSidang, 10, 15, 4);
+    const fitnessAnak = hitungFitness(child);
+    populasi.pop();
+    populasi.push({ solusi: child, fitness: fitnessAnak });
+  }
+
+  populasi.sort((a, b) => b.fitness - a.fitness);
+  setJadwalTerbaik(populasi[0].solusi);
+  setFitnessTerbaik(populasi[0].fitness);
+  setLogGenerasi(log);
+  setChartData(chartLog);
+  setProcessSteps(steps);
+
+  const dosenCounter = {};
+  populasi[0].solusi.forEach((entry) => {
+    [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
+      .filter(Boolean)
+      .forEach(d => dosenCounter[d] = (dosenCounter[d] || 0) + 1);
+  });
+  setDosenLoad(dosenCounter);
+};
+
+
+// const generateGADariSemproGA = async () => {
+//   try {
+//     const snapshot = await getDocs(collection(db, "jadwal_sempro_GA"));
+//     if (snapshot.empty) {
+//       alert("❌ Tidak ada data di jadwal_sempro_GA.");
+//       return;
+//     }
+
+//     const rawData = snapshot.docs.map(doc => doc.data());
+//     const tanggalSidang = getTanggalSidang(rawData.length);
+
+//     const dataset = rawData.map(item => ({
+//       mahasiswaId: item.mahasiswaId,
+//       namaMahasiswa: item.namaMahasiswa,
+//       pembimbing: item.pembimbing,
+//       penguji1: item.penguji1,
+//       penguji2: item.penguji2,
+//       penguji3: item.penguji3,
+//       judul: item.judul || "-",
+//       jam: item.jam || waktuSidang[Math.floor(Math.random() * waktuSidang.length)],
+//       tanggal: item.tanggal || tanggalSidang[Math.floor(Math.random() * tanggalSidang.length)],
+//       ruangan: item.ruangan || ruangan[Math.floor(Math.random() * ruangan.length)]
+//     }));
+
+//     const solusiAwal = resolveBentrokDenganPindahHari(dataset, tanggalSidang, 10, 15, 4);
+//     const fitness = hitungFitness(solusiAwal);
+
+//     setJadwalTerbaik(solusiAwal);
+//     setFitnessTerbaik(fitness);
+//     setLogGenerasi([`📋 Data dari jadwal_sempro_GA digunakan. Fitness: ${fitness}`]);
+//     setChartData([{ generasi: "Fixed", fitness }]);
+//     setProcessSteps(["✅ Data diambil dari jadwal_sempro_GA tanpa randomisasi dosen."]);
+
+//     // Hitung beban dosen untuk grafik
+//     const dosenCounter = {};
+//     solusiAwal.forEach((entry) => {
+//       [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
+//         .filter(Boolean)
+//         .forEach(d => dosenCounter[d] = (dosenCounter[d] || 0) + 1);
+//     });
+//     setDosenLoad(dosenCounter);
+//   } catch (err) {
+//     console.error("❌ Gagal mengambil data dari jadwal_sempro_GA:", err);
+//     alert("Gagal mengambil data dari Firestore.");
+//   }
+// };
+
+
+
+const generateGADariSemproGA = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, "jadwal_sempro_GA"));
+    if (snapshot.empty) {
+      alert("❌ Tidak ada data di jadwal_sempro_GA.");
+      return;
+    }
+
+    const rawData = snapshot.docs.map(doc => doc.data());
+    const tanggalSidang = getTanggalSidang(rawData.length);
+
+    // Tetap ambil data asli dari Firestore, TIDAK mengubah dosen-dosen
+    const dataset = rawData.map((item, index) => {
+      return {
+        mahasiswaId: item.mahasiswaId,
+        namaMahasiswa: item.namaMahasiswa,
+        pembimbing: item.pembimbing,
+        penguji1: item.penguji1,
+        penguji2: item.penguji2,
+        penguji3: item.penguji3,
+        judul: item.judul || "-",
+
+        // Hanya jam, tanggal, ruangan yang boleh di-random jika kosong
+        jam: item.jam && waktuSidang.includes(item.jam)
+          ? item.jam
+          : waktuSidang[Math.floor(Math.random() * waktuSidang.length)],
+
+        tanggal: item.tanggal && item.tanggal.length === 10
+          ? item.tanggal
+          : tanggalSidang[Math.floor(Math.random() * tanggalSidang.length)],
+
+        ruangan: item.ruangan && ruangan.includes(item.ruangan)
+          ? item.ruangan
+          : ruangan[Math.floor(Math.random() * ruangan.length)],
+      };
+    });
+
+    // 🧠 Penjadwalan ulang hanya untuk optimasi tanggal-jam-ruangan
+    const solusiAwal = resolveBentrokDenganPindahHari(dataset, tanggalSidang, 10, 15, 4);
+    const fitness = hitungFitness(solusiAwal);
+
+    setJadwalTerbaik(solusiAwal);
+    setFitnessTerbaik(fitness);
+    setLogGenerasi([`📋 Data dari jadwal_sempro_GA digunakan. Fitness: ${fitness}`]);
+    setChartData([{ generasi: "Fixed", fitness }]);
+    setProcessSteps(["✅ Data diambil dari jadwal_sempro_GA tanpa mengubah dosen."]);
+
+    // Hitung beban dosen
+    const dosenCounter = {};
+    solusiAwal.forEach((entry) => {
+      [entry.pembimbing, entry.penguji1, entry.penguji2, entry.penguji3]
+        .filter(Boolean)
+        .forEach(d => dosenCounter[d] = (dosenCounter[d] || 0) + 1);
+    });
+    setDosenLoad(dosenCounter);
+  } catch (err) {
+    console.error("❌ Gagal mengambil data dari jadwal_sempro_GA:", err);
+    alert("Gagal mengambil data dari Firestore.");
+  }
+};
+
+
+const simpanHasilGAkeFirestore = async () => {
+  try {
+    // Ambil hanya dokumen terakhir dari riwayat_GA
+    const q = query(collection(db, "riwayat_GA"), orderBy("timestamp", "desc"), limit(1));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      alert("❌ Tidak ada data hasil GA di koleksi riwayat_GA.");
+      return;
+    }
+
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+
+    if (!Array.isArray(data.jadwal)) {
+      alert("⚠️ Tidak ditemukan array 'jadwal' dari hasil GA.");
+      return;
+    }
+
+    for (const entry of data.jadwal) {
+      const finalEntry = {
+        ...entry,
+        penguji3: entry.penguji2 ?? "-",
+        penguji2: entry.penguji1 ?? "-",
+        penguji1: entry.pembimbing ?? "-",
+        status: "Lagi Sidang Sempro"
+      };
+      await addDoc(collection(db, "jadwal_sempro_GA"), finalEntry);
+    }
+
+    alert("✅ Hanya hasil GA terbaru yang berhasil disimpan ke Firestore.");
+  } catch (error) {
+    console.error("❌ Gagal menyimpan hasil GA:", error);
+    alert("❌ Terjadi kesalahan saat menyimpan ke Firestore.");
+  }
+};
   return (
-    <div className={styles.resultSection}>
+    // <div className={styles.resultSection}>
+    //   <h3>📘 Jadwal Sidang Seminar Isi (Dari Hasil Sempro)</h3>
+    //   <table className={styles.jadwalTable}>
+    //     <thead>
+    //       <tr>
+    //         <th>Nama Mahasiswa</th>
+    //         <th>Pembimbing (eks Penguji1)</th>
+    //         <th>Penguji 1 (eks Penguji2)</th>
+    //         <th>Penguji 2 (eks Penguji3)</th>
+    //       </tr>
+    //     </thead>
+    //     <tbody>
+    //       {jadwalSeminarIsi.map((item, i) => (
+    //         <tr key={i}>
+    //           <td>{item.namaMahasiswa}</td>
+    //           <td>{item.pembimbing}</td>
+    //           <td>{item.penguji1}</td>
+    //           <td>{item.penguji2}</td>
+    //         </tr>
+    //       ))}
+    //     </tbody>
+    //   </table>
+    // </div>
+     <motion.div className={styles.container} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+          <div className={styles.gridAnalyticBox}>
+            {/* <div className={styles.card} onClick={() => setSelectedCategory("Sempro")}>📘 Mahasiswa Sempro ({dataSempro.length})</div> */}
+            <div className={styles.card} onClick={() => setSelectedCategory("SeminarIsi")}>📕 Seminar Isi ({dataSeminarIsi.length})</div>
+            {/* <div className={styles.card} onClick={() => setSelectedCategory("Skripsi")}>📗 Skripsi ({dataSkripsi.length})</div> */}
+          </div>
+    
+          <div className={styles.actionButtons}>
+            {/* <motion.button whileTap={{ scale: 0.95 }} onClick={() => generateGA(getCurrentDataset())}>🚀 Jalankan Genetic Algorithm</motion.button> */}
+            <motion.button whileTap={{ scale: 0.95 }} onClick={generateGADariSemproGA}>
+  📋 Generate GA dari jadwal_sempro_GA
+</motion.button>
+
+            {jadwalTerbaik.length > 0 && <motion.button whileTap={{ scale: 0.95 }} onClick={simpanHasilGAkeFirestore}>💾 Simpan Jadwal ke Firestore</motion.button>}
+          </div>
+    
+    <AnimatePresence>
+          {logGenerasi.length > 0 && (
+            <motion.div
+              className={styles.logBox}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className={styles.header}>
+                <h3>🧠 Proses Genetic Algorithm</h3>
+                <div className={styles.badge}>🔥 Fitness Terbaik: {maxFitness}</div>
+              </div>
+    
+              <div className={styles.tabs}>
+                <button
+                  className={activeTab === "log" ? styles.active : ""}
+                  onClick={() => setActiveTab("log")}
+                >
+                  Log
+                </button>
+                <button
+                  className={activeTab === "detail" ? styles.active : ""}
+                  onClick={() => setActiveTab("detail")}
+                >
+                  Detail
+                </button>
+                <button
+                  className={activeTab === "chart" ? styles.active : ""}
+                  onClick={() => setActiveTab("chart")}
+                >
+                  Grafik
+                </button>
+              </div>
+    
+              {activeTab === "log" && (
+                <div className={styles.section}>
+                  <div className={styles.exportButtonWrap}>
+                    <button
+                      className={styles.exportButton}
+                      onClick={() => exportLogToTxt(filteredLog)}
+                    >
+                      📁 Export Log
+                    </button>
+                  </div>
+    
+                  <div className={styles.filterBox}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={showCrossover}
+                        onChange={() => setShowCrossover(!showCrossover)}
+                      />
+                      Crossover
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={showMutasi}
+                        onChange={() => setShowMutasi(!showMutasi)}
+                      />
+                      Mutasi
+                    </label>
+                  </div>
+    
+                  <ul className={styles.scrollArea}>
+                    {filteredLog.map((log, idx) => (
+                      <motion.li
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.02 }}
+                      >
+                        {log}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+    
+              {activeTab === "detail" && (
+                <div className={styles.section}>
+                  <ul className={styles.scrollArea}>
+                    {processSteps.map((step, idx) => (
+                      <motion.li
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.02 }}
+                      >
+                        {step}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+    
+              {activeTab === "chart" && (
+                <div className={styles.section}>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart
+                      data={chartData}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
+                      <Line
+                        type="monotone"
+                        dataKey="fitness"
+                        stroke="#4f46e5"
+                        strokeWidth={3}
+                        dot={{ r: 4 }}
+                      />
+                      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                      <XAxis dataKey="generasi" tick={{ fontSize: 12 }} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+                      <Tooltip contentStyle={{ fontSize: 12 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+    
+          <div className={styles.filterBox}>
+      <label htmlFor="filterDosen">Filter Dosen: </label>
+      <select id="filterDosen" value={filterDosen} onChange={(e) => setFilterDosen(e.target.value)}>
+        <option value="">Semua</option>
+        {listDosen.map((d, idx) => <option key={idx} value={d}>{d}</option>)}
+      </select>
+    </div>
+    
+    <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+      <h3>📊 Fitness Terbaik: {fitnessTerbaik ?? "Belum dihitung"}</h3>
+      {/* <motion.button whileTap={{ scale: 0.95 }} onClick={simpanFixKeFirestore}>
+      💾 Simpan Jadwal ke Firestore & Export
+    </motion.button> */}
+    <button onClick={() => exportToWord(formatDataForExport())}>Export Word</button>
+    <button onClick={() => exportToPDF(formatDataForExport())}>Export PDF</button>
+    <button onClick={() => exportToExcel(formatDataForExport())}>Export Excel</button>
+    {/* <button onClick={simpanJadwalYangDitampilkan}>
+      💾 Simpan Jadwal Tampilan Ini
+    </button> */}
+    
+    
+    
+      {Array.from(new Set(jadwalTerbaik.map((j) => j.tanggal))).map((tanggal, i) => (
+        <div key={i}>
+          <h4 className={styles.tanggalLabel}>📅 Tanggal: {tanggal}</h4>
+          <div className={styles.gridPerTanggal}>
+            {ruangan.map((ruang, j) => (
+              <div key={j} className={styles.kolomRuangan}>
+                <h5>🏛 {ruang}</h5>
+                <table className={styles.jadwalTable}>
+                  <thead>
+                    <tr>
+                      <th>Nama</th>
+                      <th>NIM</th>
+                      <th>Judul</th>
+                      <th>Jam</th>
+                      <th>Pembimbing</th>
+                      <th>Penguji 1</th>
+                      <th>Penguji 2</th>
+                      <th>Penguji 3</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jadwalTerbaik
+                      .filter(row => row.tanggal === tanggal && row.ruangan === ruang)
+                      .filter(row => {
+                        const dosens = [row.pembimbing, row.penguji1, row.penguji2, row.penguji3].filter(Boolean);
+                        return !filterDosen || dosens.includes(filterDosen);
+                      })
+                      .map((row, k) => (
+                        <motion.tr
+                          key={k}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: k * 0.03 }}
+                          className={
+                            konflikSet.has(`${row.namaMahasiswa}-${row.jam}`)
+                              ? styles.rowConflict
+                              : ""
+                          }
+                        >
+                          <td>{row.namaMahasiswa}</td>
+                                                    <td>{row.mahasiswaId}</td>
+                                                                              <td>{row.judul}</td>
+                          <td>{row.jam}</td>
+                          <td>{row.pembimbing}</td>
+                          <td>{row.penguji1}</td>
+                          <td>{row.penguji2}</td>
+                          <td>{row.penguji3 ?? "-"}</td>
+                        </motion.tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+      ))}
+    </motion.div>
+    
+          <motion.div className={styles.resultSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <h4>📚 Beban Dosen (Pembimbing + Penguji)</h4>
+            {/* <ul>{Object.entries(dosenLoad).map(([nama, jumlah], i) => <li key={i}>{nama}: {jumlah} sidang</li>)}</ul> */}
+            <ul>
+      {Object.entries(dosenLoad).map(([nama, jumlah], i) => (
+        <li key={i} className={jumlah === maxLoad ? styles.highlightSibuk : ""}>
+          {nama}: {jumlah} sidang
+        </li>
+      ))}
+    </ul>
+    <motion.div className={styles.barchartBox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+      <h4>📊 Grafik Beban Dosen</h4>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={Object.entries(dosenLoad).map(([nama, jumlah]) => ({ nama, jumlah }))}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="nama" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="jumlah" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
+    </motion.div>
+    
+          </motion.div>
+          <div className={styles.resultSection}>
       <h3>📘 Jadwal Sidang Seminar Isi (Dari Hasil Sempro)</h3>
-      <button onClick={simpanHasilGAkeFirestore} style={{ marginBottom: '1rem' }}>💾 Simpan Semua Hasil GA ke jadwal_sempro_GA</button>
       <table className={styles.jadwalTable}>
         <thead>
           <tr>
@@ -5076,6 +5104,7 @@ const KaprodiPage = () => {
         </tbody>
       </table>
     </div>
+        </motion.div>
   );
 };
 

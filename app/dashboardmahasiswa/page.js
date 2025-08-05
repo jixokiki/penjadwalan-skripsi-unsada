@@ -10,6 +10,7 @@ import { auth, db } from "@/lib/firebase";
 import { collection, getDocs, doc, getDoc, query, where, setDoc, onSnapshot } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
+import DashboardSeminarIsi from '../dashboardseminarisi';
 
 export default function DashboardMahasiswa() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -377,6 +378,7 @@ useEffect(() => {
             Skripsi
           </button>
         </div>
+        <DashboardSeminarIsi/>
       </div>
       {/* {judul && (
   <div className={styles.preloadedSection}>
